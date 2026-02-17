@@ -1,0 +1,29 @@
+[
+  {
+    "query_image": "venasaur_test1.png",
+    "best_card_id": "swsh35-1",
+    "score": 0.8275370001792908,
+    "top_k": [
+      {
+        "card_id": "swsh35-1",
+        "score": 0.8275370001792908
+      },
+      {
+        "card_id": "sm12-1",
+        "score": 0.7995440363883972
+      },
+      {
+        "card_id": "bw1-1",
+        "score": 0.7796932458877563
+      },
+      {
+        "card_id": "bw5-1",
+        "score": 0.7668699026107788
+      },
+      {
+        "card_id": "det1-1",
+        "score": 0.7604180574417114
+      }
+    ]
+  }
+]
