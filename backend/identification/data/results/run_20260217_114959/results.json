@@ -1,0 +1,77 @@
+[
+  {
+    "query_image": "armaldo_test1.png",
+    "best_card_id": "ex13-1",
+    "score": 0.8620376586914062,
+    "source_row": {
+      "id": "ex13-1",
+      "image_url": "https://images.pokemontcg.io/ex13/1_hires.png",
+      "caption": "A Stage 2 Pokemon Card of type Fighting, Metal with the title Armaldo  and 110 HP of rarity Rare Holo evolved from Anorith from the set Holon Phantoms.  It has the attack Delta Edge with the cost Metal, Colorless, the energy cost 2 and the damage of 70 with the description: If you have any Supporter cards in play, this attack's base damage is 20 instead of 70. It has the attack Fossil Charge with the cost Fighting, Colorless, Colorless, the energy cost 3 and the damage of 50 with the description: You may discard a Claw Fossil, Mysterious Fossil, Root Fossil, or Holon Fossil from your hand. If you do, choose 1 of your opponent's Benched Pokemon and do 30 damage to that Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.) It has weakness against Grass 2. ",
+      "name": "Armaldo δ",
+      "hp": 110,
+      "set_name": "Holon Phantoms"
+    },
+    "top_k": [
+      {
+        "card_id": "ex13-1",
+        "score": 0.8620376586914062,
+        "source_row": {
+          "id": "ex13-1",
+          "image_url": "https://images.pokemontcg.io/ex13/1_hires.png",
+          "caption": "A Stage 2 Pokemon Card of type Fighting, Metal with the title Armaldo  and 110 HP of rarity Rare Holo evolved from Anorith from the set Holon Phantoms.  It has the attack Delta Edge with the cost Metal, Colorless, the energy cost 2 and the damage of 70 with the description: If you have any Supporter cards in play, this attack's base damage is 20 instead of 70. It has the attack Fossil Charge with the cost Fighting, Colorless, Colorless, the energy cost 3 and the damage of 50 with the description: You may discard a Claw Fossil, Mysterious Fossil, Root Fossil, or Holon Fossil from your hand. If you do, choose 1 of your opponent's Benched Pokemon and do 30 damage to that Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.) It has weakness against Grass 2. ",
+          "name": "Armaldo δ",
+          "hp": 110,
+          "set_name": "Holon Phantoms"
+        }
+      },
+      {
+        "card_id": "neo4-1",
+        "score": 0.8137973546981812,
+        "source_row": {
+          "id": "neo4-1",
+          "image_url": "https://images.pokemontcg.io/neo4/1_hires.png",
+          "caption": "A Stage 2 Pokemon Card of type Lightning with the title Dark Ampharos and 70 HP of rarity Rare Holo evolved from Dark Flaaffy from the set Neo Destiny and the flavor text: Its brightly lit tail can be seen for miles in the dark, even by ships on the sea. It has the attack Shock Bolt with the cost Lightning, Colorless, Colorless, the energy cost 3 and the damage of 50 with the description: Discard all Lightning Energy cards attached to Dark Ampharos or this attack does nothing. It has the ability Conductivity with the description: Whenever your opponent attaches an Energy card from his or her hand to a Pokemon, this power does 10 damage to that Pokemon. (Don't apply Weakness and Resistance.) This power stops working if you have more than 1 Dark Ampharos in play or while Dark Ampharos is Asleep, Confused, or Paralyzed. It has weakness against Fighting 2. ",
+          "name": "Dark Ampharos",
+          "hp": 70,
+          "set_name": "Neo Destiny"
+        }
+      },
+      {
+        "card_id": "base3-1",
+        "score": 0.8128341436386108,
+        "source_row": {
+          "id": "base3-1",
+          "image_url": "https://images.pokemontcg.io/base3/1_hires.png",
+          "caption": "A Stage 1 Pokemon Card of type Fighting with the title Aerodactyl and 60 HP of rarity Rare Holo evolved from Mysterious Fossil from the set Fossil and the flavor text: A ferocious prehistoric Pokemon that goes for the enemy's throat with its serrated saw-like fangs. It has the attack Wing Attack with the cost Colorless, Colorless, Colorless, the energy cost 3 and the damage of 30. It has the ability Prehistoric Power with the description: No more Evolution cards can be played. This power stops working while Aerodactyl is Asleep, Confused, or Paralyzed. It has weakness against Grass 2. It has resistance against Fighting -30. ",
+          "name": "Aerodactyl",
+          "hp": 60,
+          "set_name": "Fossil"
+        }
+      },
+      {
+        "card_id": "ex11-3",
+        "score": 0.811609148979187,
+        "source_row": {
+          "id": "ex11-3",
+          "image_url": "https://images.pokemontcg.io/ex11/3_hires.png",
+          "caption": "A Stage 2 Pokemon Card of type Lightning, Metal with the title Dragonite  and 100 HP of rarity Rare Holo evolved from Dragonair from the set Delta Species.  It has the attack Agility with the cost Lightning, Colorless, the energy cost 2 and the damage of 30 with the description: Flip a coin. If heads, prevent all effects of an attack, including damage, done to Dragonite during your opponent's next turn. It has the attack Heavy Impact with the cost Lightning, Metal, Colorless, Colorless, the energy cost 4 and the damage of 70. It has the ability Delta Charge with the description: Once during your turn (before your attack), you may attach a Lightning Energy card from your discard pile to 1 of your Benched Pokemon. This power can't be used if Dragonite is affected by a Special Condition. It has weakness against Colorless 2. It has resistance against Grass -30 and . Fighting -30. ",
+          "name": "Dragonite δ",
+          "hp": 100,
+          "set_name": "Delta Species"
+        }
+      },
+      {
+        "card_id": "base4-1",
+        "score": 0.8100470304489136,
+        "source_row": {
+          "id": "base4-1",
+          "image_url": "https://images.pokemontcg.io/base4/1_hires.png",
+          "caption": "A Stage 2 Pokemon Card of type Psychic with the title Alakazam and 80 HP of rarity Rare Holo evolved from Kadabra from the set Base Set 2 and the flavor text: Its brain can outperform a supercomputer. Its intelligence quotient is said to be 5000. It has the attack Confuse Ray with the cost Psychic, Psychic, Psychic, the energy cost 3 and the damage of 30 with the description: Flip a coin. If heads, the Defending Pokemon is now Confused. It has the ability Damage Swap with the description: As often as you like during your turn (before your attack), you may move 1 damage counter from 1 of your Pokemon to another as long as you don't Knock Out that Pokemon. This power can't be used if Alakazam is Asleep, Confused, or Paralyzed. It has weakness against Psychic 2. ",
+          "name": "Alakazam",
+          "hp": 80,
+          "set_name": "Base Set 2"
+        }
+      }
+    ]
+  }
+]

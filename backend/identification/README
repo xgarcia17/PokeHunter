@@ -1,0 +1,2 @@
+  python -m src.identify_batch --index data/index/index.npz --query data/test_images/armaldo_test1.png --topk 5
+
