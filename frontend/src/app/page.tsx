@@ -1,6 +1,7 @@
 import NavBar from "@/components/navbar";
 import Scanner from "@/components/scanner";
 
+// Scanner Page also serves as the Home Page
 export default function ScannerPage() {
   return (
     <div className="h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-purple-50 flex flex-col overflow-hidden">

@@ -139,7 +139,7 @@ export default function Scanner() {
       />
 
       {/* Upload box */}
-      <div className="border-2 border-dashed border-purple-200 rounded-xl px-4 py-8 md:px-8 md:py-10 text-center flex flex-col items-center gap-4">
+      <div className="border-2 border-dashed hover:border-purple-200 rounded-xl px-4 py-8 md:px-8 md:py-10 text-center flex flex-col items-center gap-4">
         {previewUrl ? (
           <>
             <img
