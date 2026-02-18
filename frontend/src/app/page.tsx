@@ -7,7 +7,7 @@ export default function ScannerPage() {
       {/* Navigation Bar */}
       <NavBar />
       {/* Main Content of Page : Scanner */}
-      <div className="flex-1 overflow-auto max-w-7xl mx-auto w-[80%] px-8 py-6">
+      <div className="flex-1 my-4 overflow-auto max-w-7xl mx-auto w-[80%] px-8 py-6">
         <Scanner />
       </div>
     </div>
