@@ -173,7 +173,7 @@ export default function Scanner() {
           </p>
         </div>
 
-        {/* 👉 Only show the main button when there is NO preview */}
+        {/* Only show the "Upload Image" button when there is NO preview */}
         {!previewUrl && (
           <button
             type="button"
