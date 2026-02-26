@@ -1,2 +1,10 @@
 .env
 node_modules
+.venv/
+.venv*/
+venv/
+backend/identification/dataset/raw_images/
+backend/identification/data/results/**
+!backend/identification/data/results/.gitkeep
+backend/identification/data/test_images/**
+!backend/identification/data/test_images/.gitkeep
