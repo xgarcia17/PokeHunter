@@ -1,15 +1,12 @@
 import NavBar from "@/components/navbar";
-import Scanner from "@/components/scanner";
 
-// Scanner Page also serves as the Home Page
-export default function ScannerPage() {
+export default function RecommendationsPage() {
   return (
     <div className="h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-purple-50 flex flex-col overflow-hidden">
       {/* Navigation Bar */}
-      <NavBar currentPage={"scan"} />
-      {/* Main Content of Page : Scanner */}
+      <NavBar currentPage={"recommendations"} />
+      {/* Main Content of Page : Card Recommendations */}
       <div className="flex-1 my-4 overflow-auto max-w-7xl mx-auto w-[80%] px-8 py-6">
-        <Scanner />
       </div>
     </div>
   );
