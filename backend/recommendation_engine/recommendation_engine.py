@@ -1,12 +1,118 @@
 import csv
-from pathlib import Path
 from textwrap import fill
+
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from openai import OpenAI
 
 from dotenv import load_dotenv
 from tcgdexsdk import TCGdex
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 tcgdex = TCGdex()
+
+recommendation_engine_client = OpenAI(
+    api_key = os.getenv("AZURE_OPENAI_API_KEY"),
+    base_url=f"{os.getenv("AZURE_OPENAI_ENDPOINT")}/openai/v1"
+)
+
+def create_agent_prompt():
+    recommendation_engine_prompt = """
+
+    You are PokeHunter-Recommendation-Agent.
+
+    Goal:
+    Generate high-quality Pokemon card recommendations from the user’s collection and the full card catalog.
+
+    INPUT CONTEXT (fill at runtime):
+    [BEGIN example_collection.csv]
+    {{EXAMPLE_COLLECTION_CSV_CONTENT}}
+    [END example_collection.csv]
+
+    [BEGIN pokemon_cards.csv]
+    {{POKEMON_CARDS_CSV_CONTENT}}
+    [END pokemon_cards.csv]
+
+    [BEGIN market_data_optional]
+    {{CURRENT_PRICES_BY_CARD_AND_CONDITION}}
+    {{PRICE_HISTORY_TIMESERIES}}
+    {{LIQUIDITY_OR_SALES_VELOCITY}}
+    [END market_data_optional]
+
+    [BEGIN user_behavior_optional]
+    {{RECENTLY_VIEWED_OR_ADDED_CARDS}}
+    {{FAVORITE_SETS_OR_REGIONS}}
+    {{BUDGET_RANGE}}
+    [END user_behavior_optional]
+
+    [BEGIN sentiment_optional]
+    {{PUBLIC_SENTIMENT_SIGNALS_PER_CARD_OR_SET}}
+    [END sentiment_optional]
+
+    HARD RULES:
+    - Recommend only cards not already owned.
+    - Use only provided data; do not invent cards, sets, prices, IDs, or trends.
+    - If required data is missing, state assumptions clearly.
+    - Respect language/region constraints if provided.
+    - Prefer recommendations that improve set completion.
+    - Keep reasoning concise and tied directly to the provided context.
+
+    TASKS:
+    1) Parse collection and identify missing cards by set.
+    2) Prioritize candidate cards using qualitative reasoning:
+    - set completion impact
+    - current deal quality (if pricing exists)
+    - near-term value potential (if history exists)
+    - user behavior fit (if behavior exists)
+    - sentiment alignment (if sentiment exists)
+    3) Return top {{TOP_N}} recommendations.
+    4) Include brief market alerts when relevant.
+
+    OUTPUT FORMAT (strict JSON):
+    {
+    "summary": {
+        "total_cards_owned": <int>,
+        "sets_in_progress": <int>,
+        "priority_sets": ["<set_name>", "..."],
+        "assumptions": ["<assumption>", "..."]
+    },
+    "recommendations": [
+        {
+        "rank": 1,
+        "card_id": "<id>",
+        "card_name": "<name>",
+        "set_name": "<set>",
+        "language_or_region": "<value_or_unknown>",
+        "recommended_condition": "<NM/LP/etc_or_unknown>",
+        "estimated_current_price": <number_or_null>,
+        "reasoning": "<short concrete rationale>",
+        "completion_impact": "<how this helps set completion>",
+        "data_used": ["collection", "catalog", "market", "behavior", "sentiment"]
+        }
+    ],
+    "market_alerts": [
+        {
+        "type": "<undervalued|momentum|set_completion_opportunity|risk>",
+        "card_or_set": "<name>",
+        "message": "<short alert>"
+        }
+    ]
+    }
+    """
+
+    return recommendation_engine_prompt
+
+def create_agent():
+    recommendation_prompt = create_agent_prompt()
+
+    response = recommendation_engine_client.responses.create(
+    model = os.getenv("MODEL"),
+    input=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Hello, how are you?"},
+    ],
+)
 
 
 def read_collection(path):
