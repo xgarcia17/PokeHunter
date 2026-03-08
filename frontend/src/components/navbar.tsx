@@ -1,5 +1,6 @@
 import Link from "next/link";
 import clsx from "clsx";
+import UserInfoModal from "./userDisplayModal";
 
 
 type Page = "scan" | "collection" | "pricing" | "recommendations";
@@ -53,6 +54,7 @@ export default function NavBar({ currentPage }: NavBarProps) {
         <div className="flex gap-6 text-sm mx-auto">
           {populateNavBar(currentPage)}
         </div>
+        <UserInfoModal />
       </div>
     </nav>
   );
