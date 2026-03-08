@@ -12,11 +12,17 @@ function UserInfoModal() {
     setIsRotated(!isRotated);
   };
 
+  const fakeUser = {
+    id: "FranzK2026",
+    name: "Franz the Trainer",
+  };
+
   const InfoDisplayPopUp = () => {
     return (
-      <div className="fixed top-14 right-8 bg-white rounded-lg shadow-lg p-6 w-60 z-50">
-        <div className="mt-4 text-black flex items-center justify-center">
-          <h2>Settings Menu Content</h2>
+      <div className="fixed top-14 right-8 bg-purple-200 rounded-lg shadow-lg p-1 w-60 z-50 border border-gray-300">
+        {/* Inner outlined box */}
+        <div className="w-full flex items-center justify-center rounded-md px-3 py-2 text-black bg-white">
+          <h2 className="font-semibold">{fakeUser.name}</h2>
         </div>
       </div>
     );
