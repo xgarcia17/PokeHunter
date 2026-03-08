@@ -1,23 +1,34 @@
-from openai import AzureOpenAI
-from dotenv import load_dotenv
-from pathlib import Path
-load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 
-client = AzureOpenAI(
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version=os.getenv("AZURE_API_VERSION")
+def _required_env(name: str) -> str:
+    value = (os.getenv(name) or "").strip()
+    if not value:
+        raise RuntimeError(f"Missing required env var: {name}")
+    return value
+
+
+endpoint = _required_env("AZURE_OPENAI_ENDPOINT").rstrip("/")
+api_key = _required_env("AZURE_OPENAI_API_KEY")
+deployment = _required_env("MODEL")
+
+client = OpenAI(
+    api_key=api_key,
+    base_url=f"{endpoint}/openai/v1/",
 )
 
-# model = gpt5.1-chat
-response = client.chat.completions.create(
-    model=os.getenv("MODEL"),
-    messages=[
+response = client.responses.create(
+    model=deployment,
+    input=[
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "Hello, how are you?"}
-    ]
+        {"role": "user", "content": "Hello, how are you?"},
+    ],
 )
 
-print(response.choices[0].message.content)
+print(response.output_text)
