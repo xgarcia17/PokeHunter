@@ -4,12 +4,22 @@ import { useState } from "react";
 import pokeballImage from "frontend/public/light_grey_pokeball_by_jormxdos_dfgb85u-fullview.png";
 
 function UserInfoModal() {
-  const [isInfoDisplayed, setIsInfoDisplayed] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
 
   const handleClick = () => {
-    setIsInfoDisplayed(!isInfoDisplayed);
+    setIsModalOpen(!isModalOpen);
     setIsRotated(!isRotated);
+  };
+
+  const InfoDisplayPopUp = () => {
+    return (
+      <div className="fixed top-14 right-8 bg-white rounded-lg shadow-lg p-6 w-60 z-50">
+        <div className="mt-4 text-black flex items-center justify-center">
+          <h2>Settings Menu Content</h2>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -24,11 +34,7 @@ function UserInfoModal() {
         />
       </button>
 
-      {isInfoDisplayed && (
-        <div className="settings-modal">
-          <p>Settings Menu Content</p>
-        </div>
-      )}
+      {isModalOpen && InfoDisplayPopUp()}
     </div>
   );
 }
