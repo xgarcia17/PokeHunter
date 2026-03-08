@@ -5,15 +5,21 @@ import pokeballImage from "frontend/public/light_grey_pokeball_by_jormxdos_dfgb8
 
 function UserInfoModal() {
   const [isInfoDisplayed, setIsInfoDisplayed] = useState(false);
+  const [isRotated, setIsRotated] = useState(false);
+
+  const handleClick = () => {
+    setIsInfoDisplayed(!isInfoDisplayed);
+    setIsRotated(!isRotated);
+  };
 
   return (
     <div className="user-info-modal">
       <button
         className="user-info-modal-button w-[50px] h-[50px] flex items-center justify-center"
-        onClick={() => setIsInfoDisplayed(!isInfoDisplayed)}
+        onClick={handleClick}
       >
         <img
-          className="w-[50px] h-[50px] hover:scale-110 transition-transform duration-200"
+          className={`w-[50px] h-[50px] hover:scale-110 transition-transform duration-200 ${isRotated ? "rotate-180" : ""}`}
           src={pokeballImage.src}
         />
       </button>
