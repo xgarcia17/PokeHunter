@@ -2,6 +2,18 @@
 
 import { useRef, useState, type ChangeEvent } from "react";
 
+type AddCollectionResponse =
+  | {
+      ok: true;
+      cardId: string;
+      userId: string;
+      quantity: number;
+    }
+  | {
+      ok?: false;
+      error: string;
+    };
+
 type UploadResponse =
   | {
       ok: true;
@@ -22,6 +34,31 @@ type UploadResponse =
       ok?: false;
       error: string;
     };
+
+async function addToCollection(
+  userId: string,
+  cardId: string,
+): Promise<AddCollectionResponse> {
+  const res = await fetch("/api/collections/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, cardId }),
+  });
+
+  let data: AddCollectionResponse | null = null;
+  try {
+    data = (await res.json()) as AddCollectionResponse;
+  } catch {
+    // ignore
+  }
+
+  if (!res.ok) {
+    const msg = data && "error" in data ? data.error : "Could not add card";
+    throw new Error(msg);
+  }
+
+  return data as AddCollectionResponse;
+}
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png"] as const;
 const MAX_MB = 8;
@@ -61,7 +98,11 @@ async function uploadToNextRoute(file: File): Promise<UploadResponse> {
   return data as UploadResponse;
 }
 
-export default function Scanner() {
+type ScannerProps = {
+  userId: string;
+};
+
+export default function Scanner({ userId }: ScannerProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -70,6 +111,10 @@ export default function Scanner() {
   );
   const [error, setError] = useState<string | null>(null);
   const [serverResult, setServerResult] = useState<UploadResponse | null>(null);
+  const [addStatus, setAddStatus] = useState<"idle" | "adding" | "done" | "error">(
+    "idle",
+  );
+  const [addMessage, setAddMessage] = useState<string | null>(null);
 
   function pickFile() {
     inputRef.current?.click();
@@ -87,6 +132,8 @@ export default function Scanner() {
     setStatus("idle");
     setError(null);
     setServerResult(null);
+    setAddStatus("idle");
+    setAddMessage(null);
 
     const validationError = validateFile(file);
     if (validationError) {
@@ -119,10 +166,38 @@ export default function Scanner() {
     setStatus("idle");
     setError(null);
     setServerResult(null);
+    setAddStatus("idle");
+    setAddMessage(null);
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
     });
+  }
+
+  async function onAddToCollection() {
+    if (!serverResult || !("ok" in serverResult) || !serverResult.ok) return;
+    const cardId = serverResult.identify.card_id;
+    if (!cardId) {
+      setAddStatus("error");
+      setAddMessage("No detected card id to add.");
+      return;
+    }
+
+    setAddStatus("adding");
+    setAddMessage(null);
+
+    try {
+      const result = await addToCollection(userId, cardId);
+      if ("ok" in result && result.ok) {
+        setAddStatus("done");
+        setAddMessage(`Added to collection. Quantity: ${result.quantity}`);
+      }
+    } catch (e) {
+      setAddStatus("error");
+      setAddMessage(
+        e instanceof Error ? e.message : "Failed to add to collection",
+      );
+    }
   }
 
   return (
@@ -243,6 +318,26 @@ export default function Scanner() {
               <div>
                 <span className="font-semibold">Confidence:</span>{" "}
                 {(serverResult.identify.score * 100).toFixed(2)}%
+              </div>
+
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={onAddToCollection}
+                  disabled={
+                    addStatus === "adding" || !serverResult.identify.card_id
+                  }
+                  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {addStatus === "adding" ? "ADDING..." : "ADD TO COLLECTION"}
+                </button>
+                {addMessage && (
+                  <div
+                    className={`mt-2 text-sm ${addStatus === "error" ? "text-red-600" : "text-green-700"}`}
+                  >
+                    {addMessage}
+                  </div>
+                )}
               </div>
             </div>
           )}
