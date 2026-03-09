@@ -8,11 +8,21 @@ type AddCollectionResponse =
       cardId: string;
       userId: string;
       quantity: number;
+      card: {
+        id: string;
+        name: string;
+        set_id: string;
+        number: string;
+        price_usd: number | null;
+        price_last_updated: string | null;
+      };
     }
   | {
       ok?: false;
       error: string;
     };
+
+type AddedCard = Extract<AddCollectionResponse, { ok: true }>["card"];
 
 type UploadResponse =
   | {
@@ -115,6 +125,26 @@ export default function Scanner({ userId }: ScannerProps) {
     "idle",
   );
   const [addMessage, setAddMessage] = useState<string | null>(null);
+  const [addedCard, setAddedCard] = useState<AddedCard | null>(null);
+
+  function formatPrice(price: number | null) {
+    if (price === null) return "N/A";
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(price);
+  }
+
+  function formatTimestamp(value: string | null) {
+    if (!value) return "N/A";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+
+    return new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(date);
+  }
 
   function pickFile() {
     inputRef.current?.click();
@@ -134,6 +164,7 @@ export default function Scanner({ userId }: ScannerProps) {
     setServerResult(null);
     setAddStatus("idle");
     setAddMessage(null);
+    setAddedCard(null);
 
     const validationError = validateFile(file);
     if (validationError) {
@@ -168,6 +199,7 @@ export default function Scanner({ userId }: ScannerProps) {
     setServerResult(null);
     setAddStatus("idle");
     setAddMessage(null);
+    setAddedCard(null);
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
@@ -190,6 +222,7 @@ export default function Scanner({ userId }: ScannerProps) {
       const result = await addToCollection(userId, cardId);
       if ("ok" in result && result.ok) {
         setAddStatus("done");
+        setAddedCard(result.card);
         setAddMessage(`Added to collection. Quantity: ${result.quantity}`);
       }
     } catch (e) {
@@ -336,6 +369,18 @@ export default function Scanner({ userId }: ScannerProps) {
                     className={`mt-2 text-sm ${addStatus === "error" ? "text-red-600" : "text-green-700"}`}
                   >
                     {addMessage}
+                  </div>
+                )}
+                {addedCard && (
+                  <div className="mt-3 text-sm text-gray-800 space-y-1">
+                    <div>
+                      <span className="font-semibold">Live price:</span>{" "}
+                      {formatPrice(addedCard.price_usd)}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Price last updated:</span>{" "}
+                      {formatTimestamp(addedCard.price_last_updated)}
+                    </div>
                   </div>
                 )}
               </div>

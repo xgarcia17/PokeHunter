@@ -9,8 +9,30 @@ type CollectionItem = {
   quantity: number;
   card_name: string;
   set_name: string;
+  price_usd: number | null;
+  price_last_updated: string | null;
   image_url: string | null;
 };
+
+function formatPrice(price: number | null) {
+  if (price === null) return "N/A";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(price);
+}
+
+function formatPriceLastUpdated(value: string | null) {
+  if (!value) return "N/A";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
 
 export default function CollectionPage() {
   const [loading, setLoading] = useState(true);
@@ -98,6 +120,13 @@ export default function CollectionPage() {
                   </div>
                   <div className="text-xs md:text-sm text-gray-700 mt-1">
                     Qty: {item.quantity}
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-700 mt-1">
+                    Price: {formatPrice(item.price_usd)}
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-700 mt-1">
+                    Price last updated:{" "}
+                    {formatPriceLastUpdated(item.price_last_updated)}
                   </div>
                 </div>
               </div>
