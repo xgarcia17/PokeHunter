@@ -4,6 +4,7 @@ node_modules
 .venv*/
 venv/
 backend/identification/dataset/raw_images/
+backend/identification/dataset_comp/raw_images/
 backend/identification/data/results/**
 !backend/identification/data/results/.gitkeep
 backend/identification/data/test_images/**

@@ -1,0 +1,4 @@
+-r identification/requirements.txt
+fastapi
+uvicorn
+python-multipart

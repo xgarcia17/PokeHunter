@@ -1,0 +1,562 @@
+[
+  {
+    "folder": "151",
+    "files": "207",
+    "set_id": "sv3-5",
+    "signal_count": "207",
+    "method": "filename",
+    "candidates": "sv3-5:207,sv3:207"
+  },
+  {
+    "folder": "ancient-origins",
+    "files": "101",
+    "set_id": "xy7",
+    "signal_count": "101",
+    "method": "filename",
+    "candidates": "xy7:101"
+  },
+  {
+    "folder": "aquapolis",
+    "files": "182",
+    "set_id": "ecard2",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ecard2"
+  },
+  {
+    "folder": "arceus",
+    "files": "111",
+    "set_id": "pl4",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "pl4"
+  },
+  {
+    "folder": "astral-radiance",
+    "files": "244",
+    "set_id": "swsh10",
+    "signal_count": "244",
+    "method": "filename",
+    "candidates": "swsh10:244"
+  },
+  {
+    "folder": "best-of-game",
+    "files": "9",
+    "set_id": "bog",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "bog"
+  },
+  {
+    "folder": "black-bolt",
+    "files": "172",
+    "set_id": "zsv10-5",
+    "signal_count": "172",
+    "method": "filename",
+    "candidates": "zsv10-5:172"
+  },
+  {
+    "folder": "boundaries-crossed",
+    "files": "153",
+    "set_id": "bw7",
+    "signal_count": "153",
+    "method": "filename",
+    "candidates": "bw7:153"
+  },
+  {
+    "folder": "box-topper",
+    "files": "12",
+    "set_id": "",
+    "signal_count": "0",
+    "method": "unresolved",
+    "candidates": ""
+  },
+  {
+    "folder": "breakpoint",
+    "files": "126",
+    "set_id": "xy9",
+    "signal_count": "126",
+    "method": "filename",
+    "candidates": "xy9:126"
+  },
+  {
+    "folder": "breakthrough",
+    "files": "165",
+    "set_id": "xy8",
+    "signal_count": "165",
+    "method": "filename",
+    "candidates": "xy8:165"
+  },
+  {
+    "folder": "brilliant-stars",
+    "files": "215",
+    "set_id": "swsh9",
+    "signal_count": "215",
+    "method": "filename",
+    "candidates": "swsh9:215"
+  },
+  {
+    "folder": "burning-shadows",
+    "files": "192",
+    "set_id": "sm3",
+    "signal_count": "192",
+    "method": "filename",
+    "candidates": "sm3:192,sv15:1,sv34:1,sv35:1,sv36:1"
+  },
+  {
+    "folder": "call-of-legends",
+    "files": "106",
+    "set_id": "col",
+    "signal_count": "106",
+    "method": "filename",
+    "candidates": "col:106"
+  },
+  {
+    "folder": "celebrations",
+    "files": "50",
+    "set_id": "ann25th",
+    "signal_count": "25",
+    "method": "filename",
+    "candidates": "ann25th:25,ann25thr:25"
+  },
+  {
+    "folder": "celestial-storm",
+    "files": "200",
+    "set_id": "sm7",
+    "signal_count": "200",
+    "method": "filename",
+    "candidates": "sm7:200,sv1:1,sv13:1,sv16:1,sv32:1"
+  },
+  {
+    "folder": "champions-path",
+    "files": "80",
+    "set_id": "cp",
+    "signal_count": "80",
+    "method": "filename",
+    "candidates": "cp:80"
+  },
+  {
+    "folder": "chilling-reign",
+    "files": "231",
+    "set_id": "swsh6",
+    "signal_count": "231",
+    "method": "filename",
+    "candidates": "swsh6:231"
+  },
+  {
+    "folder": "crimson-invasion",
+    "files": "132",
+    "set_id": "sm4",
+    "signal_count": "132",
+    "method": "filename",
+    "candidates": "sm4:132,sv45:1,sv62:1,sv68:1,sv71:1"
+  },
+  {
+    "folder": "crown-zenith",
+    "files": "228",
+    "set_id": "cz",
+    "signal_count": "228",
+    "method": "filename",
+    "candidates": "cz:228"
+  },
+  {
+    "folder": "crystal-guardians",
+    "files": "100",
+    "set_id": "ex14",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ex14"
+  },
+  {
+    "folder": "dark-explorers",
+    "files": "111",
+    "set_id": "bw5",
+    "signal_count": "110",
+    "method": "filename",
+    "candidates": "bw5:110,xy5:1"
+  },
+  {
+    "folder": "darkness-ablaze",
+    "files": "199",
+    "set_id": "swsh3",
+    "signal_count": "199",
+    "method": "filename",
+    "candidates": "swsh3:199"
+  },
+  {
+    "folder": "delta-species",
+    "files": "114",
+    "set_id": "ex11",
+    "signal_count": "2",
+    "method": "filename",
+    "candidates": "ex11:2"
+  },
+  {
+    "folder": "deoxys",
+    "files": "108",
+    "set_id": "ex08",
+    "signal_count": "1",
+    "method": "filename",
+    "candidates": "ex08:1"
+  },
+  {
+    "folder": "destined-rivals",
+    "files": "244",
+    "set_id": "sv10",
+    "signal_count": "244",
+    "method": "filename",
+    "candidates": "sv10:244"
+  },
+  {
+    "folder": "detective-pikachu",
+    "files": "18",
+    "set_id": "gum",
+    "signal_count": "18",
+    "method": "filename",
+    "candidates": "gum:18"
+  },
+  {
+    "folder": "double-crisis",
+    "files": "34",
+    "set_id": "tatm",
+    "signal_count": "34",
+    "method": "filename",
+    "candidates": "tatm:34"
+  },
+  {
+    "folder": "emerald",
+    "files": "107",
+    "set_id": "ex9",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ex9"
+  },
+  {
+    "folder": "emerging-powers",
+    "files": "98",
+    "set_id": "bw2",
+    "signal_count": "98",
+    "method": "filename",
+    "candidates": "bw2:98"
+  },
+  {
+    "folder": "evolutions",
+    "files": "113",
+    "set_id": "xy12",
+    "signal_count": "113",
+    "method": "filename",
+    "candidates": "xy12:113"
+  },
+  {
+    "folder": "evolving-skies",
+    "files": "235",
+    "set_id": "swsh7",
+    "signal_count": "235",
+    "method": "filename",
+    "candidates": "swsh7:235"
+  },
+  {
+    "folder": "expedition",
+    "files": "165",
+    "set_id": "",
+    "signal_count": "0",
+    "method": "unresolved",
+    "candidates": ""
+  },
+  {
+    "folder": "fates-collide",
+    "files": "129",
+    "set_id": "xy10",
+    "signal_count": "129",
+    "method": "filename",
+    "candidates": "xy10:129"
+  },
+  {
+    "folder": "firered-leafgreen",
+    "files": "116",
+    "set_id": "ex06",
+    "signal_count": "116",
+    "method": "filename",
+    "candidates": "ex06:116"
+  },
+  {
+    "folder": "flashfire",
+    "files": "110",
+    "set_id": "xy2",
+    "signal_count": "110",
+    "method": "filename",
+    "candidates": "xy2:110"
+  },
+  {
+    "folder": "forbidden-light",
+    "files": "165",
+    "set_id": "sm6",
+    "signal_count": "165",
+    "method": "filename",
+    "candidates": "sm6:165,sv11:1,sv12:1,sv14:1,sv17:1"
+  },
+  {
+    "folder": "fossil",
+    "files": "62",
+    "set_id": "base3",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "base3"
+  },
+  {
+    "folder": "furious-fists",
+    "files": "114",
+    "set_id": "xy3",
+    "signal_count": "114",
+    "method": "filename",
+    "candidates": "xy3:114"
+  },
+  {
+    "folder": "holon-phantoms",
+    "files": "111",
+    "set_id": "ex13",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ex13"
+  },
+  {
+    "folder": "hs-energy-2010-unnumbered",
+    "files": "8",
+    "set_id": "",
+    "signal_count": "0",
+    "method": "unresolved",
+    "candidates": ""
+  },
+  {
+    "folder": "journey-together",
+    "files": "190",
+    "set_id": "sv9",
+    "signal_count": "190",
+    "method": "filename",
+    "candidates": "sv9:190"
+  },
+  {
+    "folder": "jungle",
+    "files": "64",
+    "set_id": "base2",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "base2"
+  },
+  {
+    "folder": "kalos-starter-set",
+    "files": "39",
+    "set_id": "xy0",
+    "signal_count": "39",
+    "method": "filename",
+    "candidates": "xy0:39"
+  },
+  {
+    "folder": "majestic-dawn",
+    "files": "100",
+    "set_id": "dp5",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "dp5"
+  },
+  {
+    "folder": "mee",
+    "files": "8",
+    "set_id": "mee",
+    "signal_count": "8",
+    "method": "filename",
+    "candidates": "mee:8"
+  },
+  {
+    "folder": "mega-evolution",
+    "files": "188",
+    "set_id": "me1",
+    "signal_count": "188",
+    "method": "filename",
+    "candidates": "me1:188"
+  },
+  {
+    "folder": "mega-evolution-promos",
+    "files": "25",
+    "set_id": "mebsp",
+    "signal_count": "25",
+    "method": "filename",
+    "candidates": "mebsp:25"
+  },
+  {
+    "folder": "miscellaneous",
+    "files": "1",
+    "set_id": "",
+    "signal_count": "0",
+    "method": "unresolved",
+    "candidates": ""
+  },
+  {
+    "folder": "mysterious-treasures",
+    "files": "124",
+    "set_id": "dp2",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "dp2"
+  },
+  {
+    "folder": "next-destinies",
+    "files": "103",
+    "set_id": "bw4",
+    "signal_count": "103",
+    "method": "filename",
+    "candidates": "bw4:103"
+  },
+  {
+    "folder": "platinum",
+    "files": "133",
+    "set_id": "pl1",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "pl1"
+  },
+  {
+    "folder": "pokemon-futsal-promos-2020",
+    "files": "5",
+    "set_id": "fut2020",
+    "signal_count": "5",
+    "method": "filename",
+    "candidates": "fut2020:5"
+  },
+  {
+    "folder": "power-keepers",
+    "files": "108",
+    "set_id": "ex16",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ex16"
+  },
+  {
+    "folder": "primal-clash",
+    "files": "164",
+    "set_id": "xy5",
+    "signal_count": "164",
+    "method": "filename",
+    "candidates": "xy5:164"
+  },
+  {
+    "folder": "prismatic-evolutions",
+    "files": "180",
+    "set_id": "sv8-5",
+    "signal_count": "180",
+    "method": "filename",
+    "candidates": "sv8-5:180,sv8:180"
+  },
+  {
+    "folder": "rebel-clash",
+    "files": "209",
+    "set_id": "swsh2",
+    "signal_count": "209",
+    "method": "filename",
+    "candidates": "swsh2:209"
+  },
+  {
+    "folder": "rising-rivals",
+    "files": "120",
+    "set_id": "pl2",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "pl2"
+  },
+  {
+    "folder": "roaring-skies",
+    "files": "112",
+    "set_id": "xy6",
+    "signal_count": "112",
+    "method": "filename",
+    "candidates": "xy6:112"
+  },
+  {
+    "folder": "ruby-sapphire",
+    "files": "109",
+    "set_id": "ex1",
+    "signal_count": "21",
+    "method": "filename",
+    "candidates": "ex1:21"
+  },
+  {
+    "folder": "rumble",
+    "files": "16",
+    "set_id": "",
+    "signal_count": "0",
+    "method": "unresolved",
+    "candidates": ""
+  },
+  {
+    "folder": "sandstorm",
+    "files": "100",
+    "set_id": "ex2",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "ex2"
+  },
+  {
+    "folder": "scarlet-violet",
+    "files": "258",
+    "set_id": "sv1",
+    "signal_count": "258",
+    "method": "filename",
+    "candidates": "sv1:258"
+  },
+  {
+    "folder": "scarlet-violet-energy",
+    "files": "16",
+    "set_id": "sve",
+    "signal_count": "16",
+    "method": "filename",
+    "candidates": "sve:16"
+  },
+  {
+    "folder": "scarlet-violet-promos",
+    "files": "222",
+    "set_id": "svbsp",
+    "signal_count": "207",
+    "method": "filename",
+    "candidates": "svbsp:207,sv001:1,sv002:1,sv003:1"
+  },
+  {
+    "folder": "secret-wonders",
+    "files": "132",
+    "set_id": "dp3",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "dp3"
+  },
+  {
+    "folder": "southern-islands",
+    "files": "18",
+    "set_id": "si1",
+    "signal_count": "0",
+    "method": "folder_name_tcgdex",
+    "candidates": "si1"
+  },
+  {
+    "folder": "steam-siege",
+    "files": "116",
+    "set_id": "xy11",
+    "signal_count": "116",
+    "method": "filename",
+    "candidates": "xy11:116"
+  },
+  {
+    "folder": "stellar-crown",
+    "files": "175",
+    "set_id": "sv7",
+    "signal_count": "175",
+    "method": "filename",
+    "candidates": "sv7:175"
+  },
+  {
+    "folder": "temporal-forces",
+    "files": "218",
+    "set_id": "sv5",
+    "signal_count": "218",
+    "method": "filename",
+    "candidates": "sv5:218"
+  }
+]
