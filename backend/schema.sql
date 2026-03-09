@@ -12,7 +12,10 @@ CREATE TABLE cards (
     id TEXT PRIMARY KEY,
     set_id TEXT NOT NULL REFERENCES sets(id) ON DELETE CASCADE,
     card_number TEXT NOT NULL,
+    number TEXT GENERATED ALWAYS AS (card_number) STORED,
     name TEXT NOT NULL,
+    price_usd NUMERIC,
+    price_last_updated TIMESTAMPTZ,
     UNIQUE (set_id, card_number)
 );
 
@@ -27,7 +30,9 @@ CREATE TABLE collections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     card_id TEXT NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
-    quantity INTEGER NOT NULL DEFAULT 1
+    quantity INTEGER NOT NULL DEFAULT 1,
+    price_usd NUMERIC,
+    price_last_updated TIMESTAMPTZ
 );
 
 -- Example inserts

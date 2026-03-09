@@ -7,12 +7,16 @@ const STORAGE_BUCKET = process.env.STORAGE_BUCKET ?? "pokemon-images";
 type CollectionRow = {
   card_id: string;
   quantity: number;
+  price_usd: number | null;
+  price_last_updated: string | null;
 };
 
 type CardRow = {
   id: string;
   name: string;
   set_id: string;
+  price_usd: number | null;
+  price_last_updated: string | null;
 };
 
 type SetRow = {
@@ -61,7 +65,7 @@ export async function GET(req: Request) {
 
   const collectionsUrl = `${SUPABASE_URL}/rest/v1/collections?user_id=eq.${encodeURIComponent(
     userId,
-  )}&select=card_id,quantity`;
+  )}&select=card_id,quantity,price_usd,price_last_updated`;
   const collectionsRes = await fetch(collectionsUrl, {
     headers: headers(),
     cache: "no-store",
@@ -83,7 +87,7 @@ export async function GET(req: Request) {
   const cardsUrl = `${SUPABASE_URL}/rest/v1/cards?or=(${buildOrFilter(
     "id",
     cardIds,
-  )})&select=id,name,set_id`;
+  )})&select=id,name,set_id,price_usd,price_last_updated`;
   const imagesUrl = `${SUPABASE_URL}/rest/v1/card_images?or=(${buildOrFilter(
     "card_id",
     cardIds,
@@ -138,6 +142,9 @@ export async function GET(req: Request) {
       quantity: row.quantity,
       card_name: card?.name ?? "Unknown Card",
       set_name: set?.name ?? "Unknown Set",
+      price_usd: row.price_usd ?? card?.price_usd ?? null,
+      price_last_updated:
+        row.price_last_updated ?? card?.price_last_updated ?? null,
       image_url: toPublicImageUrl(storagePath),
     };
   });
