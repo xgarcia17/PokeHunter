@@ -715,7 +715,7 @@ export async function fetchTopValuableCardsWithHistory(
   });
 
   const topCards = cards
-    .map((card) => {
+    .map<TopPricedCard | null>((card) => {
       const highestPricedVariant = pickHighestPricedVariant(card);
       if (!highestPricedVariant) return null;
 
@@ -738,9 +738,9 @@ export async function fetchTopValuableCardsWithHistory(
         historyStatus: history.length > 0 ? "available" : "unavailable",
         historyMessage:
           history.length > 0 ? null : "JustTCG returned no 7-day history.",
-      } satisfies TopPricedCard;
+      };
     })
-    .filter((card): card is TopPricedCard => Boolean(card))
+    .filter((card): card is TopPricedCard => card !== null)
     .slice(0, limit);
 
   return {
