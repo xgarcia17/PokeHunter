@@ -7,15 +7,26 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import numpy as np
-import requests
 import torch
-from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from http_compat import RequestException, get as http_get
 from PIL import Image
+from pydantic import BaseModel, Field
+
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - optional local dependency
+    def load_dotenv(*_args, **_kwargs):
+        return False
 
 from identification.src.identify import load_metadata_by_card_id
 from identification.src.utils import cosine_sim_matrix, load_clip
+from recommendation_engine.recommendation_engine import (
+    DEFAULT_BUDGET_USD,
+    DEFAULT_LIMIT,
+    recommend_cards,
+)
 
 load_dotenv(Path(__file__).resolve().with_name(".env"))
 
@@ -40,6 +51,14 @@ class AppState:
 state = AppState()
 
 
+class RecommendationRequest(BaseModel):
+    source: str = "supabase"
+    user_id: str | None = None
+    csv_path: str | None = None
+    budget_usd: float = Field(default=DEFAULT_BUDGET_USD, ge=0)
+    limit: int = Field(default=DEFAULT_LIMIT, ge=1, le=10)
+
+
 def supabase_headers() -> dict[str, str]:
     return {
         "apikey": SUPABASE_SERVICE_ROLE_KEY,
@@ -54,7 +73,7 @@ def fetch_all_rows(table: str, select_cols: str) -> list[dict]:
     while True:
         headers = {**supabase_headers(), "Range-Unit": "items", "Range": f"{offset}-{offset + limit - 1}"}
         url = f"{SUPABASE_URL}/rest/v1/{table}?select={select_cols}"
-        response = requests.get(url, headers=headers, timeout=30)
+        response = http_get(url, headers=headers, timeout=30)
         response.raise_for_status()
         batch = response.json()
         rows.extend(batch)
@@ -252,6 +271,30 @@ async def identify(file: UploadFile = File(...), topk: int = 5) -> dict:
         "source_row": top_k[0]["source_row"],
         "top_k": top_k,
     }
+
+
+@app.post("/recommendations")
+async def recommendations_route(body: RecommendationRequest) -> dict:
+    source = (body.source or "supabase").strip().lower()
+    if source not in {"supabase", "csv"}:
+        raise HTTPException(status_code=400, detail="source must be 'supabase' or 'csv'")
+    if source == "supabase" and not (body.user_id or "").strip():
+        raise HTTPException(status_code=400, detail="user_id is required when source='supabase'")
+
+    try:
+        return recommend_cards(
+            source=source,
+            user_id=body.user_id,
+            csv_path=body.csv_path,
+            budget_usd=body.budget_usd,
+            limit=body.limit,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RequestException as exc:
+        raise HTTPException(status_code=502, detail=f"Recommendation data request failed: {exc}") from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 if __name__ == "__main__":

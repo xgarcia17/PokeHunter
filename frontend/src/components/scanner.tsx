@@ -101,7 +101,7 @@ async function uploadToNextRoute(file: File): Promise<UploadResponse> {
   }
 
   if (!res.ok) {
-    const msg = data?.error ?? `Upload failed (${res.status})`;
+    const msg = data && "error" in data ? data.error : `Upload failed (${res.status})`;
     throw new Error(msg);
   }
 

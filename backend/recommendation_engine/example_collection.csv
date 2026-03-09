@@ -1,11 +1,11 @@
-game,set,number,name,tcgplayer_id,condition
-pokemon,base1,1,Alakazam,106996,Near Mint
-pokemon,base1,2,Blastoise,106997,Near Mint
-pokemon,base1,3,Chansey,106998,Near Mint
-pokemon,base1,4,Charizard,106999,Near Mint
-pokemon,base1,5,Clefairy,107001,Near Mint
-pokemon,base1,6,Gyarados,107000,Near Mint
-pokemon,base1,7,Hitmonchan,107002,Near Mint
-pokemon,base1,8,Machamp,107004,Near Mint
-pokemon,base1,9,Magneton,107003,Near Mint
-pokemon,base1,10,Mewtwo,107005,Near Mint
+game,set,number,name,condition
+pokemon,base3,4,Dragonite,Near Mint
+pokemon,bw4,54,Mewtwo-EX,Near Mint
+pokemon,bw5,54,Groudon-EX,Near Mint
+pokemon,bw7,20,Charizard,Near Mint
+pokemon,det1,5,Charizard,Near Mint
+pokemon,ex16,6,Charizard,Near Mint
+pokemon,base3,20,Gengar,Near Mint
+pokemon,base3,58,Mr.Fuji,Near Mint
+pokemon,base3,14,Raichu,Near Mint
+pokemon,base3,15,Zapdos,Near Mint
