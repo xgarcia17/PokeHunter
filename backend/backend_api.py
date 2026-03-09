@@ -1,0 +1,256 @@
+from __future__ import annotations
+
+import io
+import json
+import os
+from contextlib import asynccontextmanager
+
+import numpy as np
+import requests
+import torch
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from PIL import Image
+
+from identification.src.identify import load_metadata_by_card_id
+from identification.src.utils import cosine_sim_matrix, load_clip
+
+DEFAULT_INDEX_PATH = "identification/data/index/dataset_comp_all.npz"
+INDEX_PATH = os.getenv("IDENTIFICATION_INDEX_PATH", DEFAULT_INDEX_PATH)
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+STORAGE_BUCKET = os.getenv("STORAGE_BUCKET", "pokemon-images")
+
+
+class AppState:
+    def __init__(self) -> None:
+        self.model = None
+        self.processor = None
+        self.device = None
+        self.card_ids = None
+        self.embeddings = None
+        self.metadata_rows = None
+        self.storage_path_to_card_ref = {}
+
+
+state = AppState()
+
+
+def supabase_headers() -> dict[str, str]:
+    return {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+    }
+
+
+def fetch_all_rows(table: str, select_cols: str) -> list[dict]:
+    rows: list[dict] = []
+    limit = 1000
+    offset = 0
+    while True:
+        headers = {**supabase_headers(), "Range-Unit": "items", "Range": f"{offset}-{offset + limit - 1}"}
+        url = f"{SUPABASE_URL}/rest/v1/{table}?select={select_cols}"
+        response = requests.get(url, headers=headers, timeout=30)
+        response.raise_for_status()
+        batch = response.json()
+        rows.extend(batch)
+        if len(batch) < limit:
+            break
+        offset += limit
+    return rows
+
+
+def load_supabase_card_lookup() -> dict[str, dict]:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
+        raise RuntimeError(
+            "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required so set/card resolution comes from Supabase."
+        )
+
+    cards = fetch_all_rows("cards", "id,set_id,card_number")
+    cards_by_id = {str(c["id"]): c for c in cards if c.get("id")}
+
+    images = fetch_all_rows("card_images", "storage_path,card_id")
+    lookup: dict[str, dict] = {}
+    for image in images:
+        storage_path = str(image.get("storage_path", "")).strip()
+        card_id = str(image.get("card_id", "")).strip()
+        if not storage_path or not card_id:
+            continue
+        card = cards_by_id.get(card_id)
+        if not card:
+            continue
+        lookup[storage_path] = {
+            "set_id": str(card.get("set_id")),
+            "card_number": str(card.get("card_number")),
+            "db_card_id": card_id,
+            "storage_path": storage_path,
+            "resolution_source": "supabase",
+        }
+    return lookup
+
+
+def resolve_card_ref(source_row: dict | None, raw_card_id: str) -> dict:
+    candidates: list[str] = []
+    if source_row:
+        image_path = str(source_row.get("image_path", "")).strip().lstrip("/")
+        set_folder = str(source_row.get("set_folder", "")).strip()
+        filename = str(source_row.get("filename", "")).strip()
+        if image_path:
+            candidates.append(image_path)
+            if not image_path.startswith("raw_images/"):
+                candidates.append(f"raw_images/{image_path}")
+        if set_folder and filename:
+            candidates.append(f"raw_images/{set_folder}/{filename}")
+            candidates.append(f"{set_folder}/{filename}")
+
+    seen = set()
+    unique_candidates: list[str] = []
+    for candidate in candidates:
+        if candidate and candidate not in seen:
+            seen.add(candidate)
+            unique_candidates.append(candidate)
+
+    for candidate in unique_candidates:
+        resolved = state.storage_path_to_card_ref.get(candidate)
+        if resolved:
+            return {**resolved, "raw_index_card_id": raw_card_id}
+
+    return {
+        "set_id": None,
+        "card_number": None,
+        "db_card_id": None,
+        "storage_path": None,
+        "resolution_source": "unmapped",
+        "candidate_storage_paths": unique_candidates,
+        "raw_index_card_id": raw_card_id,
+    }
+
+
+def embed_image_bytes(image_bytes: bytes) -> np.ndarray:
+    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    inputs = state.processor(images=image, return_tensors="pt")
+    inputs = {k: v.to(state.device) for k, v in inputs.items()}
+
+    with torch.no_grad():
+        features = state.model.get_image_features(**inputs)
+
+    if isinstance(features, torch.Tensor):
+        vec_t = features[0]
+    elif hasattr(features, "pooler_output"):
+        vec_t = features.pooler_output[0]
+    elif hasattr(features, "last_hidden_state"):
+        vec_t = features.last_hidden_state[0].mean(dim=0)
+    else:
+        raise ValueError("Unsupported CLIP image feature output type")
+
+    vec = vec_t.detach().cpu().numpy().astype(np.float32)
+    norm = np.linalg.norm(vec)
+    if norm == 0:
+        raise ValueError("Zero-norm embedding for uploaded image")
+    return (vec / norm).astype(np.float32)
+
+
+def convert_to_webp_bytes(image_bytes: bytes) -> bytes:
+    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    out = io.BytesIO()
+    image.save(out, format="WEBP", quality=90, method=6)
+    return out.getvalue()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    if not os.path.exists(INDEX_PATH):
+        raise FileNotFoundError(
+            f"Index not found at '{INDEX_PATH}'. Set IDENTIFICATION_INDEX_PATH or build the index first."
+        )
+
+    data = np.load(INDEX_PATH, allow_pickle=True)
+    card_ids = data["card_ids"]
+    embeddings = data["embeddings"].astype(np.float32)
+    metadata_rows = load_metadata_by_card_id(data, card_ids)
+
+    if embeddings.ndim != 2 or embeddings.shape[0] == 0:
+        raise ValueError("Index is empty or malformed")
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model, processor = load_clip(device)
+
+    state.device = device
+    state.model = model
+    state.processor = processor
+    state.card_ids = card_ids
+    state.embeddings = embeddings
+    state.metadata_rows = metadata_rows
+    state.storage_path_to_card_ref = load_supabase_card_lookup()
+
+    yield
+
+
+app = FastAPI(title="PokeHunter Identification API", lifespan=lifespan)
+
+# Set specific origins in production.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {
+        "status": "ok",
+        "device": state.device or "unknown",
+        "supabase_card_image_mappings": str(len(state.storage_path_to_card_ref)),
+    }
+
+
+@app.post("/identify")
+async def identify(file: UploadFile = File(...), topk: int = 5) -> dict:
+    if state.model is None or state.embeddings is None:
+        raise HTTPException(status_code=503, detail="Model/index are not loaded yet")
+
+    if topk < 1:
+        raise HTTPException(status_code=400, detail="topk must be >= 1")
+
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
+    try:
+        webp_bytes = convert_to_webp_bytes(image_bytes)
+        query_embedding = embed_image_bytes(webp_bytes)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Could not process image: {exc}") from exc
+
+    scores = cosine_sim_matrix(state.embeddings, query_embedding)
+    k = max(1, min(int(topk), scores.shape[0]))
+    top_idx = np.argsort(scores)[::-1][:k]
+
+    top_k = [
+        {
+            "card_id": str(state.card_ids[i]),
+            "score": float(scores[i]),
+            "source_row": state.metadata_rows[i],
+            "resolved": resolve_card_ref(state.metadata_rows[i], str(state.card_ids[i])),
+        }
+        for i in top_idx
+    ]
+
+    return {
+        "best_card_id": top_k[0]["card_id"],
+        "best_set_id": top_k[0]["resolved"]["set_id"],
+        "best_card_number": top_k[0]["resolved"]["card_number"],
+        "best_db_card_id": top_k[0]["resolved"]["db_card_id"],
+        "score": top_k[0]["score"],
+        "source_row": top_k[0]["source_row"],
+        "top_k": top_k,
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("backend_api:app", host="0.0.0.0", port=8000, reload=True)

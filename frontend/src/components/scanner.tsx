@@ -8,6 +8,15 @@ type UploadResponse =
       name: string;
       type: string;
       size: number;
+      identify: {
+        score: number;
+        card_id: string | null;
+        set_id: string | null;
+        card_number: string | null;
+        card_name: string | null;
+        matched_storage_path: string | null;
+        matched_image_url: string | null;
+      };
     }
   | {
       ok?: false;
@@ -37,7 +46,7 @@ async function uploadToNextRoute(file: File): Promise<UploadResponse> {
     body: fd,
   });
 
-  let data: any = null;
+  let data: UploadResponse | null = null;
   try {
     data = await res.json();
   } catch {
@@ -193,19 +202,47 @@ export default function Scanner() {
           serverResult &&
           "ok" in serverResult &&
           serverResult.ok && (
-            <div className="text-left text-xs md:text-sm bg-gray-50 border rounded-lg p-3 text-black">
+            <div className="text-left text-xs md:text-sm bg-gray-50 border rounded-lg p-3 text-black space-y-4">
+              <div className="font-semibold">Card identification result</div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <div className="font-medium mb-1">Uploaded</div>
+                  {previewUrl && (
+                    <img
+                      src={previewUrl}
+                      alt="Uploaded card"
+                      className="max-h-72 w-auto rounded-lg border bg-white"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <div className="font-medium mb-1">Detected from Supabase</div>
+                  {serverResult.identify.matched_image_url ? (
+                    <img
+                      src={serverResult.identify.matched_image_url}
+                      alt="Detected card from Supabase"
+                      className="max-h-72 w-auto rounded-lg border bg-white"
+                    />
+                  ) : (
+                    <div className="text-gray-500">No matched image found.</div>
+                  )}
+                </div>
+              </div>
+
               <div>
-                <span className="font-semibold">Server accepted!</span>
+                <span className="font-semibold">Detected card:</span>{" "}
+                {serverResult.identify.card_name ?? "Unknown"}
               </div>
               <div>
-                <span className="font-semibold">Name:</span> {serverResult.name}
+                <span className="font-semibold">Set / Number:</span>{" "}
+                {serverResult.identify.set_id ?? "?"} /{" "}
+                {serverResult.identify.card_number ?? "?"}
               </div>
               <div>
-                <span className="font-semibold">Type:</span> {serverResult.type}
-              </div>
-              <div>
-                <span className="font-semibold">Size:</span>{" "}
-                {Math.round(serverResult.size / 1024)} KB
+                <span className="font-semibold">Confidence:</span>{" "}
+                {(serverResult.identify.score * 100).toFixed(2)}%
               </div>
             </div>
           )}

@@ -1,0 +1,71 @@
+folder,resolved_set_id,set_name,release_date,local_webp_count,bucket_webp_count,status
+jungle,base2,Jungle,1999-06-16,64,64,resolved
+fossil,base3,Fossil,1999-10-10,62,62,resolved
+southern-islands,si1,Southern Islands,2001-07-31,18,18,resolved
+expedition,ecard1,Expedition Base Set,2002-09-15,165,165,resolved
+best-of-game,bog,Best of game,2002-12-01,9,9,resolved
+aquapolis,ecard2,Aquapolis,2003-01-15,182,182,resolved
+ruby-sapphire,ex1,Ruby & Sapphire,2003-07-01,109,109,resolved
+sandstorm,ex2,Sandstorm,2003-09-18,100,100,resolved
+firered-leafgreen,ex6,FireRed & LeafGreen,2004-09-01,116,116,resolved
+deoxys,ex8,Deoxys,2005-02-01,108,108,resolved
+emerald,ex9,Emerald,2005-05-09,107,107,resolved
+delta-species,ex11,Delta Species,2005-10-31,114,114,resolved
+holon-phantoms,ex13,Holon Phantoms,2006-05-03,111,111,resolved
+crystal-guardians,ex14,Crystal Guardians,2006-08-30,100,100,resolved
+power-keepers,ex16,Power Keepers,2007-02-17,108,108,resolved
+mysterious-treasures,dp2,Mysterious Treasures,2007-08-01,124,124,resolved
+secret-wonders,dp3,Secret Wonders,2007-11-01,132,132,resolved
+majestic-dawn,dp5,Majestic Dawn,2008-05-01,100,100,resolved
+platinum,pl1,Platinum,2009-02-11,133,133,resolved
+rising-rivals,pl2,Rising Rivals,2009-05-16,120,120,resolved
+arceus,pl4,Arceus,2009-11-04,111,111,resolved
+rumble,ru1,Pokémon Rumble,2009-12-02,16,16,resolved
+call-of-legends,col1,Call of Legends,2011-02-09,106,106,resolved
+emerging-powers,bw2,Emerging Powers,2011-08-31,98,98,resolved
+next-destinies,bw4,Next Destinies,2012-02-08,103,103,resolved
+dark-explorers,bw5,Dark Explorers,2012-05-09,111,111,resolved
+boundaries-crossed,bw7,Boundaries Crossed,2012-11-07,153,153,resolved
+kalos-starter-set,xy0,Kalos Starter Set,2013-11-08,39,39,resolved
+flashfire,xy2,Flashfire,2014-05-07,110,110,resolved
+furious-fists,xy3,Furious Fists,2014-08-13,114,114,resolved
+primal-clash,xy5,Primal Clash,2015-02-04,164,164,resolved
+double-crisis,dc1,Double Crisis,2015-03-25,34,33,resolved
+roaring-skies,xy6,Roaring Skies,2015-05-06,112,112,resolved
+ancient-origins,xy7,Ancient Origins,2015-08-12,101,101,resolved
+breakthrough,xy8,BREAKthrough,2015-11-04,165,165,resolved
+breakpoint,xy9,BREAKpoint,2016-02-03,126,126,resolved
+fates-collide,xy10,Fates Collide,2016-05-02,129,129,resolved
+steam-siege,xy11,Steam Siege,2016-08-03,116,116,resolved
+evolutions,xy12,Evolutions,2016-11-02,113,113,resolved
+burning-shadows,sm3,Burning Shadows,2017-08-04,192,192,resolved
+crimson-invasion,sm4,Crimson Invasion,2017-11-03,132,132,resolved
+forbidden-light,sm6,Forbidden Light,2018-05-04,165,165,resolved
+celestial-storm,sm7,Celestial Storm,2018-08-03,200,200,resolved
+detective-pikachu,det1,Detective Pikachu,2019-03-29,18,18,resolved
+rebel-clash,swsh2,Rebel Clash,2020-05-01,209,209,resolved
+darkness-ablaze,swsh3,Darkness Ablaze,2020-08-14,199,199,resolved
+pokemon-futsal-promos-2020,fut2020,Pokémon Futsal 2020,2020-09-11,5,5,resolved
+champions-path,swsh3.5,Champion's Path,2020-09-25,80,80,resolved
+chilling-reign,swsh6,Chilling Reign,2021-06-18,231,231,resolved
+evolving-skies,swsh7,Evolving Skies,2021-08-27,235,235,resolved
+celebrations,cel25,Celebrations,2021-10-08,50,50,resolved
+brilliant-stars,swsh9,Brilliant Stars,2022-02-25,215,215,resolved
+astral-radiance,swsh10,Astral Radiance,2022-05-27,244,244,resolved
+crown-zenith,swsh12.5,Crown Zenith,2023-01-20,228,228,resolved
+scarlet-violet-promos,svp,SVP Black Star Promos,2023-03-31,222,222,resolved
+scarlet-violet,sv01,Scarlet & Violet,2023-03-31,258,258,resolved
+151,sv03.5,151,2023-09-22,207,205,resolved
+temporal-forces,sv05,Temporal Forces,2024-03-22,218,218,resolved
+stellar-crown,sv07,Stellar Crown,2024-09-13,175,175,resolved
+prismatic-evolutions,sv08.5,Prismatic Evolutions,2025-01-17,180,180,resolved
+journey-together,sv09,Journey Together,2025-03-28,190,190,resolved
+destined-rivals,sv10,Destined Rivals,2025-05-30,244,244,resolved
+black-bolt,sv10.5b,Black Bolt,2025-07-17,172,172,resolved
+mega-evolution,me01,Mega Evolution,2025-09-26,188,188,resolved
+mega-evolution-promos,mep,MEP Black Star Promos,2025-09-26,25,25,resolved
+box-topper,,,,12,12,unresolved
+hs-energy-2010-unnumbered,,,,8,8,unresolved
+mee,mee,,,8,8,unresolved
+miscellaneous,,,,1,1,unresolved
+scarlet-violet-energy,,,,16,16,unresolved
