@@ -4,16 +4,20 @@ import io
 import json
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import numpy as np
 import requests
 import torch
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 
 from identification.src.identify import load_metadata_by_card_id
 from identification.src.utils import cosine_sim_matrix, load_clip
+
+load_dotenv(Path(__file__).resolve().with_name(".env"))
 
 DEFAULT_INDEX_PATH = "identification/data/index/dataset_comp_all.npz"
 INDEX_PATH = os.getenv("IDENTIFICATION_INDEX_PATH", DEFAULT_INDEX_PATH)
