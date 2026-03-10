@@ -5,13 +5,11 @@ import json
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
-import numpy as np
-import torch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from http_compat import RequestException, get as http_get
-from PIL import Image
 from pydantic import BaseModel, Field
 
 try:
@@ -20,13 +18,34 @@ except ImportError:  # pragma: no cover - optional local dependency
     def load_dotenv(*_args, **_kwargs):
         return False
 
-from identification.src.identify import load_metadata_by_card_id
-from identification.src.utils import cosine_sim_matrix, load_clip
 from recommendation_engine.recommendation_engine import (
     DEFAULT_BUDGET_USD,
     DEFAULT_LIMIT,
     recommend_cards,
 )
+
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover - optional until identify is used
+    np = None  # type: ignore[assignment]
+
+try:
+    import torch
+except ImportError:  # pragma: no cover - optional until identify is used
+    torch = None  # type: ignore[assignment]
+
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - optional until identify is used
+    Image = None  # type: ignore[assignment]
+
+try:
+    from identification.src.identify import load_metadata_by_card_id
+    from identification.src.utils import cosine_sim_matrix, load_clip
+except ImportError:  # pragma: no cover - optional until identify is used
+    load_metadata_by_card_id = None  # type: ignore[assignment]
+    cosine_sim_matrix = None  # type: ignore[assignment]
+    load_clip = None  # type: ignore[assignment]
 
 load_dotenv(Path(__file__).resolve().with_name(".env"))
 
@@ -56,7 +75,24 @@ class RecommendationRequest(BaseModel):
     user_id: str | None = None
     csv_path: str | None = None
     budget_usd: float = Field(default=DEFAULT_BUDGET_USD, ge=0)
-    limit: int = Field(default=DEFAULT_LIMIT, ge=1, le=10)
+    limit: int = Field(default=DEFAULT_LIMIT, ge=1, le=15)
+    force_refresh: bool = False
+
+
+def ensure_identification_dependencies_available() -> None:
+    missing: list[str] = []
+    if np is None:
+        missing.append("numpy")
+    if torch is None:
+        missing.append("torch")
+    if Image is None:
+        missing.append("Pillow")
+    if load_clip is None or cosine_sim_matrix is None or load_metadata_by_card_id is None:
+        missing.append("identification runtime")
+    if missing:
+        raise RuntimeError(
+            "Identification dependencies are unavailable: " + ", ".join(missing)
+        )
 
 
 def supabase_headers() -> dict[str, str]:
@@ -150,6 +186,7 @@ def resolve_card_ref(source_row: dict | None, raw_card_id: str) -> dict:
 
 
 def embed_image_bytes(image_bytes: bytes) -> np.ndarray:
+    ensure_identification_dependencies_available()
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     inputs = state.processor(images=image, return_tensors="pt")
     inputs = {k: v.to(state.device) for k, v in inputs.items()}
@@ -174,14 +211,25 @@ def embed_image_bytes(image_bytes: bytes) -> np.ndarray:
 
 
 def convert_to_webp_bytes(image_bytes: bytes) -> bytes:
+    ensure_identification_dependencies_available()
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     out = io.BytesIO()
     image.save(out, format="WEBP", quality=90, method=6)
     return out.getvalue()
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI):
+def ensure_supabase_card_lookup_loaded() -> None:
+    if state.storage_path_to_card_ref:
+        return
+    state.storage_path_to_card_ref = load_supabase_card_lookup()
+
+
+def ensure_identification_state_loaded() -> None:
+    if state.model is not None and state.embeddings is not None:
+        return
+
+    ensure_identification_dependencies_available()
+
     if not os.path.exists(INDEX_PATH):
         raise FileNotFoundError(
             f"Index not found at '{INDEX_PATH}'. Set IDENTIFICATION_INDEX_PATH or build the index first."
@@ -204,8 +252,10 @@ async def lifespan(_: FastAPI):
     state.card_ids = card_ids
     state.embeddings = embeddings
     state.metadata_rows = metadata_rows
-    state.storage_path_to_card_ref = load_supabase_card_lookup()
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     yield
 
 
@@ -232,8 +282,15 @@ def health() -> dict[str, str]:
 
 @app.post("/identify")
 async def identify(file: UploadFile = File(...), topk: int = 5) -> dict:
-    if state.model is None or state.embeddings is None:
-        raise HTTPException(status_code=503, detail="Model/index are not loaded yet")
+    try:
+        ensure_identification_state_loaded()
+        ensure_supabase_card_lookup_loaded()
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     if topk < 1:
         raise HTTPException(status_code=400, detail="topk must be >= 1")
@@ -288,6 +345,7 @@ async def recommendations_route(body: RecommendationRequest) -> dict:
             csv_path=body.csv_path,
             budget_usd=body.budget_usd,
             limit=body.limit,
+            force_refresh=body.force_refresh,
         )
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

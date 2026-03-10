@@ -8,6 +8,7 @@ type AddCollectionResponse =
       cardId: string;
       userId: string;
       quantity: number;
+      pricingWarning?: string | null;
       card: {
         id: string;
         name: string;
@@ -223,7 +224,11 @@ export default function Scanner({ userId }: ScannerProps) {
       if ("ok" in result && result.ok) {
         setAddStatus("done");
         setAddedCard(result.card);
-        setAddMessage(`Added to collection. Quantity: ${result.quantity}`);
+        setAddMessage(
+          result.pricingWarning
+            ? `Added to collection. Quantity: ${result.quantity}. Pricing unavailable right now.`
+            : `Added to collection. Quantity: ${result.quantity}`,
+        );
       }
     } catch (e) {
       setAddStatus("error");

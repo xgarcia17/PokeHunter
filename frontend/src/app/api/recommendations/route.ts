@@ -6,6 +6,9 @@ const RECOMMENDATIONS_API_URL =
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId")?.trim() ?? "";
+  const forceRefresh = ["1", "true", "yes"].includes(
+    searchParams.get("forceRefresh")?.trim().toLowerCase() ?? "",
+  );
 
   if (!userId) {
     return NextResponse.json(
@@ -25,7 +28,8 @@ export async function GET(req: Request) {
         source: "supabase",
         user_id: userId,
         budget_usd: 1000,
-        limit: 5,
+        limit: 15,
+        force_refresh: forceRefresh,
       }),
       cache: "no-store",
     });
