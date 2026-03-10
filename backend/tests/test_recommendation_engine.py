@@ -23,6 +23,9 @@ else:
 
 
 class RecommendationEngineTests(unittest.TestCase):
+    def setUp(self) -> None:
+        engine._RECOMMENDATION_CACHE.clear()
+
     def test_csv_profile_inference_prefers_charizard_and_base3(self) -> None:
         collection = engine.load_collection_from_csv(
             BACKEND_ROOT / "recommendation_engine" / "example_collection.csv"
@@ -98,9 +101,9 @@ class RecommendationEngineTests(unittest.TestCase):
         with mock.patch.object(
             engine,
             "enrich_cards_with_tcgdex",
-            return_value=candidate_cards,
+            side_effect=lambda cards, include_images=True: cards,
         ):
-            ranked = engine.build_candidate_pool(
+            ranked, _ = engine.build_candidate_pool(
                 profile,
                 owned_cards,
                 budget_usd=1000,
@@ -110,55 +113,490 @@ class RecommendationEngineTests(unittest.TestCase):
 
         self.assertEqual([card["card_id"] for card in ranked], ["base3-21"])
 
-    def test_apply_model_recommendations_falls_back_for_invalid_card_ids(self) -> None:
-        shortlist = [
+    def test_build_candidate_pool_enriches_only_top_20_candidates(self) -> None:
+        profile = {
+            "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 5}],
+            "top_pokemon": [{"name": "Charizard", "count": 3}],
+            "top_rarities": [{"rarity": "Holo Rare", "count": 3}],
+        }
+        candidate_cards = [
             {
-                "card_id": "sv1-1",
+                "card_id": f"base3-{index}",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": str(100 + index),
+                "name": f"Charizard Variant {index}",
+                "rarity": "Holo Rare",
+                "category": "Pokemon",
+                "price_usd": 50.0 + index,
+                "image_url": None,
+            }
+            for index in range(25)
+        ]
+
+        captured_lengths: list[int] = []
+
+        def passthrough(cards, include_images=True):
+            captured_lengths.append(len(cards))
+            return cards
+
+        with mock.patch.object(engine, "enrich_cards_with_tcgdex", side_effect=passthrough):
+            ranked, metrics = engine.build_candidate_pool(
+                profile,
+                [],
+                budget_usd=1000,
+                shortlist_size=20,
+                candidate_cards=candidate_cards,
+            )
+
+        self.assertEqual(len(captured_lengths), 1)
+        self.assertEqual(captured_lengths[0], 20)
+        self.assertEqual(len(ranked), 20)
+        self.assertEqual(metrics["enriched_count"], 20)
+
+    def test_build_recommendation_candidate_groups_respects_bucket_focus(self) -> None:
+        profile = {
+            "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 5}],
+            "top_pokemon": [{"name": "Charizard", "count": 3}],
+            "top_rarities": [{"rarity": "Holo Rare", "count": 4}],
+        }
+        candidates = [
+            {
+                "card_id": "charizard-1",
                 "name": "Charizard ex",
                 "set_id": "sv1",
                 "set_name": "Scarlet & Violet",
                 "card_number": "1",
                 "rarity": "Ultra Rare",
+                "category": "Pokemon",
                 "price_usd": 55.0,
-                "price_status": "under_budget",
                 "image_url": None,
-                "deterministic_reason": "Matches your Charizard affinity.",
             },
             {
-                "card_id": "sv1-2",
-                "name": "Gengar ex",
+                "card_id": "charizard-2",
+                "name": "Charizard",
+                "set_id": "swsh1",
+                "set_name": "Sword & Shield",
+                "card_number": "2",
+                "rarity": "Rare",
+                "category": "Pokemon",
+                "price_usd": 75.0,
+                "image_url": None,
+            },
+            {
+                "card_id": "set-card-1",
+                "name": "Pikachu",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": "11",
+                "rarity": "Common",
+                "category": "Pokemon",
+                "price_usd": 20.0,
+                "image_url": None,
+            },
+            {
+                "card_id": "set-card-2",
+                "name": "Potion",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": "21",
+                "rarity": "Common",
+                "category": "Trainer",
+                "price_usd": 10.0,
+                "image_url": None,
+            },
+            {
+                "card_id": "rarity-card-1",
+                "name": "Mewtwo",
+                "set_id": "xy1",
+                "set_name": "XY",
+                "card_number": "50",
+                "rarity": "Holo Rare",
+                "category": "Pokemon",
+                "price_usd": 45.0,
+                "image_url": None,
+            },
+            {
+                "card_id": "rarity-card-2",
+                "name": "Switch",
+                "set_id": "sv2",
+                "set_name": "Paldea Evolved",
+                "card_number": "100",
+                "rarity": "Holo Rare",
+                "category": "Trainer",
+                "price_usd": 8.0,
+                "image_url": None,
+            },
+        ]
+
+        groups = engine.build_recommendation_candidate_groups(
+            profile,
+            candidates,
+            budget_usd=1000,
+            limit=15,
+        )
+
+        pokemon_group = next(group for group in groups if group["key"] == "pokemon_affinity")
+        set_group = next(group for group in groups if group["key"] == "set_affinity")
+        rarity_group = next(group for group in groups if group["key"] == "rarity_affinity")
+
+        self.assertTrue(all("Charizard" in card["name"] for card in pokemon_group["candidates"][:2]))
+        self.assertTrue(all(card["set_id"] == "base3" for card in set_group["candidates"][:2]))
+        self.assertTrue(all(card["rarity"] == "Holo Rare" for card in rarity_group["candidates"][:2]))
+
+    def test_build_recommendation_candidate_groups_gives_rarity_more_candidate_depth(self) -> None:
+        profile = {
+            "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 5}],
+            "top_pokemon": [{"name": "Charizard", "count": 3}],
+            "top_rarities": [{"rarity": "Holo Rare", "count": 4}],
+        }
+        candidates = [
+            {
+                "card_id": f"rarity-{index}",
+                "name": f"Card {index}",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": str(index),
+                "rarity": "Holo Rare",
+                "category": "Trainer" if index % 2 else "Pokemon",
+                "price_usd": 10.0 + index,
+                "image_url": None,
+            }
+            for index in range(24)
+        ] + [
+            {
+                "card_id": f"pokemon-{index}",
+                "name": "Charizard",
                 "set_id": "sv1",
                 "set_name": "Scarlet & Violet",
-                "card_number": "2",
-                "rarity": "Ultra Rare",
-                "price_usd": None,
-                "price_status": "unknown",
+                "card_number": str(100 + index),
+                "rarity": "Rare",
+                "category": "Pokemon",
+                "price_usd": 20.0 + index,
                 "image_url": None,
-                "deterministic_reason": "Strong fit for your preferred rarities.",
+            }
+            for index in range(12)
+        ]
+
+        groups = engine.build_recommendation_candidate_groups(
+            profile,
+            candidates,
+            budget_usd=1000,
+            limit=15,
+        )
+
+        pokemon_group = next(group for group in groups if group["key"] == "pokemon_affinity")
+        rarity_group = next(group for group in groups if group["key"] == "rarity_affinity")
+
+        self.assertEqual(len(pokemon_group["candidates"]), 10)
+        self.assertEqual(len(rarity_group["candidates"]), 20)
+
+    def test_apply_model_recommendations_falls_back_for_invalid_or_duplicate_card_ids(self) -> None:
+        candidate_groups = [
+            {
+                "key": "pokemon_affinity",
+                "title": "Pokemon Affinity",
+                "focus": "Cards that match the Pokemon you collect most.",
+                "target_count": 1,
+                "candidates": [
+                    {
+                        "card_id": "sv1-1",
+                        "name": "Charizard ex",
+                        "set_id": "sv1",
+                        "set_name": "Scarlet & Violet",
+                        "card_number": "1",
+                        "rarity": "Ultra Rare",
+                        "price_usd": 55.0,
+                        "price_status": "under_budget",
+                        "image_url": None,
+                        "driver_key": "pokemon_affinity",
+                        "deterministic_reason": "Matches your Charizard affinity.",
+                    }
+                ],
+            },
+            {
+                "key": "set_affinity",
+                "title": "Set Affinity",
+                "focus": "Cards that deepen the sets you already favor.",
+                "target_count": 1,
+                "candidates": [
+                    {
+                        "card_id": "sv1-1",
+                        "name": "Charizard ex",
+                        "set_id": "sv1",
+                        "set_name": "Scarlet & Violet",
+                        "card_number": "1",
+                        "rarity": "Ultra Rare",
+                        "price_usd": 55.0,
+                        "price_status": "under_budget",
+                        "image_url": None,
+                        "driver_key": "set_affinity",
+                        "deterministic_reason": "Strong set fit.",
+                    },
+                    {
+                        "card_id": "sv1-2",
+                        "name": "Gengar ex",
+                        "set_id": "sv1",
+                        "set_name": "Scarlet & Violet",
+                        "card_number": "2",
+                        "rarity": "Ultra Rare",
+                        "price_usd": None,
+                        "price_status": "unknown",
+                        "image_url": None,
+                        "driver_key": "set_affinity",
+                        "deterministic_reason": "Backup set fit.",
+                    },
+                ],
             },
         ]
 
         result = engine.apply_model_recommendations(
-            shortlist,
-            1,
+            candidate_groups,
             model_payload={
                 "profile_summary": "",
-                "recommendations": [{"card_id": "made-up-card", "reason": "Bad choice"}],
+                "recommendation_groups": [
+                    {
+                        "key": "pokemon_affinity",
+                        "recommendations": [{"card_id": "sv1-1", "reason": "Model chose Charizard."}],
+                    },
+                    {
+                        "key": "set_affinity",
+                        "recommendations": [{"card_id": "sv1-1", "reason": "Duplicate choice"}],
+                    },
+                ],
             },
             profile={"top_pokemon": [], "top_sets": [], "top_rarities": []},
             budget_usd=1000,
         )
 
         self.assertEqual(result["recommendations"][0]["card_id"], "sv1-1")
+        self.assertEqual(result["recommendations"][0]["reason"], "Model chose Charizard.")
+        self.assertEqual(result["recommendations"][1]["card_id"], "sv1-2")
+        self.assertEqual(result["recommendations"][1]["reason"], "Backup set fit.")
         self.assertEqual(
-            result["recommendations"][0]["reason"],
-            "Matches your Charizard affinity.",
+            [group["key"] for group in result["recommendation_groups"]],
+            ["pokemon_affinity", "set_affinity"],
         )
 
     def test_price_status_unknown_when_price_missing(self) -> None:
         self.assertEqual(engine.price_status_for_budget(None, 1000), "unknown")
         self.assertEqual(engine.price_status_for_budget(999.99, 1000), "under_budget")
         self.assertEqual(engine.price_status_for_budget(1000.01, 1000), "over_budget")
+
+    def test_recommend_cards_uses_cache_for_same_collection_signature(self) -> None:
+        collection = [
+            {
+                "card_id": None,
+                "set_id": "base3",
+                "card_number": "4",
+                "name": "Dragonite",
+                "quantity": 1,
+                "price_usd": None,
+            }
+        ]
+        enriched_collection = [
+            {
+                **collection[0],
+                "set_name": "Jungle",
+                "rarity": "Holo Rare",
+                "category": "Pokemon",
+            }
+        ]
+        shortlist = [
+            {
+                "card_id": "base3-21",
+                "name": "Charizard",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": "21",
+                "rarity": "Holo Rare",
+                "price_usd": 100.0,
+                "price_status": "under_budget",
+                "image_url": None,
+                "deterministic_reason": "Matches your collection.",
+            }
+        ]
+        finalized = {
+            "profile_summary": "summary",
+            "recommendations": [
+                {
+                    "card_id": "base3-21",
+                    "name": "Charizard",
+                    "set_id": "base3",
+                    "set_name": "Jungle",
+                    "card_number": "21",
+                    "rarity": "Holo Rare",
+                    "price_usd": 100.0,
+                    "price_status": "under_budget",
+                    "image_url": None,
+                    "reason": "Matches your collection.",
+                }
+            ],
+            "recommendation_groups": [
+                {
+                    "key": "pokemon_affinity",
+                    "title": "Pokemon Affinity",
+                    "focus": "Cards that match the Pokemon you collect most.",
+                    "recommendations": [
+                        {
+                            "card_id": "base3-21",
+                            "name": "Charizard",
+                            "set_id": "base3",
+                            "set_name": "Jungle",
+                            "card_number": "21",
+                            "rarity": "Holo Rare",
+                            "price_usd": 100.0,
+                            "price_status": "under_budget",
+                            "image_url": None,
+                            "reason": "Matches your collection.",
+                            "driver_key": "pokemon_affinity",
+                        }
+                    ],
+                }
+            ],
+        }
+        profile = {
+            "budget_usd": 1000,
+            "collection_size": 1,
+            "top_pokemon": [{"name": "Dragonite", "count": 1}],
+            "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 1}],
+            "top_rarities": [{"rarity": "Holo Rare", "count": 1}],
+            "finish_affinity_status": "ignored_v1",
+        }
+
+        with (
+            mock.patch.object(engine, "load_collection_from_csv", return_value=collection),
+            mock.patch.object(engine, "enrich_cards_with_tcgdex", return_value=enriched_collection),
+            mock.patch.object(engine, "infer_user_profile", return_value=profile),
+            mock.patch.object(engine, "build_candidate_pool", return_value=(shortlist, {
+                "candidate_fetch_ms": 1.0,
+                "prefilter_count": 1,
+                "enriched_count": 1,
+                "tcgdex_enrichment_ms": 1.0,
+                "raw_candidate_count": 1,
+            })) as build_pool,
+            mock.patch.object(engine, "_run_llm_recommender", return_value={"recommendation_groups": []}) as llm_call,
+            mock.patch.object(engine, "apply_model_recommendations", return_value=finalized),
+        ):
+            first = engine.recommend_cards(source="csv", csv_path="example_collection.csv")
+            second = engine.recommend_cards(source="csv", csv_path="example_collection.csv")
+
+        self.assertEqual(first, second)
+        self.assertEqual(build_pool.call_count, 1)
+        self.assertEqual(llm_call.call_count, 1)
+
+    def test_recommend_cards_force_refresh_bypasses_cache(self) -> None:
+        collection = [
+            {
+                "card_id": None,
+                "set_id": "base3",
+                "card_number": "4",
+                "name": "Dragonite",
+                "quantity": 1,
+                "price_usd": None,
+            }
+        ]
+        enriched_collection = [
+            {
+                **collection[0],
+                "set_name": "Jungle",
+                "rarity": "Holo Rare",
+                "category": "Pokemon",
+            }
+        ]
+        shortlist = [
+            {
+                "card_id": "base3-21",
+                "name": "Charizard",
+                "set_id": "base3",
+                "set_name": "Jungle",
+                "card_number": "21",
+                "rarity": "Holo Rare",
+                "price_usd": 100.0,
+                "price_status": "under_budget",
+                "image_url": None,
+                "deterministic_reason": "Matches your collection.",
+            }
+        ]
+        finalized = {
+            "profile_summary": "summary",
+            "recommendations": [
+                {
+                    "card_id": "base3-21",
+                    "name": "Charizard",
+                    "set_id": "base3",
+                    "set_name": "Jungle",
+                    "card_number": "21",
+                    "rarity": "Holo Rare",
+                    "price_usd": 100.0,
+                    "price_status": "under_budget",
+                    "image_url": None,
+                    "reason": "Matches your collection.",
+                }
+            ],
+            "recommendation_groups": [
+                {
+                    "key": "pokemon_affinity",
+                    "title": "Pokemon Affinity",
+                    "focus": "Cards that match the Pokemon you collect most.",
+                    "recommendations": [
+                        {
+                            "card_id": "base3-21",
+                            "name": "Charizard",
+                            "set_id": "base3",
+                            "set_name": "Jungle",
+                            "card_number": "21",
+                            "rarity": "Holo Rare",
+                            "price_usd": 100.0,
+                            "price_status": "under_budget",
+                            "image_url": None,
+                            "reason": "Matches your collection.",
+                            "driver_key": "pokemon_affinity",
+                        }
+                    ],
+                }
+            ],
+        }
+        profile = {
+            "budget_usd": 1000,
+            "collection_size": 1,
+            "top_pokemon": [{"name": "Dragonite", "count": 1}],
+            "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 1}],
+            "top_rarities": [{"rarity": "Holo Rare", "count": 1}],
+            "finish_affinity_status": "ignored_v1",
+        }
+
+        with (
+            mock.patch.object(engine, "load_collection_from_csv", return_value=collection),
+            mock.patch.object(engine, "enrich_cards_with_tcgdex", return_value=enriched_collection),
+            mock.patch.object(engine, "infer_user_profile", return_value=profile),
+            mock.patch.object(
+                engine,
+                "build_candidate_pool",
+                return_value=(
+                    shortlist,
+                    {
+                        "candidate_fetch_ms": 1.0,
+                        "prefilter_count": 1,
+                        "enriched_count": 1,
+                        "tcgdex_enrichment_ms": 1.0,
+                        "raw_candidate_count": 1,
+                    },
+                ),
+            ) as build_pool,
+            mock.patch.object(engine, "_run_llm_recommender", return_value={"recommendation_groups": []}) as llm_call,
+            mock.patch.object(engine, "apply_model_recommendations", return_value=finalized),
+        ):
+            first = engine.recommend_cards(source="csv", csv_path="example_collection.csv")
+            second = engine.recommend_cards(
+                source="csv",
+                csv_path="example_collection.csv",
+                force_refresh=True,
+            )
+
+        self.assertEqual(first, second)
+        self.assertEqual(build_pool.call_count, 2)
+        self.assertEqual(llm_call.call_count, 2)
 
 
 @unittest.skipIf(backend_api is None, f"backend_api import failed: {BACKEND_API_IMPORT_ERROR}")
