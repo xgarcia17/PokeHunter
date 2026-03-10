@@ -9,6 +9,23 @@ type AddCollectionBody = {
   cardId?: string;
 };
 
+async function fetchCardRecord(cardId: string): Promise<CardRecord | null> {
+  const url = `${SUPABASE_URL}/rest/v1/cards?id=eq.${encodeURIComponent(
+    cardId,
+  )}&select=id,name,set_id,number:card_number,price_usd,price_last_updated&limit=1`;
+  const res = await fetch(url, {
+    headers: supabaseHeaders(),
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to load card details");
+  }
+
+  const rows = (await res.json()) as CardRecord[];
+  return rows[0] ?? null;
+}
+
 function supabaseHeaders() {
   return {
     apikey: SUPABASE_SERVICE_ROLE_KEY,
@@ -81,17 +98,18 @@ export async function POST(req: Request) {
 
   const existing = (await selectRes.json()) as Array<{ id: string; quantity: number }>;
 
-  let pricedCard: CardRecord;
+  const fallbackCard = await fetchCardRecord(cardId);
+  if (!fallbackCard) {
+    return NextResponse.json({ error: "Card was not found" }, { status: 404 });
+  }
+
+  let pricedCard: CardRecord = fallbackCard;
+  let pricingWarning: string | null = null;
   try {
     pricedCard = await refreshCardPriceIfNeeded(cardId);
   } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to refresh card price",
-      },
-      { status: 502 },
-    );
+    pricingWarning =
+      error instanceof Error ? error.message : "Failed to refresh card price";
   }
 
   if (existing.length > 0) {
@@ -114,18 +132,18 @@ export async function POST(req: Request) {
       );
     }
 
-    try {
-      await updateCollectionPricing(current.id, pricedCard);
-    } catch (error) {
-      return NextResponse.json(
-        {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to sync collection pricing",
-        },
-        { status: 502 },
-      );
+    if (
+      pricedCard.price_usd !== null ||
+      pricedCard.price_last_updated !== null
+    ) {
+      try {
+        await updateCollectionPricing(current.id, pricedCard);
+      } catch (error) {
+        pricingWarning =
+          error instanceof Error
+            ? error.message
+            : "Failed to sync collection pricing";
+      }
     }
 
     return NextResponse.json({
@@ -134,6 +152,7 @@ export async function POST(req: Request) {
       userId,
       quantity: nextQuantity,
       card: pricedCard,
+      pricingWarning,
     });
   }
 
@@ -154,19 +173,17 @@ export async function POST(req: Request) {
 
   const insertedRows = (await insertRes.json()) as Array<{ id: string }>;
   const insertedCollection = insertedRows[0];
-  if (insertedCollection) {
+  if (
+    insertedCollection &&
+    (pricedCard.price_usd !== null || pricedCard.price_last_updated !== null)
+  ) {
     try {
       await updateCollectionPricing(insertedCollection.id, pricedCard);
     } catch (error) {
-      return NextResponse.json(
-        {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to sync collection pricing",
-        },
-        { status: 502 },
-      );
+      pricingWarning =
+        error instanceof Error
+          ? error.message
+          : "Failed to sync collection pricing";
     }
   }
 
@@ -176,5 +193,6 @@ export async function POST(req: Request) {
     userId,
     quantity: 1,
     card: pricedCard,
+    pricingWarning,
   });
 }
