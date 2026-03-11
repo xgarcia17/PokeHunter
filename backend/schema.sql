@@ -31,8 +31,17 @@ CREATE TABLE collections (
     user_id UUID NOT NULL,
     card_id TEXT NOT NULL REFERENCES cards(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL DEFAULT 1,
+    date_added TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     price_usd NUMERIC,
     price_last_updated TIMESTAMPTZ
+);
+
+CREATE TABLE recommendation_preferences (
+    user_id UUID PRIMARY KEY,
+    budget_policy TEXT NOT NULL DEFAULT 'soft_cap',
+    budget_usd NUMERIC NOT NULL DEFAULT 1000,
+    num INTEGER NOT NULL DEFAULT 10,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Example inserts
@@ -45,8 +54,11 @@ VALUES ('sv1-43', 'sv1', '43', 'Gardevoir ex');
 INSERT INTO card_images (card_id, storage_path)
 VALUES ('sv1-43', 'sv1/gardevoir-ex-43.webp');
 
-INSERT INTO collections (user_id, card_id, quantity)
-VALUES ('11111111-1111-1111-1111-111111111111', 'sv1-43', 2);
+INSERT INTO collections (user_id, card_id, quantity, date_added)
+VALUES ('11111111-1111-1111-1111-111111111111', 'sv1-43', 2, '2026-03-05T14:20:00Z');
+
+INSERT INTO recommendation_preferences (user_id, budget_policy, budget_usd, num)
+VALUES ('11111111-1111-1111-1111-111111111111', 'soft_cap', 1000, 10);
 
 -- Example verification queries
 SELECT * FROM sets;

@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 type CollectionItem = {
   card_id: string;
   quantity: number;
+  date_added: string | null;
   card_name: string;
   set_name: string;
   price_usd: number | null;
@@ -31,6 +32,17 @@ function formatPriceLastUpdated(value: string | null) {
   return new Intl.DateTimeFormat("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
+  }).format(date);
+}
+
+function formatDateAdded(value: string | null) {
+  if (!value) return "N/A";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
   }).format(date);
 }
 
@@ -120,6 +132,9 @@ export default function CollectionPage() {
                   </div>
                   <div className="text-xs md:text-sm text-gray-700 mt-1">
                     Qty: {item.quantity}
+                  </div>
+                  <div className="text-xs md:text-sm text-gray-700 mt-1">
+                    Added on: {formatDateAdded(item.date_added)}
                   </div>
                   <div className="text-xs md:text-sm text-gray-700 mt-1">
                     Price: {formatPrice(item.price_usd)}

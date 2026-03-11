@@ -7,6 +7,7 @@ const STORAGE_BUCKET = process.env.STORAGE_BUCKET ?? "pokemon-images";
 type CollectionRow = {
   card_id: string;
   quantity: number;
+  date_added: string | null;
   price_usd: number | null;
   price_last_updated: string | null;
 };
@@ -65,7 +66,7 @@ export async function GET(req: Request) {
 
   const collectionsUrl = `${SUPABASE_URL}/rest/v1/collections?user_id=eq.${encodeURIComponent(
     userId,
-  )}&select=card_id,quantity,price_usd,price_last_updated`;
+  )}&select=card_id,quantity,date_added,price_usd,price_last_updated`;
   const collectionsRes = await fetch(collectionsUrl, {
     headers: headers(),
     cache: "no-store",
@@ -140,6 +141,7 @@ export async function GET(req: Request) {
     return {
       card_id: row.card_id,
       quantity: row.quantity,
+      date_added: row.date_added,
       card_name: card?.name ?? "Unknown Card",
       set_name: set?.name ?? "Unknown Set",
       price_usd: row.price_usd ?? card?.price_usd ?? null,

@@ -25,6 +25,7 @@ else:
 class RecommendationEngineTests(unittest.TestCase):
     def setUp(self) -> None:
         engine._RECOMMENDATION_CACHE.clear()
+        engine._PRICING_INSIGHT_CACHE.clear()
 
     def test_csv_profile_inference_prefers_charizard_and_base3(self) -> None:
         collection = engine.load_collection_from_csv(
@@ -46,6 +47,25 @@ class RecommendationEngineTests(unittest.TestCase):
         self.assertEqual(profile["top_sets"][0]["set_id"], "base3")
         self.assertEqual(profile["top_sets"][0]["count"], 5)
         self.assertEqual(profile["finish_affinity_status"], "ignored_v1")
+
+    def test_profile_inference_counts_quantity_when_category_missing(self) -> None:
+        collection = [
+            {
+                "card_id": "sv1-17",
+                "set_id": "sv1",
+                "card_number": "17",
+                "name": "Turtwig",
+                "quantity": 2,
+                "rarity": "Common",
+                "category": None,
+            }
+        ]
+
+        profile = engine.infer_user_profile(collection, budget_usd=1000)
+
+        self.assertEqual(profile["collection_size"], 2)
+        self.assertEqual(profile["top_pokemon"][0]["name"], "Turtwig")
+        self.assertEqual(profile["top_pokemon"][0]["count"], 2)
 
     def test_build_candidate_pool_excludes_owned_cards(self) -> None:
         profile = {
@@ -233,18 +253,17 @@ class RecommendationEngineTests(unittest.TestCase):
             profile,
             candidates,
             budget_usd=1000,
+            budget_policy="soft_cap",
             limit=15,
         )
 
         pokemon_group = next(group for group in groups if group["key"] == "pokemon_affinity")
         set_group = next(group for group in groups if group["key"] == "set_affinity")
-        rarity_group = next(group for group in groups if group["key"] == "rarity_affinity")
-
         self.assertTrue(all("Charizard" in card["name"] for card in pokemon_group["candidates"][:2]))
         self.assertTrue(all(card["set_id"] == "base3" for card in set_group["candidates"][:2]))
-        self.assertTrue(all(card["rarity"] == "Holo Rare" for card in rarity_group["candidates"][:2]))
+        self.assertEqual({group["key"] for group in groups}, {"pokemon_affinity", "set_affinity"})
 
-    def test_build_recommendation_candidate_groups_gives_rarity_more_candidate_depth(self) -> None:
+    def test_build_recommendation_candidate_groups_uses_configured_candidate_depth(self) -> None:
         profile = {
             "top_sets": [{"set_id": "base3", "set_name": "Jungle", "count": 5}],
             "top_pokemon": [{"name": "Charizard", "count": 3}],
@@ -282,14 +301,55 @@ class RecommendationEngineTests(unittest.TestCase):
             profile,
             candidates,
             budget_usd=1000,
+            budget_policy="soft_cap",
             limit=15,
         )
 
         pokemon_group = next(group for group in groups if group["key"] == "pokemon_affinity")
-        rarity_group = next(group for group in groups if group["key"] == "rarity_affinity")
+        set_group = next(group for group in groups if group["key"] == "set_affinity")
 
         self.assertEqual(len(pokemon_group["candidates"]), 10)
-        self.assertEqual(len(rarity_group["candidates"]), 20)
+        self.assertEqual(len(set_group["candidates"]), 10)
+
+    def test_build_recommendation_candidate_groups_has_no_rarity_bucket(self) -> None:
+        profile = {
+            "top_sets": [{"set_id": "sv1", "set_name": "Scarlet & Violet", "count": 2}],
+            "top_pokemon": [{"name": "Turtwig", "count": 2}],
+            "top_rarities": [],
+        }
+        candidates = [
+            {
+                "card_id": "sv1-1",
+                "name": "Turtwig",
+                "set_id": "sv1",
+                "set_name": "Scarlet & Violet",
+                "card_number": "1",
+                "rarity": "Common",
+                "category": "Pokemon",
+                "price_usd": 2.0,
+                "image_url": None,
+            },
+            {
+                "card_id": "sv1-2",
+                "name": "Potion",
+                "set_id": "sv1",
+                "set_name": "Scarlet & Violet",
+                "card_number": "2",
+                "rarity": "Uncommon",
+                "category": "Trainer",
+                "price_usd": 1.0,
+                "image_url": None,
+            },
+        ]
+
+        groups = engine.build_recommendation_candidate_groups(
+            profile,
+            candidates,
+            budget_usd=1000,
+            budget_policy="soft_cap",
+            limit=15,
+        )
+        self.assertEqual({group["key"] for group in groups}, {"pokemon_affinity", "set_affinity"})
 
     def test_apply_model_recommendations_falls_back_for_invalid_or_duplicate_card_ids(self) -> None:
         candidate_groups = [
@@ -377,6 +437,65 @@ class RecommendationEngineTests(unittest.TestCase):
             [group["key"] for group in result["recommendation_groups"]],
             ["pokemon_affinity", "set_affinity"],
         )
+
+    def test_apply_model_recommendations_allows_overlap_when_later_group_would_be_empty(self) -> None:
+        candidate_groups = [
+            {
+                "key": "pokemon_affinity",
+                "title": "Pokemon Affinity",
+                "focus": "Cards that match the Pokemon you collect most.",
+                "target_count": 1,
+                "candidates": [
+                    {
+                        "card_id": "sv1-1",
+                        "name": "Turtwig",
+                        "set_id": "sv1",
+                        "set_name": "Scarlet & Violet",
+                        "card_number": "1",
+                        "rarity": "Common",
+                        "price_usd": 2.0,
+                        "price_status": "under_budget",
+                        "image_url": None,
+                        "driver_key": "pokemon_affinity",
+                        "deterministic_reason": "Pokemon fit.",
+                    }
+                ],
+            },
+            {
+                "key": "rarity_affinity",
+                "title": "Rarity Affinity",
+                "focus": "Cards that match the rarities you tend to keep.",
+                "target_count": 1,
+                "candidates": [
+                    {
+                        "card_id": "sv1-1",
+                        "name": "Turtwig",
+                        "set_id": "sv1",
+                        "set_name": "Scarlet & Violet",
+                        "card_number": "1",
+                        "rarity": "Common",
+                        "price_usd": 2.0,
+                        "price_status": "under_budget",
+                        "image_url": None,
+                        "driver_key": "rarity_affinity",
+                        "deterministic_reason": "Rarity fit.",
+                    }
+                ],
+            },
+        ]
+
+        result = engine.apply_model_recommendations(
+            candidate_groups,
+            model_payload={"profile_summary": "", "recommendation_groups": []},
+            profile={"top_pokemon": [], "top_sets": [], "top_rarities": []},
+            budget_usd=1000,
+        )
+
+        pokemon_group = next(group for group in result["recommendation_groups"] if group["key"] == "pokemon_affinity")
+        rarity_group = next(group for group in result["recommendation_groups"] if group["key"] == "rarity_affinity")
+        self.assertEqual(len(pokemon_group["recommendations"]), 1)
+        self.assertEqual(len(rarity_group["recommendations"]), 1)
+        self.assertEqual(rarity_group["recommendations"][0]["card_id"], "sv1-1")
 
     def test_price_status_unknown_when_price_missing(self) -> None:
         self.assertEqual(engine.price_status_for_budget(None, 1000), "unknown")
@@ -598,6 +717,67 @@ class RecommendationEngineTests(unittest.TestCase):
         self.assertEqual(build_pool.call_count, 2)
         self.assertEqual(llm_call.call_count, 2)
 
+    def test_generate_pricing_insight_uses_cache_for_same_collection_signature(self) -> None:
+        cards = [
+            {
+                "name": "Turtwig",
+                "set_name": "Scarlet & Violet",
+                "price_usd": 2.5,
+                "quantity": 2,
+                "date_added": "2026-03-10T12:00:00Z",
+            },
+            {
+                "name": "Charizard",
+                "set_name": "Base Set",
+                "price_usd": 100.0,
+                "quantity": 1,
+                "date_added": "2026-03-08T12:00:00Z",
+            },
+        ]
+        reordered_cards = [cards[1], cards[0]]
+        llm_payload = {
+            "insight": "Collection value concentration is healthy.",
+            "highlights": ["Top value anchored by Charizard."],
+        }
+
+        with mock.patch.object(engine, "_run_llm_pricing_analyst", return_value=llm_payload) as llm_call:
+            first = engine.generate_pricing_insight(cards, budget_usd=1000)
+            second = engine.generate_pricing_insight(reordered_cards, budget_usd=1000)
+
+        self.assertEqual(first, second)
+        self.assertEqual(llm_call.call_count, 1)
+        self.assertEqual(first["source"], "llm")
+
+    def test_generate_pricing_insight_cache_miss_when_collection_changes(self) -> None:
+        cards = [
+            {
+                "name": "Turtwig",
+                "set_name": "Scarlet & Violet",
+                "price_usd": 2.5,
+                "quantity": 2,
+                "date_added": "2026-03-10T12:00:00Z",
+            }
+        ]
+        changed_cards = [
+            {
+                "name": "Turtwig",
+                "set_name": "Scarlet & Violet",
+                "price_usd": 2.5,
+                "quantity": 3,
+                "date_added": "2026-03-10T12:00:00Z",
+            }
+        ]
+        llm_payload = {
+            "insight": "Collection momentum is improving.",
+            "highlights": ["Recent adds are accelerating."],
+        }
+
+        with mock.patch.object(engine, "_run_llm_pricing_analyst", return_value=llm_payload) as llm_call:
+            engine.generate_pricing_insight(cards, budget_usd=1000)
+            engine.generate_pricing_insight(changed_cards, budget_usd=1000)
+
+        self.assertEqual(llm_call.call_count, 2)
+
 
 @unittest.skipIf(backend_api is None, f"backend_api import failed: {BACKEND_API_IMPORT_ERROR}")
 class RecommendationApiTests(unittest.TestCase):
@@ -626,6 +806,31 @@ class RecommendationApiTests(unittest.TestCase):
 
         with mock.patch.object(backend_api, "recommend_cards", return_value=expected):
             payload = asyncio.run(backend_api.recommendations_route(request))
+
+        self.assertEqual(payload, expected)
+
+    def test_pricing_insight_route_returns_payload(self) -> None:
+        request = backend_api.PricingInsightRequest(
+            cards=[
+                backend_api.PricingInsightCard(
+                    name="Turtwig",
+                    set_name="Scarlet & Violet",
+                    price_usd=2.5,
+                    quantity=2,
+                    date_added="2026-03-10T12:00:00Z",
+                )
+            ],
+            budget_usd=1000,
+        )
+        expected = {
+            "source": "llm",
+            "insight": "Your collection is healthy and growing.",
+            "highlights": ["Strong set concentration in Scarlet & Violet."],
+            "stats": {"card_count": 2},
+        }
+
+        with mock.patch.object(backend_api, "generate_pricing_insight", return_value=expected):
+            payload = asyncio.run(backend_api.pricing_insight_route(request))
 
         self.assertEqual(payload, expected)
 

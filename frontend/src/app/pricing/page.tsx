@@ -9,6 +9,11 @@ type PriceHistoryPoint = {
   price: number;
 };
 
+type CollectionValuePoint = {
+  date: string;
+  value: number;
+};
+
 type TopPricedCard = {
   id: string;
   name: string;
@@ -17,6 +22,7 @@ type TopPricedCard = {
   setName: string;
   priceUsd: number;
   quantity: number;
+  dateAdded: string | null;
   totalValueUsd: number;
   priceLastUpdated: string | null;
   imageUrl: string | null;
@@ -40,6 +46,12 @@ type PricingResponse =
   | {
       error: string;
     };
+
+type PricingInsightPayload = {
+  source: string;
+  insight: string;
+  highlights: string[];
+};
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-US", {
@@ -198,10 +210,133 @@ function PriceHistoryChart({
   );
 }
 
+function CollectionValueTimelineChart({ points }: { points: CollectionValuePoint[] }) {
+  const width = 860;
+  const height = 250;
+  const padding = 24;
+
+  const chartData = useMemo(() => {
+    if (points.length === 0) return null;
+
+    const timestamps = points.map((point) => new Date(point.date).getTime());
+    const values = points.map((point) => point.value);
+    const minX = Math.min(...timestamps);
+    const maxX = Math.max(...timestamps);
+    const minY = 0;
+    const maxY = Math.max(...values);
+    const xRange = maxX - minX || 1;
+    const yRange = maxY - minY || 1;
+
+    const polyline = points
+      .map((point) => {
+        const x =
+          padding +
+          ((new Date(point.date).getTime() - minX) / xRange) * (width - padding * 2);
+        const y = height - padding - ((point.value - minY) / yRange) * (height - padding * 2);
+        return `${x},${y}`;
+      })
+      .join(" ");
+
+    return { minX, maxX, minY, maxY, polyline };
+  }, [points]);
+
+  if (!chartData) {
+    return (
+      <div className="h-[250px] flex items-center justify-center rounded-xl border border-dashed border-gray-300 text-gray-500">
+        Not enough date data to build a timeline yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="w-full h-auto overflow-visible"
+        role="img"
+        aria-label="Collection value timeline"
+      >
+        <line
+          x1={padding}
+          y1={height - padding}
+          x2={width - padding}
+          y2={height - padding}
+          stroke="#cbd5e1"
+          strokeWidth="1"
+        />
+        <line
+          x1={padding}
+          y1={padding}
+          x2={padding}
+          y2={height - padding}
+          stroke="#cbd5e1"
+          strokeWidth="1"
+        />
+        <polyline
+          fill="none"
+          stroke="#0f766e"
+          strokeWidth="3"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          points={chartData.polyline}
+        />
+        {points.map((point, pointIndex) => {
+          const previousValue = pointIndex > 0 ? points[pointIndex - 1].value : 0;
+          const delta = Number((point.value - previousValue).toFixed(2));
+          const deltaLabel = `${delta >= 0 ? "+" : "-"}${formatPrice(Math.abs(delta))}`;
+          const totalLabel = formatPrice(point.value);
+          const x =
+            padding +
+            ((new Date(point.date).getTime() - chartData.minX) /
+              (chartData.maxX - chartData.minX || 1)) *
+              (width - padding * 2);
+          const y =
+            height -
+            padding -
+            ((point.value - chartData.minY) / (chartData.maxY - chartData.minY || 1)) *
+              (height - padding * 2);
+
+          return (
+            <g key={point.date}>
+              <circle cx={x} cy={y} r="3.5" fill="#0f766e" />
+              <text
+                x={x}
+                y={Math.max(padding + 12, y - 16)}
+                textAnchor="middle"
+                fontSize="11"
+                fill="#0f172a"
+              >
+                {deltaLabel}
+              </text>
+              <text
+                x={x}
+                y={Math.max(padding + 24, y - 4)}
+                textAnchor="middle"
+                fontSize="10"
+                fill="#334155"
+              >
+                {totalLabel}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+      <div className="mt-3 flex items-center justify-between text-xs text-gray-600">
+        <span>{formatPrice(chartData.minY)}</span>
+        <span>{formatShortDate(points[0].date)}</span>
+        <span>{formatShortDate(points[points.length - 1].date)}</span>
+        <span>{formatPrice(chartData.maxY)}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cards, setCards] = useState<TopPricedCard[]>([]);
+  const [pricingInsight, setPricingInsight] = useState<PricingInsightPayload | null>(null);
+  const [pricingInsightError, setPricingInsightError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadPricing() {
@@ -232,6 +367,8 @@ export default function PricingPage() {
 
       setLoading(true);
       setError(null);
+      setPricingInsight(null);
+      setPricingInsightError(null);
 
       try {
         const res = await fetch(
@@ -245,7 +382,50 @@ export default function PricingPage() {
         if (!res.ok) {
           throw new Error(payload?.error ?? "Failed to load pricing");
         }
-        setCards((payload?.cards ?? []) as TopPricedCard[]);
+        const nextCards = (payload?.cards ?? []) as TopPricedCard[];
+        setCards(nextCards);
+
+        if (nextCards.length > 0) {
+          try {
+            const insightRes = await fetch("/api/pricing/insight", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                budgetUsd: 1000,
+                cards: nextCards.slice(0, 80).map((card) => ({
+                  name: card.name,
+                  set_name: card.setName,
+                  price_usd: card.priceUsd,
+                  quantity: card.quantity,
+                  date_added: card.dateAdded,
+                })),
+              }),
+              cache: "no-store",
+            });
+
+            const insightPayload = (await insightRes.json()) as
+              | ({ ok: true } & PricingInsightPayload)
+              | { error: string };
+            if (!insightRes.ok || !("ok" in insightPayload && insightPayload.ok)) {
+              throw new Error(
+                "error" in insightPayload
+                  ? insightPayload.error
+                  : "Failed to load pricing insight",
+              );
+            }
+            setPricingInsight({
+              source: insightPayload.source,
+              insight: insightPayload.insight,
+              highlights: insightPayload.highlights ?? [],
+            });
+          } catch (insightError) {
+            setPricingInsightError(
+              insightError instanceof Error
+                ? insightError.message
+                : "Failed to load pricing insight",
+            );
+          }
+        }
       } catch (fetchError) {
         setCards([]);
         setError(
@@ -263,6 +443,29 @@ export default function PricingPage() {
   const dashboardTotals = useMemo(() => {
     const totalTrackedValue = cards.reduce((sum, card) => sum + card.totalValueUsd, 0);
     return { totalTrackedValue };
+  }, [cards]);
+  const collectionValueTimeline = useMemo(() => {
+    const valueByDate = new Map<string, number>();
+
+    for (const card of cards) {
+      if (!card.dateAdded) continue;
+      const date = new Date(card.dateAdded);
+      if (Number.isNaN(date.getTime())) continue;
+
+      const dateKey = date.toISOString().slice(0, 10);
+      const cardValue = Number((card.priceUsd * card.quantity).toFixed(2));
+      valueByDate.set(dateKey, (valueByDate.get(dateKey) ?? 0) + cardValue);
+    }
+
+    const sortedDates = [...valueByDate.keys()].sort();
+    let runningValue = 0;
+    return sortedDates.map((date) => {
+      runningValue += valueByDate.get(date) ?? 0;
+      return {
+        date,
+        value: Number(runningValue.toFixed(2)),
+      };
+    });
   }, [cards]);
 
   return (
@@ -302,6 +505,43 @@ export default function PricingPage() {
                   {formatPrice(dashboardTotals.totalTrackedValue)}
                 </div>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-teal-200 bg-teal-50/60 p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700">
+                Collection Value Timeline
+              </div>
+              <p className="mt-1 text-sm text-teal-900">
+                Cumulative value over time, based on each card&apos;s added date and current saved price.
+              </p>
+              <div className="mt-4">
+                <CollectionValueTimelineChart points={collectionValueTimeline} />
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-indigo-200 bg-indigo-50/70 p-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700">
+                AI Pricing Insight
+              </div>
+              {pricingInsight ? (
+                <div className="mt-2 space-y-3 text-indigo-950">
+                  <p className="text-sm md:text-base">{pricingInsight.insight}</p>
+                  {pricingInsight.highlights.length > 0 && (
+                    <ul className="list-disc pl-5 text-sm space-y-1">
+                      {pricingInsight.highlights.map((highlight, index) => (
+                        <li key={`${index}-${highlight}`}>{highlight}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="text-xs text-indigo-700">
+                    Source: {pricingInsight.source === "llm" ? "Azure OpenAI" : "Deterministic fallback"}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-2 text-sm text-indigo-900">
+                  {pricingInsightError ?? "Generating collection-level price analysis..."}
+                </div>
+              )}
             </div>
 
             {cards.map((card, index) => (
@@ -349,6 +589,14 @@ export default function PricingPage() {
                           </div>
                           <div className="mt-1 text-sm font-medium text-gray-900">
                             {card.setId}
+                          </div>
+                        </div>
+                        <div className="rounded-2xl bg-white/80 px-4 py-3 sm:col-span-2">
+                          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
+                            Added To Collection
+                          </div>
+                          <div className="mt-1 text-sm font-medium text-gray-900">
+                            {formatTimestamp(card.dateAdded)}
                           </div>
                         </div>
                         <div className="rounded-2xl bg-white/80 px-4 py-3 sm:col-span-2">

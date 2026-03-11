@@ -5,6 +5,7 @@ const RECOMMENDATIONS_API_URL =
   process.env.RECOMMENDATIONS_API_URL ?? "http://127.0.0.1:8000/recommendations";
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/+$/, "") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+const ALLOWED_BUDGET_POLICIES = new Set(["soft_cap", "strict_cap", "market_flex"]);
 
 function collectRecommendedCardIds(payload: unknown): string[] {
   if (!payload || typeof payload !== "object") return [];
@@ -127,9 +128,23 @@ function applyPricesToRecommendationsPayload(
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId")?.trim() ?? "";
+  const budgetUsdRaw = Number(searchParams.get("budgetUsd") ?? "1000");
+  const numRaw = Number(searchParams.get("num") ?? "10");
+  const budgetPolicyRaw = (searchParams.get("budgetPolicy") ?? "soft_cap").trim().toLowerCase();
   const forceRefresh = ["1", "true", "yes"].includes(
     searchParams.get("forceRefresh")?.trim().toLowerCase() ?? "",
   );
+  const budgetUsd =
+    Number.isFinite(budgetUsdRaw) && budgetUsdRaw >= 0
+      ? Number(budgetUsdRaw.toFixed(2))
+      : 1000;
+  const num =
+    Number.isFinite(numRaw) && numRaw >= 1
+      ? Math.min(15, Math.trunc(numRaw))
+      : 10;
+  const budgetPolicy = ALLOWED_BUDGET_POLICIES.has(budgetPolicyRaw)
+    ? budgetPolicyRaw
+    : "soft_cap";
 
   if (!userId) {
     return NextResponse.json(
@@ -148,8 +163,9 @@ export async function GET(req: Request) {
       body: JSON.stringify({
         source: "supabase",
         user_id: userId,
-        budget_usd: 1000,
-        limit: 15,
+        budget_usd: budgetUsd,
+        budget_policy: budgetPolicy,
+        limit: num,
         force_refresh: forceRefresh,
       }),
       cache: "no-store",
