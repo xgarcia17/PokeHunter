@@ -1,0 +1,1133 @@
+{
+  "source": "supabase",
+  "budget_usd": 1000.0,
+  "profile": {
+    "budget_usd": 1000.0,
+    "collection_size": 9,
+    "top_pokemon": [
+      {
+        "name": "Charizard",
+        "count": 2
+      },
+      {
+        "name": "Vaporeon",
+        "count": 2
+      },
+      {
+        "name": "Blastoise",
+        "count": 1
+      },
+      {
+        "name": "Team Rocket's Mewtwo",
+        "count": 1
+      },
+      {
+        "name": "Primal Kyogre",
+        "count": 1
+      }
+    ],
+    "top_sets": [
+      {
+        "set_id": "xy7",
+        "set_name": "Ancient Origins",
+        "count": 3
+      },
+      {
+        "set_id": "sv03.5",
+        "set_name": "151",
+        "count": 2
+      },
+      {
+        "set_id": "sv08.5",
+        "set_name": "Prismatic Evolutions",
+        "count": 2
+      }
+    ],
+    "top_rarities": [
+      {
+        "rarity": "Special illustration rare",
+        "count": 4
+      },
+      {
+        "rarity": "Secret Rare",
+        "count": 3
+      },
+      {
+        "rarity": "Ultra Rare",
+        "count": 1
+      }
+    ],
+    "finish_affinity_status": "ignored_v1"
+  },
+  "profile_summary": "Recommendations selected with unique card IDs across groups.",
+  "recommendations": [
+    {
+      "card_id": "xy7-22",
+      "name": "Vaporeon",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "22",
+      "rarity": "Uncommon",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-022-vaporeon.webp",
+      "reason": "Fits your strongest Pokemon affinity for Vaporeon.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-183",
+      "name": "Charizard ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "183",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_183_std.webp",
+      "reason": "Fits your strongest Pokemon affinity for Charizard.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-006",
+      "name": "Charizard ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "006",
+      "rarity": "Double rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_006_std.webp",
+      "reason": "Aligns with your Charizard affinity.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv08.5-022",
+      "name": "Vaporeon",
+      "set_id": "sv08.5",
+      "set_name": "Prismatic Evolutions",
+      "card_number": "022",
+      "rarity": "Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_022_std.webp",
+      "reason": "Matches your interest in Vaporeon.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-134",
+      "name": "Vaporeon",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "134",
+      "rarity": "Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_134_std.webp",
+      "reason": "Strengthens your Vaporeon collection.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "xy7-99",
+      "name": "Energy Retrieval",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "99",
+      "rarity": "Secret Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-099-energy_retrieval.webp",
+      "reason": "Deepens your Ancient Origins set and matches preferred rarity.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "sv08.5-023",
+      "name": "Vaporeon ex",
+      "set_id": "sv08.5",
+      "set_name": "Prismatic Evolutions",
+      "card_number": "023",
+      "rarity": "Double rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_023_std.webp",
+      "reason": "Strengthens Prismatic Evolutions and Vaporeon focus.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-27",
+      "name": "Ampharos EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "27",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-027-ampharos_ex.webp",
+      "reason": "Adds to Ancient Origins with an Ultra Rare.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-87",
+      "name": "Ampharos EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "87",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-087-ampharos_ex.webp",
+      "reason": "Another strong Ancient Origins Ultra Rare addition.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-57",
+      "name": "Giratina EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "57",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-057-giratina_ex.webp",
+      "reason": "Expands your Ancient Origins Ultra Rare lineup.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-93",
+      "name": "Giratina EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "93",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-093-giratina_ex.webp",
+      "reason": "Matches your Ultra Rare preference.",
+      "driver_key": "rarity_affinity"
+    },
+    {
+      "card_id": "sv03.5-184",
+      "name": "Blastoise ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "184",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_184_std.webp",
+      "reason": "Aligns with your Ultra Rare and 151 set interests.",
+      "driver_key": "rarity_affinity"
+    }
+  ],
+  "recommendation_groups": [
+    {
+      "key": "pokemon_affinity",
+      "title": "Pokemon Affinity",
+      "focus": "Cards that match the Pokemon you collect most.",
+      "recommendations": [
+        {
+          "card_id": "xy7-22",
+          "name": "Vaporeon",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "22",
+          "rarity": "Uncommon",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-022-vaporeon.webp",
+          "reason": "Fits your strongest Pokemon affinity for Vaporeon.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-183",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "183",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_183_std.webp",
+          "reason": "Fits your strongest Pokemon affinity for Charizard.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-006",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "006",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_006_std.webp",
+          "reason": "Aligns with your Charizard affinity.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv08.5-022",
+          "name": "Vaporeon",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "022",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_022_std.webp",
+          "reason": "Matches your interest in Vaporeon.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-134",
+          "name": "Vaporeon",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "134",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_134_std.webp",
+          "reason": "Strengthens your Vaporeon collection.",
+          "driver_key": "pokemon_affinity"
+        }
+      ]
+    },
+    {
+      "key": "set_affinity",
+      "title": "Set Affinity",
+      "focus": "Cards that deepen the sets you already favor.",
+      "recommendations": [
+        {
+          "card_id": "xy7-99",
+          "name": "Energy Retrieval",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "99",
+          "rarity": "Secret Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-099-energy_retrieval.webp",
+          "reason": "Deepens your Ancient Origins set and matches preferred rarity.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "sv08.5-023",
+          "name": "Vaporeon ex",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "023",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_023_std.webp",
+          "reason": "Strengthens Prismatic Evolutions and Vaporeon focus.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-27",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "27",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-027-ampharos_ex.webp",
+          "reason": "Adds to Ancient Origins with an Ultra Rare.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-87",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "87",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-087-ampharos_ex.webp",
+          "reason": "Another strong Ancient Origins Ultra Rare addition.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-57",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "57",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-057-giratina_ex.webp",
+          "reason": "Expands your Ancient Origins Ultra Rare lineup.",
+          "driver_key": "set_affinity"
+        }
+      ]
+    },
+    {
+      "key": "rarity_affinity",
+      "title": "Rarity Affinity",
+      "focus": "Cards that match the rarities you tend to keep.",
+      "recommendations": [
+        {
+          "card_id": "xy7-93",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "93",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-093-giratina_ex.webp",
+          "reason": "Matches your Ultra Rare preference.",
+          "driver_key": "rarity_affinity"
+        },
+        {
+          "card_id": "sv03.5-184",
+          "name": "Blastoise ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "184",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_184_std.webp",
+          "reason": "Aligns with your Ultra Rare and 151 set interests.",
+          "driver_key": "rarity_affinity"
+        }
+      ]
+    }
+  ],
+  "collection_signature": "{\"entries\": [[\"sv03.5-199\", 1, \"sv03.5\", \"199\"], [\"sv03.5-200\", 1, \"sv03.5\", \"200\"], [\"sv08.5-149\", 2, \"sv08.5\", \"149\"], [\"sv10-213\", 1, \"sv10\", \"213\"], [\"xy12-11\", 1, \"xy12\", \"11\"], [\"xy7-96\", 1, \"xy7\", \"96\"], [\"xy7-97\", 1, \"xy7\", \"97\"], [\"xy7-98\", 1, \"xy7\", \"98\"]], \"source\": \"supabase\"}",
+  "gpt_pool_groups": [
+    {
+      "key": "pokemon_affinity",
+      "title": "Pokemon Affinity",
+      "focus": "Cards that match the Pokemon you collect most.",
+      "target_count": 5,
+      "candidates": [
+        {
+          "card_id": "xy7-22",
+          "name": "Vaporeon",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "22",
+          "rarity": "Uncommon",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Vaporeon. Also keeps you close to the Ancient Origins set."
+        },
+        {
+          "card_id": "sv03.5-183",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "183",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Charizard. Also keeps you close to the 151 set."
+        },
+        {
+          "card_id": "sv03.5-006",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "006",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Charizard. Also keeps you close to the 151 set."
+        },
+        {
+          "card_id": "sv08.5-022",
+          "name": "Vaporeon",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "022",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Vaporeon. Also keeps you close to the Prismatic Evolutions set."
+        },
+        {
+          "card_id": "sv03.5-134",
+          "name": "Vaporeon",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "134",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Vaporeon. Also keeps you close to the 151 set."
+        },
+        {
+          "card_id": "sv08.5-023",
+          "name": "Vaporeon ex",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "023",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Vaporeon. Also keeps you close to the Prismatic Evolutions set."
+        },
+        {
+          "card_id": "sv03.5-184",
+          "name": "Blastoise ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "184",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "pokemon_affinity",
+          "heuristic_reason": "Fits your strongest Pokemon affinity for Blastoise. Also keeps you close to the 151 set."
+        }
+      ]
+    },
+    {
+      "key": "set_affinity",
+      "title": "Set Affinity",
+      "focus": "Cards that deepen the sets you already favor.",
+      "target_count": 5,
+      "candidates": [
+        {
+          "card_id": "xy7-22",
+          "name": "Vaporeon",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "22",
+          "rarity": "Uncommon",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Ancient Origins set. Still aligns with your interest in Vaporeon."
+        },
+        {
+          "card_id": "xy7-99",
+          "name": "Energy Retrieval",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "99",
+          "rarity": "Secret Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Ancient Origins set. Also fits the Secret Rare cards you already keep."
+        },
+        {
+          "card_id": "sv03.5-183",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "183",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the 151 set. Still aligns with your interest in Charizard."
+        },
+        {
+          "card_id": "sv03.5-006",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "006",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the 151 set. Still aligns with your interest in Charizard."
+        },
+        {
+          "card_id": "sv08.5-022",
+          "name": "Vaporeon",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "022",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Prismatic Evolutions set. Still aligns with your interest in Vaporeon."
+        },
+        {
+          "card_id": "sv03.5-134",
+          "name": "Vaporeon",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "134",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the 151 set. Still aligns with your interest in Vaporeon."
+        },
+        {
+          "card_id": "sv08.5-023",
+          "name": "Vaporeon ex",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "023",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Prismatic Evolutions set. Still aligns with your interest in Vaporeon."
+        },
+        {
+          "card_id": "xy7-27",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "27",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Ancient Origins set. Also fits the Ultra Rare cards you already keep."
+        },
+        {
+          "card_id": "xy7-87",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "87",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Ancient Origins set. Also fits the Ultra Rare cards you already keep."
+        },
+        {
+          "card_id": "xy7-57",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "57",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "set_affinity",
+          "heuristic_reason": "Deepens your collection in the Ancient Origins set. Also fits the Ultra Rare cards you already keep."
+        }
+      ]
+    },
+    {
+      "key": "rarity_affinity",
+      "title": "Rarity Affinity",
+      "focus": "Cards that match the rarities you tend to keep.",
+      "target_count": 5,
+      "candidates": [
+        {
+          "card_id": "xy7-99",
+          "name": "Energy Retrieval",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "99",
+          "rarity": "Secret Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Secret Rare cards you already collect. It also reinforces your preference for the Ancient Origins set."
+        },
+        {
+          "card_id": "sv03.5-183",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "183",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the 151 set."
+        },
+        {
+          "card_id": "xy7-27",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "27",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the Ancient Origins set."
+        },
+        {
+          "card_id": "xy7-87",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "87",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the Ancient Origins set."
+        },
+        {
+          "card_id": "xy7-57",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "57",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the Ancient Origins set."
+        },
+        {
+          "card_id": "xy7-93",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "93",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the Ancient Origins set."
+        },
+        {
+          "card_id": "sv03.5-184",
+          "name": "Blastoise ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "184",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "driver_key": "rarity_affinity",
+          "heuristic_reason": "Matches the Ultra Rare cards you already collect. It also reinforces your preference for the 151 set."
+        }
+      ]
+    }
+  ],
+  "gpt_response_raw": {
+    "profile_summary": "Recommendations selected with unique card IDs across groups.",
+    "recommendation_groups": [
+      {
+        "key": "pokemon_affinity",
+        "recommendations": [
+          {
+            "card_id": "xy7-22",
+            "reason": "Fits your strongest Pokemon affinity for Vaporeon."
+          },
+          {
+            "card_id": "sv03.5-183",
+            "reason": "Fits your strongest Pokemon affinity for Charizard."
+          },
+          {
+            "card_id": "sv03.5-006",
+            "reason": "Aligns with your Charizard affinity."
+          },
+          {
+            "card_id": "sv08.5-022",
+            "reason": "Matches your interest in Vaporeon."
+          },
+          {
+            "card_id": "sv03.5-134",
+            "reason": "Strengthens your Vaporeon collection."
+          }
+        ]
+      },
+      {
+        "key": "set_affinity",
+        "recommendations": [
+          {
+            "card_id": "xy7-99",
+            "reason": "Deepens your Ancient Origins set and matches preferred rarity."
+          },
+          {
+            "card_id": "sv08.5-023",
+            "reason": "Strengthens Prismatic Evolutions and Vaporeon focus."
+          },
+          {
+            "card_id": "xy7-27",
+            "reason": "Adds to Ancient Origins with an Ultra Rare."
+          },
+          {
+            "card_id": "xy7-87",
+            "reason": "Another strong Ancient Origins Ultra Rare addition."
+          },
+          {
+            "card_id": "xy7-57",
+            "reason": "Expands your Ancient Origins Ultra Rare lineup."
+          }
+        ]
+      },
+      {
+        "key": "rarity_affinity",
+        "recommendations": [
+          {
+            "card_id": "xy7-93",
+            "reason": "Matches your Ultra Rare preference."
+          },
+          {
+            "card_id": "sv03.5-184",
+            "reason": "Aligns with your Ultra Rare and 151 set interests."
+          }
+        ]
+      }
+    ]
+  },
+  "final_recommendation_groups": [
+    {
+      "key": "pokemon_affinity",
+      "title": "Pokemon Affinity",
+      "focus": "Cards that match the Pokemon you collect most.",
+      "recommendations": [
+        {
+          "card_id": "xy7-22",
+          "name": "Vaporeon",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "22",
+          "rarity": "Uncommon",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-022-vaporeon.webp",
+          "reason": "Fits your strongest Pokemon affinity for Vaporeon.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-183",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "183",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_183_std.webp",
+          "reason": "Fits your strongest Pokemon affinity for Charizard.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-006",
+          "name": "Charizard ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "006",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_006_std.webp",
+          "reason": "Aligns with your Charizard affinity.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv08.5-022",
+          "name": "Vaporeon",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "022",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_022_std.webp",
+          "reason": "Matches your interest in Vaporeon.",
+          "driver_key": "pokemon_affinity"
+        },
+        {
+          "card_id": "sv03.5-134",
+          "name": "Vaporeon",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "134",
+          "rarity": "Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_134_std.webp",
+          "reason": "Strengthens your Vaporeon collection.",
+          "driver_key": "pokemon_affinity"
+        }
+      ]
+    },
+    {
+      "key": "set_affinity",
+      "title": "Set Affinity",
+      "focus": "Cards that deepen the sets you already favor.",
+      "recommendations": [
+        {
+          "card_id": "xy7-99",
+          "name": "Energy Retrieval",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "99",
+          "rarity": "Secret Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-099-energy_retrieval.webp",
+          "reason": "Deepens your Ancient Origins set and matches preferred rarity.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "sv08.5-023",
+          "name": "Vaporeon ex",
+          "set_id": "sv08.5",
+          "set_name": "Prismatic Evolutions",
+          "card_number": "023",
+          "rarity": "Double rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_023_std.webp",
+          "reason": "Strengthens Prismatic Evolutions and Vaporeon focus.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-27",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "27",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-027-ampharos_ex.webp",
+          "reason": "Adds to Ancient Origins with an Ultra Rare.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-87",
+          "name": "Ampharos EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "87",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-087-ampharos_ex.webp",
+          "reason": "Another strong Ancient Origins Ultra Rare addition.",
+          "driver_key": "set_affinity"
+        },
+        {
+          "card_id": "xy7-57",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "57",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-057-giratina_ex.webp",
+          "reason": "Expands your Ancient Origins Ultra Rare lineup.",
+          "driver_key": "set_affinity"
+        }
+      ]
+    },
+    {
+      "key": "rarity_affinity",
+      "title": "Rarity Affinity",
+      "focus": "Cards that match the rarities you tend to keep.",
+      "recommendations": [
+        {
+          "card_id": "xy7-93",
+          "name": "Giratina EX",
+          "set_id": "xy7",
+          "set_name": "Ancient Origins",
+          "card_number": "93",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-093-giratina_ex.webp",
+          "reason": "Matches your Ultra Rare preference.",
+          "driver_key": "rarity_affinity"
+        },
+        {
+          "card_id": "sv03.5-184",
+          "name": "Blastoise ex",
+          "set_id": "sv03.5",
+          "set_name": "151",
+          "card_number": "184",
+          "rarity": "Ultra Rare",
+          "price_usd": null,
+          "price_status": "unknown",
+          "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_184_std.webp",
+          "reason": "Aligns with your Ultra Rare and 151 set interests.",
+          "driver_key": "rarity_affinity"
+        }
+      ]
+    }
+  ],
+  "final_recommendations": [
+    {
+      "card_id": "xy7-22",
+      "name": "Vaporeon",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "22",
+      "rarity": "Uncommon",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-022-vaporeon.webp",
+      "reason": "Fits your strongest Pokemon affinity for Vaporeon.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-183",
+      "name": "Charizard ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "183",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_183_std.webp",
+      "reason": "Fits your strongest Pokemon affinity for Charizard.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-006",
+      "name": "Charizard ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "006",
+      "rarity": "Double rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_006_std.webp",
+      "reason": "Aligns with your Charizard affinity.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv08.5-022",
+      "name": "Vaporeon",
+      "set_id": "sv08.5",
+      "set_name": "Prismatic Evolutions",
+      "card_number": "022",
+      "rarity": "Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_022_std.webp",
+      "reason": "Matches your interest in Vaporeon.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "sv03.5-134",
+      "name": "Vaporeon",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "134",
+      "rarity": "Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_134_std.webp",
+      "reason": "Strengthens your Vaporeon collection.",
+      "driver_key": "pokemon_affinity"
+    },
+    {
+      "card_id": "xy7-99",
+      "name": "Energy Retrieval",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "99",
+      "rarity": "Secret Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-099-energy_retrieval.webp",
+      "reason": "Deepens your Ancient Origins set and matches preferred rarity.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "sv08.5-023",
+      "name": "Vaporeon ex",
+      "set_id": "sv08.5",
+      "set_name": "Prismatic Evolutions",
+      "card_number": "023",
+      "rarity": "Double rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/prismatic-evolutions/sv8-5_en_023_std.webp",
+      "reason": "Strengthens Prismatic Evolutions and Vaporeon focus.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-27",
+      "name": "Ampharos EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "27",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-027-ampharos_ex.webp",
+      "reason": "Adds to Ancient Origins with an Ultra Rare.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-87",
+      "name": "Ampharos EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "87",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-087-ampharos_ex.webp",
+      "reason": "Another strong Ancient Origins Ultra Rare addition.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-57",
+      "name": "Giratina EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "57",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-057-giratina_ex.webp",
+      "reason": "Expands your Ancient Origins Ultra Rare lineup.",
+      "driver_key": "set_affinity"
+    },
+    {
+      "card_id": "xy7-93",
+      "name": "Giratina EX",
+      "set_id": "xy7",
+      "set_name": "Ancient Origins",
+      "card_number": "93",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/ancient-origins/en_US-XY7-093-giratina_ex.webp",
+      "reason": "Matches your Ultra Rare preference.",
+      "driver_key": "rarity_affinity"
+    },
+    {
+      "card_id": "sv03.5-184",
+      "name": "Blastoise ex",
+      "set_id": "sv03.5",
+      "set_name": "151",
+      "card_number": "184",
+      "rarity": "Ultra Rare",
+      "price_usd": null,
+      "price_status": "unknown",
+      "image_url": "https://zodxmkzrdwnvbsxnvqma.supabase.co/storage/v1/object/public/pokemon-images/raw_images/151/sv3-5_en_184_std.webp",
+      "reason": "Aligns with your Ultra Rare and 151 set interests.",
+      "driver_key": "rarity_affinity"
+    }
+  ],
+  "candidate_metrics": {
+    "raw_candidate_count": 539,
+    "prefilter_count": 533,
+    "enriched_count": 40,
+    "candidate_fetch_ms": 936.43,
+    "tcgdex_enrichment_ms": 17395.85
+  },
+  "timings": {
+    "collection_load_ms": 1937.79,
+    "profile_ms": 2772.24,
+    "gpt_ms": 11237.7,
+    "total_ms": 34283.05
+  }
+}

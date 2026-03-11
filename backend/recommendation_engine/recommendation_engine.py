@@ -48,6 +48,7 @@ _NAME_SUFFIX_RE = re.compile(
 _TCGDEX_CLIENT = TCGdex() if TCGdex else None
 _TCGDEX_CACHE: dict[str, dict[str, Any] | None] = {}
 _RECOMMENDATION_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
+_RECOMMENDATION_TRACE_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
 LOGGER = logging.getLogger(__name__)
 RECOMMENDATION_GROUP_SPECS = (
     {
@@ -341,6 +342,21 @@ def _get_cached_recommendation(cache_key: str) -> dict[str, Any] | None:
 
 def _store_recommendation_cache(cache_key: str, payload: dict[str, Any]) -> None:
     _RECOMMENDATION_CACHE[cache_key] = (time.time(), deepcopy(payload))
+
+
+def _get_cached_recommendation_trace(cache_key: str) -> dict[str, Any] | None:
+    cached = _RECOMMENDATION_TRACE_CACHE.get(cache_key)
+    if not cached:
+        return None
+    created_at, payload = cached
+    if time.time() - created_at > RECOMMENDATION_CACHE_TTL_SECONDS:
+        _RECOMMENDATION_TRACE_CACHE.pop(cache_key, None)
+        return None
+    return deepcopy(payload)
+
+
+def _store_recommendation_trace_cache(cache_key: str, payload: dict[str, Any]) -> None:
+    _RECOMMENDATION_TRACE_CACHE[cache_key] = (time.time(), deepcopy(payload))
 
 
 def load_collection_from_csv(path: str | os.PathLike[str] | None = None) -> list[dict[str, Any]]:
@@ -984,14 +1000,8 @@ def _azure_openai_client() -> tuple[Any, str]:
     return OpenAI(api_key=api_key, base_url=f"{endpoint}/openai/v1/"), deployment
 
 
-def _run_llm_recommender(
-    profile: dict[str, Any],
-    recommendation_candidate_groups: list[dict[str, Any]],
-    budget_usd: float,
-    limit: int,
-) -> dict[str, Any]:
-    client, deployment = _azure_openai_client()
-    grouped_payload = [
+def _gpt_candidate_payload(recommendation_candidate_groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
         {
             "key": group.get("key"),
             "title": group.get("title"),
@@ -1015,6 +1025,16 @@ def _run_llm_recommender(
         }
         for group in recommendation_candidate_groups
     ]
+
+
+def _run_llm_recommender(
+    profile: dict[str, Any],
+    recommendation_candidate_groups: list[dict[str, Any]],
+    budget_usd: float,
+    limit: int,
+) -> dict[str, Any]:
+    client, deployment = _azure_openai_client()
+    grouped_payload = _gpt_candidate_payload(recommendation_candidate_groups)
     response = client.responses.create(
         model=deployment,
         input=[
@@ -1148,20 +1168,36 @@ def apply_model_recommendations(
     }
 
 
-def recommend_cards(
-    *,
-    source: str = "supabase",
-    user_id: str | None = None,
-    csv_path: str | os.PathLike[str] | None = None,
-    budget_usd: float = DEFAULT_BUDGET_USD,
-    limit: int = DEFAULT_LIMIT,
-    force_refresh: bool = False,
+def _recommendation_response_payload(
+    source: str,
+    budget_usd: float,
+    profile: dict[str, Any],
+    profile_summary: str,
+    recommendations: list[dict[str, Any]],
+    recommendation_groups: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    total_start = time.perf_counter()
+    return {
+        "source": source,
+        "budget_usd": float(budget_usd),
+        "profile": profile,
+        "profile_summary": profile_summary,
+        "recommendations": recommendations,
+        "recommendation_groups": recommendation_groups,
+    }
+
+
+def _prepare_recommendation_request(
+    *,
+    source: str,
+    user_id: str | None,
+    csv_path: str | os.PathLike[str] | None,
+    budget_usd: float,
+    limit: int,
+) -> dict[str, Any]:
     normalized_source = (source or "supabase").strip().lower()
     if normalized_source not in {"supabase", "csv"}:
         raise ValueError("source must be 'supabase' or 'csv'")
-    limit = max(1, min(int(limit), DEFAULT_LIMIT))
+    normalized_limit = max(1, min(int(limit), DEFAULT_LIMIT))
 
     collection_start = time.perf_counter()
     if normalized_source == "supabase":
@@ -1176,44 +1212,124 @@ def recommend_cards(
         user_id=user_id,
         csv_path=csv_path,
         budget_usd=budget_usd,
-        limit=limit,
+        limit=normalized_limit,
         collection_signature=collection_signature,
     )
-    cached = None if force_refresh else _get_cached_recommendation(cache_key)
-    if cached is not None:
-        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
-        LOGGER.info(
-            "recommend_cards source=%s cache=hit collection_ms=%.2f total_ms=%.2f",
-            normalized_source,
-            collection_load_ms,
-            total_ms,
-        )
-        return cached
+    return {
+        "source": normalized_source,
+        "user_id": (user_id or "").strip() or None,
+        "csv_path": str(csv_path) if csv_path else None,
+        "budget_usd": float(budget_usd),
+        "limit": normalized_limit,
+        "collection": collection,
+        "collection_signature": collection_signature,
+        "cache_key": cache_key,
+        "collection_load_ms": collection_load_ms,
+    }
+
+
+def _recommendation_trace_payload(
+    context: dict[str, Any],
+    response: dict[str, Any],
+    *,
+    recommendation_candidate_groups: list[dict[str, Any]] | None,
+    model_payload: dict[str, Any] | None,
+    candidate_metrics: dict[str, Any],
+    timings: dict[str, float],
+) -> dict[str, Any]:
+    return {
+        **deepcopy(response),
+        "collection_signature": context["collection_signature"],
+        "gpt_pool_groups": _gpt_candidate_payload(recommendation_candidate_groups or []),
+        "gpt_response_raw": deepcopy(model_payload),
+        "final_recommendation_groups": deepcopy(response["recommendation_groups"]),
+        "final_recommendations": deepcopy(response["recommendations"]),
+        "candidate_metrics": deepcopy(candidate_metrics),
+        "timings": dict(timings),
+    }
+
+
+def _default_candidate_metrics() -> dict[str, Any]:
+    return {
+        "raw_candidate_count": 0,
+        "prefilter_count": 0,
+        "enriched_count": 0,
+        "candidate_fetch_ms": 0.0,
+        "tcgdex_enrichment_ms": 0.0,
+    }
+
+
+def _log_recommendation_cache_hit(source: str, collection_load_ms: float, total_ms: float, *, trace: bool) -> None:
+    log_label = "recommend_cards_with_trace" if trace else "recommend_cards"
+    LOGGER.info(
+        "%s source=%s cache=hit collection_ms=%.2f total_ms=%.2f",
+        log_label,
+        source,
+        collection_load_ms,
+        total_ms,
+    )
+
+
+def _log_recommendation_cache_miss(trace_payload: dict[str, Any], *, trace: bool) -> None:
+    timings = trace_payload["timings"]
+    candidate_metrics = trace_payload["candidate_metrics"]
+    log_label = "recommend_cards_with_trace" if trace else "recommend_cards"
+    LOGGER.info(
+        "%s source=%s cache=miss collection_ms=%.2f profile_ms=%.2f candidate_fetch_ms=%.2f prefilter_count=%d enriched_count=%d enrichment_ms=%.2f gpt_ms=%.2f total_ms=%.2f",
+        log_label,
+        trace_payload["source"],
+        timings["collection_load_ms"],
+        timings["profile_ms"],
+        candidate_metrics["candidate_fetch_ms"],
+        candidate_metrics["prefilter_count"],
+        candidate_metrics["enriched_count"],
+        candidate_metrics["tcgdex_enrichment_ms"],
+        timings["gpt_ms"],
+        timings["total_ms"],
+    )
+
+
+def _compute_recommendation_trace(context: dict[str, Any]) -> dict[str, Any]:
+    total_start = time.perf_counter()
+    source = str(context["source"])
+    budget_usd = float(context["budget_usd"])
+    limit = int(context["limit"])
+    collection = list(context["collection"])
 
     profile_start = time.perf_counter()
     enriched_collection = enrich_cards_with_tcgdex(collection, include_images=False)
     profile = infer_user_profile(enriched_collection, budget_usd=budget_usd)
     profile_ms = round((time.perf_counter() - profile_start) * 1000, 2)
 
+    empty_groups = _empty_recommendation_groups(limit)
+    candidate_metrics = _default_candidate_metrics()
+    recommendation_candidate_groups: list[dict[str, Any]] = []
+    model_payload: dict[str, Any] | None = None
+    response: dict[str, Any]
+
     if not enriched_collection:
-        response = {
-            "source": normalized_source,
-            "budget_usd": float(budget_usd),
-            "profile": profile,
-            "profile_summary": "No cards found in the collection yet, so there is not enough signal to recommend next pickups.",
-            "recommendations": [],
-            "recommendation_groups": _empty_recommendation_groups(limit),
-        }
-        _store_recommendation_cache(cache_key, response)
-        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
-        LOGGER.info(
-            "recommend_cards source=%s cache=miss collection_ms=%.2f profile_ms=%.2f candidate_fetch_ms=0.00 prefilter_count=0 enriched_count=0 gpt_ms=0.00 total_ms=%.2f",
-            normalized_source,
-            collection_load_ms,
-            profile_ms,
-            total_ms,
+        response = _recommendation_response_payload(
+            source,
+            budget_usd,
+            profile,
+            "No cards found in the collection yet, so there is not enough signal to recommend next pickups.",
+            [],
+            empty_groups,
         )
-        return response
+        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
+        return _recommendation_trace_payload(
+            context,
+            response,
+            recommendation_candidate_groups=recommendation_candidate_groups,
+            model_payload=model_payload,
+            candidate_metrics=candidate_metrics,
+            timings={
+                "collection_load_ms": float(context["collection_load_ms"]),
+                "profile_ms": profile_ms,
+                "gpt_ms": 0.0,
+                "total_ms": total_ms,
+            },
+        )
 
     shortlist_size = _shared_candidate_pool_size(limit)
     candidate_pool, candidate_metrics = build_candidate_pool(
@@ -1228,34 +1344,31 @@ def recommend_cards(
         budget_usd,
         limit=limit,
     )
-    candidate_count = sum(
-        len(group.get("candidates", []))
-        for group in recommendation_candidate_groups
-    )
+    candidate_count = sum(len(group.get("candidates", [])) for group in recommendation_candidate_groups)
     if candidate_count == 0:
-        response = {
-            "source": normalized_source,
-            "budget_usd": float(budget_usd),
-            "profile": profile,
-            "profile_summary": _deterministic_profile_summary(profile, budget_usd),
-            "recommendations": [],
-            "recommendation_groups": _empty_recommendation_groups(limit),
-        }
-        _store_recommendation_cache(cache_key, response)
-        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
-        LOGGER.info(
-            "recommend_cards source=%s cache=miss collection_ms=%.2f profile_ms=%.2f candidate_fetch_ms=%.2f prefilter_count=%d enriched_count=%d gpt_ms=0.00 total_ms=%.2f",
-            normalized_source,
-            collection_load_ms,
-            profile_ms,
-            candidate_metrics["candidate_fetch_ms"],
-            candidate_metrics["prefilter_count"],
-            candidate_metrics["enriched_count"],
-            total_ms,
+        response = _recommendation_response_payload(
+            source,
+            budget_usd,
+            profile,
+            _deterministic_profile_summary(profile, budget_usd),
+            [],
+            empty_groups,
         )
-        return response
+        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
+        return _recommendation_trace_payload(
+            context,
+            response,
+            recommendation_candidate_groups=recommendation_candidate_groups,
+            model_payload=model_payload,
+            candidate_metrics=candidate_metrics,
+            timings={
+                "collection_load_ms": float(context["collection_load_ms"]),
+                "profile_ms": profile_ms,
+                "gpt_ms": 0.0,
+                "total_ms": total_ms,
+            },
+        )
 
-    model_payload: dict[str, Any] | None = None
     gpt_start = time.perf_counter()
     try:
         model_payload = _run_llm_recommender(profile, recommendation_candidate_groups, budget_usd, limit)
@@ -1270,50 +1383,111 @@ def recommend_cards(
         budget_usd=budget_usd,
     )
     if not finalized["recommendations"]:
-        response = {
-            "source": normalized_source,
-            "budget_usd": float(budget_usd),
-            "profile": profile,
-            "profile_summary": _deterministic_profile_summary(profile, budget_usd),
-            "recommendations": [],
-            "recommendation_groups": _empty_recommendation_groups(limit),
-        }
-        _store_recommendation_cache(cache_key, response)
-        total_ms = round((time.perf_counter() - total_start) * 1000, 2)
-        LOGGER.info(
-            "recommend_cards source=%s cache=miss collection_ms=%.2f profile_ms=%.2f candidate_fetch_ms=%.2f prefilter_count=%d enriched_count=%d gpt_ms=%.2f total_ms=%.2f",
-            normalized_source,
-            collection_load_ms,
-            profile_ms,
-            candidate_metrics["candidate_fetch_ms"],
-            candidate_metrics["prefilter_count"],
-            candidate_metrics["enriched_count"],
-            gpt_ms,
-            total_ms,
+        response = _recommendation_response_payload(
+            source,
+            budget_usd,
+            profile,
+            _deterministic_profile_summary(profile, budget_usd),
+            [],
+            empty_groups,
         )
-        return response
+    else:
+        response = _recommendation_response_payload(
+            source,
+            budget_usd,
+            profile,
+            finalized["profile_summary"],
+            finalized["recommendations"],
+            finalized["recommendation_groups"],
+        )
+
+    total_ms = round((time.perf_counter() - total_start) * 1000, 2)
+    return _recommendation_trace_payload(
+        context,
+        response,
+        recommendation_candidate_groups=recommendation_candidate_groups,
+        model_payload=model_payload,
+        candidate_metrics=candidate_metrics,
+        timings={
+            "collection_load_ms": float(context["collection_load_ms"]),
+            "profile_ms": profile_ms,
+            "gpt_ms": gpt_ms,
+            "total_ms": total_ms,
+        },
+    )
+
+
+def recommend_cards_with_trace(
+    *,
+    source: str = "supabase",
+    user_id: str | None = None,
+    csv_path: str | os.PathLike[str] | None = None,
+    budget_usd: float = DEFAULT_BUDGET_USD,
+    limit: int = DEFAULT_LIMIT,
+    force_refresh: bool = False,
+) -> dict[str, Any]:
+    total_start = time.perf_counter()
+    context = _prepare_recommendation_request(
+        source=source,
+        user_id=user_id,
+        csv_path=csv_path,
+        budget_usd=budget_usd,
+        limit=limit,
+    )
+    cache_key = str(context["cache_key"])
+    if not force_refresh:
+        cached = _get_cached_recommendation_trace(cache_key)
+        if cached is not None:
+            total_ms = round((time.perf_counter() - total_start) * 1000, 2)
+            _log_recommendation_cache_hit(str(context["source"]), float(context["collection_load_ms"]), total_ms, trace=True)
+            return cached
+
+    trace_payload = _compute_recommendation_trace(context)
+    trace_payload["timings"]["total_ms"] = round((time.perf_counter() - total_start) * 1000, 2)
     response = {
-        "source": normalized_source,
-        "budget_usd": float(budget_usd),
-        "profile": profile,
-        "profile_summary": finalized["profile_summary"],
-        "recommendations": finalized["recommendations"],
-        "recommendation_groups": finalized["recommendation_groups"],
+        key: deepcopy(trace_payload[key])
+        for key in ("source", "budget_usd", "profile", "profile_summary", "recommendations", "recommendation_groups")
     }
     _store_recommendation_cache(cache_key, response)
-    total_ms = round((time.perf_counter() - total_start) * 1000, 2)
-    LOGGER.info(
-        "recommend_cards source=%s cache=miss collection_ms=%.2f profile_ms=%.2f candidate_fetch_ms=%.2f prefilter_count=%d enriched_count=%d enrichment_ms=%.2f gpt_ms=%.2f total_ms=%.2f",
-        normalized_source,
-        collection_load_ms,
-        profile_ms,
-        candidate_metrics["candidate_fetch_ms"],
-        candidate_metrics["prefilter_count"],
-        candidate_metrics["enriched_count"],
-        candidate_metrics["tcgdex_enrichment_ms"],
-        gpt_ms,
-        total_ms,
+    _store_recommendation_trace_cache(cache_key, trace_payload)
+    _log_recommendation_cache_miss(trace_payload, trace=True)
+    return trace_payload
+
+
+def recommend_cards(
+    *,
+    source: str = "supabase",
+    user_id: str | None = None,
+    csv_path: str | os.PathLike[str] | None = None,
+    budget_usd: float = DEFAULT_BUDGET_USD,
+    limit: int = DEFAULT_LIMIT,
+    force_refresh: bool = False,
+) -> dict[str, Any]:
+    total_start = time.perf_counter()
+    context = _prepare_recommendation_request(
+        source=source,
+        user_id=user_id,
+        csv_path=csv_path,
+        budget_usd=budget_usd,
+        limit=limit,
     )
+    cache_key = str(context["cache_key"])
+    if not force_refresh:
+        cached = _get_cached_recommendation(cache_key)
+        if cached is not None:
+            total_ms = round((time.perf_counter() - total_start) * 1000, 2)
+            _log_recommendation_cache_hit(str(context["source"]), float(context["collection_load_ms"]), total_ms, trace=False)
+            return cached
+
+    trace_payload = _compute_recommendation_trace(context)
+    trace_payload["timings"]["total_ms"] = round((time.perf_counter() - total_start) * 1000, 2)
+    response = {
+        key: deepcopy(trace_payload[key])
+        for key in ("source", "budget_usd", "profile", "profile_summary", "recommendations", "recommendation_groups")
+    }
+    _store_recommendation_cache(cache_key, response)
+    _store_recommendation_trace_cache(cache_key, trace_payload)
+    _log_recommendation_cache_miss(trace_payload, trace=False)
     return response
 
 

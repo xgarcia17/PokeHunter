@@ -1,0 +1,70 @@
+{
+  "overall_pool_mean": 58.31,
+  "overall_selected_mean": 59.56,
+  "overall_lift": 1.25,
+  "per_group": {
+    "pokemon_affinity": {
+      "title": "Pokemon Affinity",
+      "pool_count": 7,
+      "selected_count": 5,
+      "invalid_selection_count": 0,
+      "pool_mean": 65.43,
+      "selected_mean": 68.4,
+      "lift": 2.97,
+      "top_5_capture": 1.0,
+      "selected_card_ids": [
+        "xy7-22",
+        "sv03.5-183",
+        "sv03.5-006",
+        "sv08.5-022",
+        "sv03.5-134"
+      ]
+    },
+    "set_affinity": {
+      "title": "Set Affinity",
+      "pool_count": 10,
+      "selected_count": 5,
+      "invalid_selection_count": 0,
+      "pool_mean": 60.54,
+      "selected_mean": 56.93,
+      "lift": -3.6,
+      "top_5_capture": 0.2,
+      "selected_card_ids": [
+        "xy7-99",
+        "sv08.5-023",
+        "xy7-27",
+        "xy7-87",
+        "xy7-57"
+      ]
+    },
+    "rarity_affinity": {
+      "title": "Rarity Affinity",
+      "pool_count": 7,
+      "selected_count": 2,
+      "invalid_selection_count": 0,
+      "pool_mean": 48.0,
+      "selected_mean": 44.0,
+      "lift": -4.0,
+      "top_5_capture": 0.5,
+      "selected_card_ids": [
+        "xy7-93",
+        "sv03.5-184"
+      ]
+    }
+  },
+  "scoring_formulas": {
+    "alignment": {
+      "pokemon_affinity": "A_pokemon(c) = 0.50 * P(c) + 0.30 * S(c) + 0.20 * R(c)",
+      "set_affinity": "A_set(c) = 0.50 * S(c) + 0.30 * P(c) + 0.20 * R(c)",
+      "rarity_affinity": "A_rarity(c) = 0.50 * R(c) + 0.30 * S(c) + 0.20 * P(c)"
+    },
+    "budget_fit": {
+      "missing_price": "B(c) = 0.50",
+      "under_budget": "B(c) = 1 - 0.5 * (price_usd / budget_usd)",
+      "over_budget": "B(c) = max(0, 0.5 - 0.5 * min(1, (price_usd - budget_usd) / budget_usd))"
+    },
+    "final_score": "Score_100(c, g) = round(100 * (0.80 * A_g(c) + 0.20 * B(c)), 2)",
+    "lift": "Lift(g) = SelectedMean(g) - PoolMean(g)",
+    "top_5_capture": "Top5Capture(g) = top-5 GPT-selected cards in group / GPT-selected cards in group"
+  }
+}
