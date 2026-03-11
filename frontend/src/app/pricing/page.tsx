@@ -23,6 +23,13 @@ type TopPricedCard = {
   history: PriceHistoryPoint[];
   historyStatus: "available" | "unavailable";
   historyMessage: string | null;
+  tcgdexPricing: {
+    updated: string | null;
+    eurToUsdRate: number;
+    avgUsd: number | null;
+    lowUsd: number | null;
+    trendUsd: number | null;
+  } | null;
 };
 
 type PricingResponse =
@@ -41,6 +48,10 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+function formatNullablePrice(price: number | null) {
+  return price === null ? "N/A" : formatPrice(price);
+}
+
 function formatTimestamp(value: string | null) {
   if (!value) return "N/A";
   const date = new Date(value);
@@ -49,22 +60,6 @@ function formatTimestamp(value: string | null) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
-}
-
-function formatRelativeTime(value: string | null) {
-  if (!value) return "Unknown";
-
-  const then = new Date(value).getTime();
-  if (Number.isNaN(then)) return "Unknown";
-
-  const diffMs = Date.now() - then;
-  const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
-
-  if (diffHours < 1) return "Updated less than 1 hour ago";
-  if (diffHours < 24) return `Updated ${diffHours}h ago`;
-
-  const diffDays = Math.floor(diffHours / 24);
-  return `Updated ${diffDays}d ago`;
 }
 
 function metricTone(index: number) {
@@ -226,6 +221,15 @@ export default function PricingPage() {
         return;
       }
 
+      void fetch("/api/pricing/refresh", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+        keepalive: true,
+      }).catch(() => {
+        // Do not block page render if background refresh cannot be triggered.
+      });
+
       setLoading(true);
       setError(null);
 
@@ -234,11 +238,14 @@ export default function PricingPage() {
           `/api/pricing/top-cards?userId=${encodeURIComponent(userId)}`,
           { cache: "no-store" },
         );
-        const payload = (await res.json()) as PricingResponse;
-        if (!res.ok || !("ok" in payload && payload.ok)) {
-          throw new Error("error" in payload ? payload.error : "Failed to load pricing");
+        const payload = (await res.json()) as PricingResponse & {
+          ok?: boolean;
+          cards?: TopPricedCard[];
+        };
+        if (!res.ok) {
+          throw new Error(payload?.error ?? "Failed to load pricing");
         }
-        setCards(payload.cards);
+        setCards((payload?.cards ?? []) as TopPricedCard[]);
       } catch (fetchError) {
         setCards([]);
         setError(
@@ -267,9 +274,8 @@ export default function PricingPage() {
             Most Valuable Cards In Your Collection
           </h1>
           <p className="mt-2 text-sm md:text-base text-gray-600">
-            Your top 3 most expensive cards, sorted by current saved price. When
-            external history lookup fails, the dashboard still shows the saved
-            pricing, position value, and last refresh timestamp.
+            All cards in your collection, ranked by saved value with live TCGdex
+            pricing in USD.
           </p>
         </div>
 
@@ -319,36 +325,6 @@ export default function PricingPage() {
                         <div className="mt-1 text-sm text-gray-600">
                           #{card.number} • {card.setName}
                         </div>
-                        <div className="mt-2 text-sm text-gray-500">
-                          {formatRelativeTime(card.priceLastUpdated)}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      <div className={`rounded-2xl px-4 py-3 ${metricTone(index).soft}`}>
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                          Current
-                        </div>
-                        <div className="mt-1 text-lg font-bold text-gray-900">
-                          {formatPrice(card.priceUsd)}
-                        </div>
-                      </div>
-                      <div className="rounded-2xl bg-gray-50 px-4 py-3">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                          Qty
-                        </div>
-                        <div className="mt-1 text-lg font-bold text-gray-900">
-                          {card.quantity}
-                        </div>
-                      </div>
-                      <div className="rounded-2xl bg-gray-900 px-4 py-3 text-white col-span-2 sm:col-span-1">
-                        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
-                          Position
-                        </div>
-                        <div className="mt-1 text-lg font-bold">
-                          {formatPrice(card.totalValueUsd)}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -377,10 +353,34 @@ export default function PricingPage() {
                         </div>
                         <div className="rounded-2xl bg-white/80 px-4 py-3 sm:col-span-2">
                           <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                            Price Updated At
+                            TCGdex Retrieved At
                           </div>
                           <div className="mt-1 text-sm font-medium text-gray-900">
-                            {formatTimestamp(card.priceLastUpdated)}
+                            {formatTimestamp(card.tcgdexPricing?.updated ?? null)}
+                          </div>
+                        </div>
+                        <div className="rounded-2xl bg-white px-4 py-4 border border-emerald-200">
+                          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                            TCGdex Avg (USD)
+                          </div>
+                          <div className="mt-1 text-3xl font-extrabold text-gray-900 leading-none">
+                            {formatNullablePrice(card.tcgdexPricing?.avgUsd ?? null)}
+                          </div>
+                        </div>
+                        <div className="rounded-2xl bg-white px-4 py-4 border border-blue-200">
+                          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700">
+                            TCGdex Low (USD)
+                          </div>
+                          <div className="mt-1 text-3xl font-extrabold text-gray-900 leading-none">
+                            {formatNullablePrice(card.tcgdexPricing?.lowUsd ?? null)}
+                          </div>
+                        </div>
+                        <div className="rounded-2xl bg-white px-4 py-4 border border-amber-200 sm:col-span-2">
+                          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-700">
+                            TCGdex Trend (USD)
+                          </div>
+                          <div className="mt-1 text-4xl font-extrabold text-gray-900 leading-none">
+                            {formatNullablePrice(card.tcgdexPricing?.trendUsd ?? null)}
                           </div>
                         </div>
                       </div>

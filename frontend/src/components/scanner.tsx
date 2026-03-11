@@ -39,6 +39,15 @@ type UploadResponse =
         card_name: string | null;
         matched_storage_path: string | null;
         matched_image_url: string | null;
+        candidates?: Array<{
+          score: number;
+          card_id: string | null;
+          set_id: string | null;
+          card_number: string | null;
+          card_name: string | null;
+          matched_storage_path: string | null;
+          matched_image_url: string | null;
+        }>;
       };
     }
   | {
@@ -74,6 +83,37 @@ async function addToCollection(
 const ALLOWED_TYPES = ["image/jpeg", "image/png"] as const;
 const MAX_MB = 8;
 const MAX_BYTES = MAX_MB * 1024 * 1024;
+const MIN_CONFIDENCE_FOR_DIRECT_ADD = 0.9;
+const CLOSE_SCORE_GAP_FOR_CHOOSER = 0.02;
+
+type IdentifyCandidate = NonNullable<
+  Extract<UploadResponse, { ok: true }>["identify"]["candidates"]
+>[number];
+
+function getIdentifyCandidates(
+  result: Extract<UploadResponse, { ok: true }>,
+): IdentifyCandidate[] {
+  if (result.identify.candidates && result.identify.candidates.length > 0) {
+    return result.identify.candidates;
+  }
+
+  return [
+    {
+      score: result.identify.score,
+      card_id: result.identify.card_id,
+      set_id: result.identify.set_id,
+      card_number: result.identify.card_number,
+      card_name: result.identify.card_name,
+      matched_storage_path: result.identify.matched_storage_path,
+      matched_image_url: result.identify.matched_image_url,
+    },
+  ];
+}
+
+function areTopTwoCandidatesClose(candidates: IdentifyCandidate[]): boolean {
+  if (candidates.length < 2) return false;
+  return Math.abs(candidates[0].score - candidates[1].score) <= CLOSE_SCORE_GAP_FOR_CHOOSER;
+}
 
 function validateFile(file: File): string | null {
   if (!ALLOWED_TYPES.includes(file.type as (typeof ALLOWED_TYPES)[number])) {
@@ -127,6 +167,10 @@ export default function Scanner({ userId }: ScannerProps) {
   );
   const [addMessage, setAddMessage] = useState<string | null>(null);
   const [addedCard, setAddedCard] = useState<AddedCard | null>(null);
+  const [shouldPromptRetake, setShouldPromptRetake] = useState(false);
+  const [selectedCandidateIndex, setSelectedCandidateIndex] = useState<number | null>(
+    0,
+  );
 
   function formatPrice(price: number | null) {
     if (price === null) return "N/A";
@@ -166,6 +210,8 @@ export default function Scanner({ userId }: ScannerProps) {
     setAddStatus("idle");
     setAddMessage(null);
     setAddedCard(null);
+    setShouldPromptRetake(false);
+    setSelectedCandidateIndex(0);
 
     const validationError = validateFile(file);
     if (validationError) {
@@ -180,6 +226,10 @@ export default function Scanner({ userId }: ScannerProps) {
     try {
       const result = await uploadToNextRoute(file);
       setServerResult(result);
+      if ("ok" in result && result.ok) {
+        const candidates = getIdentifyCandidates(result);
+        setSelectedCandidateIndex(areTopTwoCandidatesClose(candidates) ? null : 0);
+      }
       setStatus("done");
     } catch (e) {
       setStatus("error");
@@ -201,6 +251,8 @@ export default function Scanner({ userId }: ScannerProps) {
     setAddStatus("idle");
     setAddMessage(null);
     setAddedCard(null);
+    setShouldPromptRetake(false);
+    setSelectedCandidateIndex(0);
     setPreviewUrl((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return null;
@@ -209,7 +261,35 @@ export default function Scanner({ userId }: ScannerProps) {
 
   async function onAddToCollection() {
     if (!serverResult || !("ok" in serverResult) || !serverResult.ok) return;
-    const cardId = serverResult.identify.card_id;
+    const candidates = getIdentifyCandidates(serverResult);
+    const topTwoClose = areTopTwoCandidatesClose(candidates);
+    const selectedCandidate =
+      selectedCandidateIndex !== null ? candidates[selectedCandidateIndex] ?? null : null;
+    if (topTwoClose && !selectedCandidate) {
+      setAddStatus("error");
+      setAddMessage(
+        "Top two matches are very close. Please choose which card is correct first.",
+      );
+      return;
+    }
+
+    const activeCandidate = selectedCandidate ?? candidates[0] ?? null;
+    const confidence = activeCandidate?.score ?? serverResult.identify.score;
+    if (confidence < MIN_CONFIDENCE_FOR_DIRECT_ADD) {
+      const confidencePercent = (confidence * 100).toFixed(2);
+      const confirmed = window.confirm(
+        `Scan confidence is ${confidencePercent}% (below 90%). Do you want to add this card anyway?`,
+      );
+      if (!confirmed) {
+        setAddStatus("idle");
+        setAddMessage("Please take another photo to improve card detection.");
+        setShouldPromptRetake(true);
+        return;
+      }
+    }
+
+    setShouldPromptRetake(false);
+    const cardId = activeCandidate?.card_id ?? serverResult.identify.card_id;
     if (!cardId) {
       setAddStatus("error");
       setAddMessage("No detected card id to add.");
@@ -236,6 +316,20 @@ export default function Scanner({ userId }: ScannerProps) {
         e instanceof Error ? e.message : "Failed to add to collection",
       );
     }
+  }
+
+  function onSkipAdd() {
+    setAddStatus("idle");
+    setAddedCard(null);
+    setShouldPromptRetake(false);
+    setAddMessage("Card not added.");
+  }
+
+  function onTakeAnotherPhoto() {
+    reset();
+    window.setTimeout(() => {
+      pickFile();
+    }, 0);
   }
 
   return (
@@ -314,9 +408,51 @@ export default function Scanner({ userId }: ScannerProps) {
         {status === "done" &&
           serverResult &&
           "ok" in serverResult &&
-          serverResult.ok && (
-            <div className="text-left text-xs md:text-sm bg-gray-50 border rounded-lg p-3 text-black space-y-4">
+          serverResult.ok && (() => {
+            const candidates = getIdentifyCandidates(serverResult);
+            const topTwoClose = areTopTwoCandidatesClose(candidates);
+            const selectedCandidate =
+              selectedCandidateIndex !== null ? candidates[selectedCandidateIndex] ?? null : null;
+            const displayCandidate = selectedCandidate ?? candidates[0];
+            if (!displayCandidate) return null;
+
+            return (
+              <div className="text-left text-xs md:text-sm bg-gray-50 border rounded-lg p-3 text-black space-y-4">
               <div className="font-semibold">Card identification result</div>
+
+              {topTwoClose && candidates[1] && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 space-y-2">
+                  <div className="font-medium text-amber-900">
+                    Top two matches are close. Choose the correct card before adding:
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCandidateIndex(0)}
+                      className={`px-3 py-2 rounded-lg text-sm border ${
+                        selectedCandidateIndex === 0
+                          ? "bg-amber-100 border-amber-500 text-amber-900"
+                          : "bg-white border-amber-200 text-amber-800"
+                      }`}
+                    >
+                      Option 1: {candidates[0].card_name ?? "Unknown"} (
+                      {(candidates[0].score * 100).toFixed(2)}%)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCandidateIndex(1)}
+                      className={`px-3 py-2 rounded-lg text-sm border ${
+                        selectedCandidateIndex === 1
+                          ? "bg-amber-100 border-amber-500 text-amber-900"
+                          : "bg-white border-amber-200 text-amber-800"
+                      }`}
+                    >
+                      Option 2: {candidates[1].card_name ?? "Unknown"} (
+                      {(candidates[1].score * 100).toFixed(2)}%)
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -332,9 +468,9 @@ export default function Scanner({ userId }: ScannerProps) {
 
                 <div>
                   <div className="font-medium mb-1">Detected from Supabase</div>
-                  {serverResult.identify.matched_image_url ? (
+                  {displayCandidate.matched_image_url ? (
                     <img
-                      src={serverResult.identify.matched_image_url}
+                      src={displayCandidate.matched_image_url}
                       alt="Detected card from Supabase"
                       className="max-h-72 w-auto rounded-lg border bg-white"
                     />
@@ -346,32 +482,64 @@ export default function Scanner({ userId }: ScannerProps) {
 
               <div>
                 <span className="font-semibold">Detected card:</span>{" "}
-                {serverResult.identify.card_name ?? "Unknown"}
+                {displayCandidate.card_name ?? "Unknown"}
               </div>
               <div>
                 <span className="font-semibold">Set / Number:</span>{" "}
-                {serverResult.identify.set_id ?? "?"} /{" "}
-                {serverResult.identify.card_number ?? "?"}
+                {displayCandidate.set_id ?? "?"} /{" "}
+                {displayCandidate.card_number ?? "?"}
               </div>
               <div>
                 <span className="font-semibold">Confidence:</span>{" "}
-                {(serverResult.identify.score * 100).toFixed(2)}%
+                {(displayCandidate.score * 100).toFixed(2)}%
               </div>
 
+              {displayCandidate.score < MIN_CONFIDENCE_FOR_DIRECT_ADD && (
+                <div className="text-amber-700 text-sm">
+                  Confidence is below 90%. You will be asked to confirm before
+                  adding.
+                </div>
+              )}
+
               <div className="pt-1">
-                <button
-                  type="button"
-                  onClick={onAddToCollection}
-                  disabled={
-                    addStatus === "adding" || !serverResult.identify.card_id
-                  }
-                  className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {addStatus === "adding" ? "ADDING..." : "ADD TO COLLECTION"}
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={onAddToCollection}
+                    disabled={
+                      addStatus === "adding" || !displayCandidate.card_id
+                    }
+                    className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {addStatus === "adding" ? "ADDING..." : "ADD TO COLLECTION"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onSkipAdd}
+                    disabled={addStatus === "adding"}
+                    className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    DO NOT ADD
+                  </button>
+                  {shouldPromptRetake && (
+                    <button
+                      type="button"
+                      onClick={onTakeAnotherPhoto}
+                      className="border border-amber-300 text-amber-800 bg-amber-50 px-4 py-2 rounded-lg text-sm font-medium"
+                    >
+                      TAKE ANOTHER PHOTO
+                    </button>
+                  )}
+                </div>
                 {addMessage && (
                   <div
-                    className={`mt-2 text-sm ${addStatus === "error" ? "text-red-600" : "text-green-700"}`}
+                    className={`mt-2 text-sm ${
+                      addStatus === "error"
+                        ? "text-red-600"
+                        : addStatus === "done"
+                          ? "text-green-700"
+                          : "text-gray-700"
+                    }`}
                   >
                     {addMessage}
                   </div>
@@ -389,8 +557,9 @@ export default function Scanner({ userId }: ScannerProps) {
                   </div>
                 )}
               </div>
-            </div>
-          )}
+              </div>
+            );
+          })()}
 
         {status === "error" && error && (
           <div className="text-sm text-red-600">{error}</div>

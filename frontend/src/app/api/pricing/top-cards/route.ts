@@ -4,6 +4,8 @@ import { fetchCollectionTopValuableCardsWithHistory } from "@/lib/cardPricing";
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId")?.trim() ?? "";
+  const includeHistory = searchParams.get("includeHistory") === "1";
+  const refreshStalePrices = searchParams.get("refreshStalePrices") === "1";
 
   if (!userId) {
     return NextResponse.json(
@@ -13,7 +15,10 @@ export async function GET(req: Request) {
   }
 
   try {
-    const result = await fetchCollectionTopValuableCardsWithHistory(userId, 3);
+    const result = await fetchCollectionTopValuableCardsWithHistory(userId, null, {
+      refreshStalePrices,
+      includeHistory,
+    });
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     return NextResponse.json(

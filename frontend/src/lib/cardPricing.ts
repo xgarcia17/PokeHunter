@@ -2,7 +2,15 @@ const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/+$/, "") ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 const JUST_TCG_API_KEY = process.env.JUST_TCG_API_KEY ?? "";
 const JUST_TCG_BASE_URL = "https://api.justtcg.com/v1";
-const PRICE_REFRESH_WINDOW_MS = 24 * 60 * 60 * 1000;
+const POKEMON_TCG_API_KEY =
+  process.env.TCG_POKEMON ??
+  process.env.POKEMONTCG_API_KEY ??
+  process.env.POKEMON_TCG_API_KEY ??
+  "";
+const POKEMON_TCG_BASE_URL = "https://api.pokemontcg.io/v2";
+const TCGDEX_BASE_URL = "https://api.tcgdex.net/v2/en";
+const EUR_TO_USD_RATE = 1.08;
+const PRICE_REFRESH_WINDOW_MS = 4 * 24 * 60 * 60 * 1000;
 const STORAGE_BUCKET = process.env.STORAGE_BUCKET ?? "pokemon-images";
 
 export type CardRecord = {
@@ -63,6 +71,50 @@ type JustTcgCard = {
   variants?: JustTcgVariant[];
 };
 
+type PokemonTcgPrice = {
+  market?: number | null;
+  mid?: number | null;
+  low?: number | null;
+  high?: number | null;
+  directLow?: number | null;
+};
+
+type PokemonTcgCard = {
+  id: string;
+  name: string;
+  number: string;
+  set?: {
+    id?: string;
+    name?: string;
+  };
+  tcgplayer?: {
+    prices?: Record<string, PokemonTcgPrice | undefined>;
+  };
+  cardmarket?: {
+    prices?: {
+      averageSellPrice?: number | null;
+      lowPrice?: number | null;
+      trendPrice?: number | null;
+    };
+  };
+};
+
+type PokemonTcgCardsResponse = {
+  data?: PokemonTcgCard[];
+};
+
+type TcgdexCardResponse = {
+  pricing?: {
+    cardmarket?: {
+      updated?: string | null;
+      unit?: string | null;
+      avg?: number | null;
+      low?: number | null;
+      trend?: number | null;
+    };
+  };
+};
+
 export type PriceHistoryPoint = {
   timestamp: string;
   price: number;
@@ -82,6 +134,13 @@ export type TopPricedCard = {
   history: PriceHistoryPoint[];
   historyStatus: "available" | "unavailable";
   historyMessage: string | null;
+  tcgdexPricing: {
+    updated: string | null;
+    eurToUsdRate: number;
+    avgUsd: number | null;
+    lowUsd: number | null;
+    trendUsd: number | null;
+  } | null;
 };
 
 function supabaseHeaders() {
@@ -104,17 +163,27 @@ function toPublicImageUrl(storagePath: string | null | undefined): string | null
   return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${cleaned}`;
 }
 
-function requireServerConfig() {
+function convertEurToUsd(value: number | null | undefined): number | null {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  return Number((value * EUR_TO_USD_RATE).toFixed(2));
+}
+
+function requireServerConfig(options?: { requireJustTcg?: boolean }) {
+  const requireJustTcg = options?.requireJustTcg ?? true;
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
   }
 
-  if (!JUST_TCG_API_KEY) {
+  if (requireJustTcg && !JUST_TCG_API_KEY) {
     throw new Error("Missing JUST_TCG_API_KEY");
   }
 }
 
-function shouldRefreshPrice(priceLastUpdated: string | null) {
+function shouldRefreshPrice(
+  priceLastUpdated: string | null,
+  priceUsd: number | null,
+) {
+  if (priceUsd === null) return true;
   if (!priceLastUpdated) return true;
 
   const lastUpdatedMs = new Date(priceLastUpdated).getTime();
@@ -300,6 +369,163 @@ async function fetchJustTcg<T>(
   }
 
   return payload.data ?? [];
+}
+
+async function fetchTcgdexPricing(cardId: string): Promise<TopPricedCard["tcgdexPricing"]> {
+  const url = `${TCGDEX_BASE_URL}/cards/${encodeURIComponent(cardId)}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) return null;
+
+  const payload = (await res.json()) as TcgdexCardResponse;
+  const cardmarket = payload.pricing?.cardmarket;
+  if (!cardmarket) return null;
+
+  return {
+    updated: cardmarket.updated ?? null,
+    eurToUsdRate: EUR_TO_USD_RATE,
+    avgUsd: convertEurToUsd(cardmarket.avg),
+    lowUsd: convertEurToUsd(cardmarket.low),
+    trendUsd: convertEurToUsd(cardmarket.trend),
+  };
+}
+
+function pokemonTcgHeaders() {
+  const headers: Record<string, string> = {};
+  if (POKEMON_TCG_API_KEY) {
+    headers["X-Api-Key"] = POKEMON_TCG_API_KEY;
+  }
+  return headers;
+}
+
+function rankPokemonTcgCardCandidate(candidate: PokemonTcgCard, input: {
+  cardName: string;
+  cardNumber: string;
+  setName: string;
+}) {
+  const localNameCompact = normalizeCompact(input.cardName);
+  const candidateNameCompact = normalizeCompact(candidate.name);
+  const localNumberCandidates = new Set(numberCandidates(input.cardNumber).map(normalizeCompact));
+  const candidateNumberCompact = normalizeCompact(candidate.number);
+  const localSetNameCompact = normalizeCompact(input.setName);
+  const candidateSetNameCompact = normalizeCompact(candidate.set?.name);
+
+  let score = 0;
+  if (candidateNameCompact === localNameCompact) score += 10;
+  if (candidateNumberCompact && localNumberCandidates.has(candidateNumberCompact)) score += 8;
+  if (candidateSetNameCompact && candidateSetNameCompact === localSetNameCompact) score += 4;
+  score += overlapScore(tokenSet(input.cardName), tokenSet(candidate.name)) * 5;
+
+  return score;
+}
+
+function pickPokemonTcgPrice(card: PokemonTcgCard): number | null {
+  const pricesByFinish = card.tcgplayer?.prices ?? {};
+  const finishPreference = [
+    "normal",
+    "holofoil",
+    "reverseHolofoil",
+    "1stEditionHolofoil",
+    "1stEditionNormal",
+    "unlimitedHolofoil",
+    "unlimitedNormal",
+  ];
+
+  const fieldsByPriority: Array<keyof PokemonTcgPrice> = [
+    "market",
+    "mid",
+    "directLow",
+    "low",
+    "high",
+  ];
+
+  for (const finish of finishPreference) {
+    const priceRow = pricesByFinish[finish];
+    if (!priceRow) continue;
+    for (const field of fieldsByPriority) {
+      const value = priceRow[field];
+      if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+        return Number(value.toFixed(2));
+      }
+    }
+  }
+
+  for (const priceRow of Object.values(pricesByFinish)) {
+    if (!priceRow) continue;
+    for (const field of fieldsByPriority) {
+      const value = priceRow[field];
+      if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+        return Number(value.toFixed(2));
+      }
+    }
+  }
+
+  const averageSell = card.cardmarket?.prices?.averageSellPrice;
+  if (typeof averageSell === "number" && Number.isFinite(averageSell) && averageSell > 0) {
+    return Number(averageSell.toFixed(2));
+  }
+
+  const trend = card.cardmarket?.prices?.trendPrice;
+  if (typeof trend === "number" && Number.isFinite(trend) && trend > 0) {
+    return Number(trend.toFixed(2));
+  }
+
+  return null;
+}
+
+async function fetchPokemonTcgPrice(input: {
+  cardName: string;
+  cardNumber: string;
+  setName: string;
+}): Promise<number | null> {
+  const rawQueries = [
+    `name:"${input.cardName}" number:"${input.cardNumber}"`,
+    `name:"${input.cardName}"`,
+    `number:"${input.cardNumber}"`,
+  ];
+
+  const seen = new Set<string>();
+  const candidates = new Map<string, PokemonTcgCard>();
+
+  for (const query of rawQueries) {
+    const compact = query.trim();
+    if (!compact || seen.has(compact)) continue;
+    seen.add(compact);
+
+    const url = new URL(`${POKEMON_TCG_BASE_URL}/cards`);
+    url.searchParams.set("q", compact);
+    url.searchParams.set("pageSize", "50");
+
+    const res = await fetch(url.toString(), {
+      headers: pokemonTcgHeaders(),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      continue;
+    }
+
+    const payload = (await res.json()) as PokemonTcgCardsResponse;
+    for (const card of payload.data ?? []) {
+      candidates.set(card.id, card);
+    }
+  }
+
+  if (candidates.size === 0) {
+    return null;
+  }
+
+  const ranked = [...candidates.values()].sort(
+    (left, right) =>
+      rankPokemonTcgCardCandidate(right, input) -
+      rankPokemonTcgCardCandidate(left, input),
+  );
+
+  for (const card of ranked) {
+    const price = pickPokemonTcgPrice(card);
+    if (price !== null) return price;
+  }
+
+  return null;
 }
 
 function rankSetCandidate(candidate: JustTcgSet, input: { setId: string; setName: string }) {
@@ -652,33 +878,40 @@ async function updateCardPrice(cardId: string, priceUsd: number): Promise<void> 
   }
 }
 
+export async function refreshCardsFromTcgdex(cardIds: string[]): Promise<void> {
+  requireServerConfig({ requireJustTcg: false });
+
+  const uniqueCardIds = [...new Set(cardIds.map((cardId) => cardId.trim()).filter(Boolean))];
+  if (uniqueCardIds.length === 0) return;
+
+  await Promise.all(
+    uniqueCardIds.map(async (cardId) => {
+      const tcgdexPricing = await fetchTcgdexPricing(cardId);
+      const trendUsd = tcgdexPricing?.trendUsd ?? null;
+      if (trendUsd === null) return;
+
+      await updateCardPrice(cardId, trendUsd);
+    }),
+  );
+}
+
 export async function refreshCardPriceIfNeeded(cardId: string): Promise<CardRecord> {
-  requireServerConfig();
+  requireServerConfig({ requireJustTcg: false });
 
   const card = await fetchSupabaseCard(cardId);
   if (!card) {
     throw new Error(`Card ${cardId} was not found`);
   }
 
-  if (!shouldRefreshPrice(card.price_last_updated)) {
+  if (!shouldRefreshPrice(card.price_last_updated, card.price_usd)) {
     return card;
   }
 
-  const set = await fetchSupabaseSet(card.set_id);
-  if (!set) {
-    throw new Error(`Set ${card.set_id} was not found`);
+  const tcgdexPricing = await fetchTcgdexPricing(card.id);
+  const nextPrice = tcgdexPricing?.trendUsd ?? null;
+  if (nextPrice === null) {
+    throw new Error(`TCGdex trend price unavailable for card ${card.id}`);
   }
-
-  const justTcgSetId = await resolveJustTcgSetId({
-    setId: set.id,
-    setName: set.name,
-  });
-  const justTcgCard = await resolveJustTcgCard(justTcgSetId, {
-    cardName: card.name,
-    cardNumber: card.number,
-    setName: set.name,
-  });
-  const nextPrice = pickRepresentativeVariantPrice(justTcgCard);
 
   await updateCardPrice(cardId, nextPrice);
 
@@ -698,7 +931,7 @@ export async function fetchTopValuableCardsWithHistory(
   setName: string;
   cards: TopPricedCard[];
 }> {
-  requireServerConfig();
+  requireServerConfig({ requireJustTcg: true });
 
   const resolvedSet = await resolveJustTcgSet({
     setId: setQuery,
@@ -714,19 +947,21 @@ export async function fetchTopValuableCardsWithHistory(
     include_price_history: true,
   });
 
-  const topCards = cards
-    .map<TopPricedCard | null>((card) => {
-      const highestPricedVariant = pickHighestPricedVariant(card);
-      if (!highestPricedVariant) return null;
+  const topCards = (
+    await Promise.all(
+      cards.map(async (card): Promise<TopPricedCard | null> => {
+        const highestPricedVariant = pickHighestPricedVariant(card);
+        if (!highestPricedVariant) return null;
 
-      const history = normalizeHistoryEntries(
-        highestPricedVariant.price_history ?? highestPricedVariant.priceHistory,
-      );
+        const history = normalizeHistoryEntries(
+          highestPricedVariant.price_history ?? highestPricedVariant.priceHistory,
+        );
+        const tcgdexPricing = await fetchTcgdexPricing(card.id);
 
-      return {
-        id: card.id,
-        name: card.name,
-        number: card.number,
+        return {
+          id: card.id,
+          name: card.name,
+          number: card.number,
         setId: resolvedSet.id,
         setName: resolvedSet.name,
         priceUsd: Number(highestPricedVariant.price.toFixed(2)),
@@ -734,12 +969,15 @@ export async function fetchTopValuableCardsWithHistory(
         totalValueUsd: Number(highestPricedVariant.price.toFixed(2)),
         priceLastUpdated: null,
         imageUrl: null,
-        history,
-        historyStatus: history.length > 0 ? "available" : "unavailable",
-        historyMessage:
-          history.length > 0 ? null : "JustTCG returned no 7-day history.",
-      };
-    })
+          history,
+          historyStatus: history.length > 0 ? "available" : "unavailable",
+          historyMessage:
+            history.length > 0 ? null : "JustTCG returned no 7-day history.",
+          tcgdexPricing,
+        };
+      }),
+    )
+  )
     .filter((card): card is TopPricedCard => card !== null)
     .slice(0, limit);
 
@@ -752,11 +990,18 @@ export async function fetchTopValuableCardsWithHistory(
 
 export async function fetchCollectionTopValuableCardsWithHistory(
   userId: string,
-  limit = 3,
+  limit: number | null = 3,
+  options?: {
+    refreshStalePrices?: boolean;
+    includeHistory?: boolean;
+  },
 ): Promise<{
   cards: TopPricedCard[];
 }> {
-  requireServerConfig();
+  const refreshStalePrices = options?.refreshStalePrices ?? true;
+  const includeHistory = options?.includeHistory ?? true;
+
+  requireServerConfig({ requireJustTcg: includeHistory });
 
   const collectionRows = await fetchCollectionRows(userId);
   if (collectionRows.length === 0) {
@@ -765,15 +1010,17 @@ export async function fetchCollectionTopValuableCardsWithHistory(
 
   const uniqueCardIds = [...new Set(collectionRows.map((row) => row.card_id))];
   const initialCards = await fetchSupabaseCards(uniqueCardIds);
-  const staleCardIds = initialCards
-    .filter((card) => shouldRefreshPrice(card.price_last_updated))
-    .map((card) => card.id);
+  if (refreshStalePrices) {
+    const staleCardIds = initialCards
+      .filter((card) => shouldRefreshPrice(card.price_last_updated, card.price_usd))
+      .map((card) => card.id);
 
-  for (const staleCardId of staleCardIds) {
-    try {
-      await refreshCardPriceIfNeeded(staleCardId);
-    } catch {
-      // Keep the dashboard usable even if an external refresh fails.
+    for (const staleCardId of staleCardIds) {
+      try {
+        await refreshCardPriceIfNeeded(staleCardId);
+      } catch {
+        // Keep the dashboard usable even if an external refresh fails.
+      }
     }
   }
 
@@ -813,49 +1060,59 @@ export async function fetchCollectionTopValuableCardsWithHistory(
         setName: string;
       } => Boolean(entry),
     )
-    .sort((left, right) => (right.priceUsd ?? -1) - (left.priceUsd ?? -1))
-    .slice(0, limit);
+    .sort((left, right) => (right.priceUsd ?? -1) - (left.priceUsd ?? -1));
+
+  const limitedRankedCollectionCards =
+    typeof limit === "number" && Number.isFinite(limit) && limit > 0
+      ? rankedCollectionCards.slice(0, limit)
+      : rankedCollectionCards;
 
   const cardsWithHistory = await Promise.all(
-    rankedCollectionCards.map(async (entry) => {
+    limitedRankedCollectionCards.map(async (entry) => {
       let history: PriceHistoryPoint[] = [];
       let historyStatus: TopPricedCard["historyStatus"] = "unavailable";
-      let historyMessage: string | null = "No external history available.";
+      let historyMessage: string | null = includeHistory
+        ? "No external history available."
+        : "History lookup skipped for faster loading.";
 
-      try {
-        const justTcgSet = await tryResolveJustTcgSet({
-          setId: entry.card.set_id,
-          setName: entry.setName,
-        });
+      if (includeHistory) {
+        try {
+          const justTcgSet = await tryResolveJustTcgSet({
+            setId: entry.card.set_id,
+            setName: entry.setName,
+          });
 
-        if (!justTcgSet) {
-          throw new Error("Could not resolve this set in JustTCG.");
+          if (!justTcgSet) {
+            throw new Error("Could not resolve this set in JustTCG.");
+          }
+
+          const justTcgCard = await resolveJustTcgCard(justTcgSet.id, {
+            cardName: entry.card.name,
+            cardNumber: entry.card.number,
+            setName: entry.setName,
+          });
+
+          const highestPricedVariant = justTcgCard
+            ? pickHighestPricedVariant(justTcgCard)
+            : null;
+
+          history = highestPricedVariant
+            ? normalizeHistoryEntries(
+                highestPricedVariant.price_history ?? highestPricedVariant.priceHistory,
+              )
+            : [];
+          historyStatus = history.length > 0 ? "available" : "unavailable";
+          historyMessage =
+            history.length > 0
+              ? null
+              : "JustTCG returned no 7-day history for the matched card.";
+        } catch {
+          historyStatus = "unavailable";
+          historyMessage = "External 7-day history is unavailable for this card.";
         }
-
-        const justTcgCard = await resolveJustTcgCard(justTcgSet.id, {
-          cardName: entry.card.name,
-          cardNumber: entry.card.number,
-          setName: entry.setName,
-        });
-
-        const highestPricedVariant = justTcgCard
-          ? pickHighestPricedVariant(justTcgCard)
-          : null;
-
-        history = highestPricedVariant
-          ? normalizeHistoryEntries(
-              highestPricedVariant.price_history ?? highestPricedVariant.priceHistory,
-            )
-          : [];
-        historyStatus = history.length > 0 ? "available" : "unavailable";
-        historyMessage =
-          history.length > 0
-            ? null
-            : "JustTCG returned no 7-day history for the matched card.";
-      } catch (error) {
-        historyStatus = "unavailable";
-        historyMessage = "External 7-day history is unavailable for this card.";
       }
+
+      const tcgdexPricing = await fetchTcgdexPricing(entry.card.id);
 
       return {
         id: entry.card.id,
@@ -871,6 +1128,7 @@ export async function fetchCollectionTopValuableCardsWithHistory(
         history,
         historyStatus,
         historyMessage,
+        tcgdexPricing,
       } satisfies TopPricedCard;
     }),
   );

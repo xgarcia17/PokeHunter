@@ -15,6 +15,7 @@ type IdentifyResponse = {
   best_db_card_id: string | null;
   score: number;
   top_k?: Array<{
+    score: number;
     resolved?: {
       storage_path?: string | null;
       set_id?: string | null;
@@ -34,6 +35,16 @@ type CardRow = {
 type CardImageRow = {
   card_id: string;
   storage_path: string;
+};
+
+type UploadIdentifyCandidate = {
+  score: number;
+  card_id: string | null;
+  set_id: string | null;
+  card_number: string | null;
+  card_name: string | null;
+  matched_storage_path: string | null;
+  matched_image_url: string | null;
 };
 
 function toPublicImageUrl(storagePath: string | null | undefined): string | null {
@@ -117,6 +128,33 @@ async function fetchSupabaseCardImage(cardId: string): Promise<CardImageRow | nu
   return rows[0] ?? null;
 }
 
+async function resolveCandidate(
+  score: number,
+  dbCardId: string | null,
+  setId: string | null,
+  cardNumber: string | null,
+  storagePath: string | null,
+): Promise<UploadIdentifyCandidate> {
+  let card = dbCardId ? await fetchSupabaseCard(dbCardId) : null;
+  if (!card && setId && cardNumber) {
+    card = await fetchSupabaseCardBySetAndNumber(setId, cardNumber);
+  }
+
+  const resolvedCardId = card?.id ?? dbCardId ?? null;
+  const cardImage = resolvedCardId ? await fetchSupabaseCardImage(resolvedCardId) : null;
+  const matchedStoragePath = cardImage?.storage_path ?? storagePath;
+
+  return {
+    score,
+    card_id: resolvedCardId,
+    set_id: card?.set_id ?? setId,
+    card_number: card?.card_number ?? cardNumber,
+    card_name: card?.name ?? null,
+    matched_storage_path: matchedStoragePath,
+    matched_image_url: toPublicImageUrl(matchedStoragePath),
+  };
+}
+
 export async function POST(req: Request) {
   const formData = await req.formData();
   const file = formData.get("file");
@@ -166,21 +204,60 @@ export async function POST(req: Request) {
     );
   }
 
-  const bestDbCardId = identifyData.best_db_card_id;
-  const resolved = identifyData.top_k?.[0]?.resolved;
-  const fallbackStoragePath = resolved?.storage_path ?? null;
-  const fallbackSetId = identifyData.best_set_id ?? resolved?.set_id ?? null;
-  const fallbackCardNumber =
-    identifyData.best_card_number ?? resolved?.card_number ?? null;
+  const topCandidatesPayload = (identifyData.top_k ?? []).slice(0, 2);
+  const rawCandidates =
+    topCandidatesPayload.length > 0
+      ? topCandidatesPayload.map((candidate) => ({
+          score: candidate.score,
+          dbCardId: candidate.resolved?.db_card_id ?? null,
+          setId: candidate.resolved?.set_id ?? null,
+          cardNumber: candidate.resolved?.card_number ?? null,
+          storagePath: candidate.resolved?.storage_path ?? null,
+        }))
+      : [
+          {
+            score: identifyData.score,
+            dbCardId: identifyData.best_db_card_id,
+            setId: identifyData.best_set_id,
+            cardNumber: identifyData.best_card_number,
+            storagePath: null,
+          },
+        ];
 
-  let card = bestDbCardId ? await fetchSupabaseCard(bestDbCardId) : null;
-  if (!card && fallbackSetId && fallbackCardNumber) {
-    card = await fetchSupabaseCardBySetAndNumber(fallbackSetId, fallbackCardNumber);
+  const resolvedCandidates = await Promise.all(
+    rawCandidates.map((candidate) =>
+      resolveCandidate(
+        candidate.score,
+        candidate.dbCardId,
+        candidate.setId,
+        candidate.cardNumber,
+        candidate.storagePath,
+      ),
+    ),
+  );
+
+  const uniqueCandidates: UploadIdentifyCandidate[] = [];
+  const seen = new Set<string>();
+  for (const candidate of resolvedCandidates) {
+    const dedupeKey =
+      candidate.card_id ??
+      `${candidate.set_id ?? "unknown-set"}:${candidate.card_number ?? "unknown-number"}`;
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    uniqueCandidates.push(candidate);
   }
 
-  const resolvedCardId = card?.id ?? bestDbCardId ?? null;
-  const cardImage = resolvedCardId ? await fetchSupabaseCardImage(resolvedCardId) : null;
-  const matchedStoragePath = cardImage?.storage_path ?? fallbackStoragePath;
+  const primaryCandidate =
+    uniqueCandidates[0] ??
+    ({
+      score: identifyData.score,
+      card_id: identifyData.best_db_card_id,
+      set_id: identifyData.best_set_id,
+      card_number: identifyData.best_card_number,
+      card_name: null,
+      matched_storage_path: null,
+      matched_image_url: null,
+    } satisfies UploadIdentifyCandidate);
 
   return NextResponse.json({
     ok: true,
@@ -188,13 +265,14 @@ export async function POST(req: Request) {
     type: file.type,
     size: file.size,
     identify: {
-      score: identifyData.score,
-      card_id: resolvedCardId,
-      set_id: card?.set_id ?? fallbackSetId,
-      card_number: card?.card_number ?? fallbackCardNumber,
-      card_name: card?.name ?? null,
-      matched_storage_path: matchedStoragePath,
-      matched_image_url: toPublicImageUrl(matchedStoragePath),
+      score: primaryCandidate.score,
+      card_id: primaryCandidate.card_id,
+      set_id: primaryCandidate.set_id,
+      card_number: primaryCandidate.card_number,
+      card_name: primaryCandidate.card_name,
+      matched_storage_path: primaryCandidate.matched_storage_path,
+      matched_image_url: primaryCandidate.matched_image_url,
+      candidates: uniqueCandidates,
     },
   });
 }

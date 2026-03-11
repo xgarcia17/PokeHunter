@@ -35,9 +35,7 @@ type RecommendationCard = {
   set_id: string;
   set_name: string;
   card_number: string;
-  rarity: string | null;
   price_usd: number | null;
-  price_status: "under_budget" | "over_budget" | "unknown";
   image_url: string | null;
   reason: string;
   driver_key: string;
@@ -100,26 +98,6 @@ function metricTone(index: number) {
       text: "text-emerald-700",
     },
   ][index % 3];
-}
-
-function priceStatusTone(status: RecommendationCard["price_status"]) {
-  switch (status) {
-    case "under_budget":
-      return {
-        label: "Under Budget",
-        pill: "bg-emerald-100 text-emerald-700 border border-emerald-200",
-      };
-    case "over_budget":
-      return {
-        label: "Over Budget",
-        pill: "bg-amber-100 text-amber-700 border border-amber-200",
-      };
-    default:
-      return {
-        label: "Price Unknown",
-        pill: "bg-slate-100 text-slate-700 border border-slate-200",
-      };
-  }
 }
 
 function affinityLabel(label: string, count: number) {
@@ -481,8 +459,6 @@ export default function RecommendationsPage() {
                   )}
 
                   {group.recommendations.map((card, cardIndex) => {
-                    const statusTone = priceStatusTone(card.price_status);
-
                     return (
                       <div
                         key={`${group.key}-${card.card_id}`}
@@ -509,33 +485,13 @@ export default function RecommendationsPage() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-1">
                               <div className={`rounded-2xl px-4 py-3 ${tone.soft}`}>
                                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
                                   Price
                                 </div>
                                 <div className="mt-1 text-lg font-bold text-gray-900">
                                   {formatPrice(card.price_usd)}
-                                </div>
-                              </div>
-                              <div className="rounded-2xl bg-gray-50 px-4 py-3">
-                                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                                  Rarity
-                                </div>
-                                <div className="mt-1 text-sm font-bold text-gray-900 break-words">
-                                  {card.rarity ?? "Unknown"}
-                                </div>
-                              </div>
-                              <div className="rounded-2xl bg-gray-900 px-4 py-3 text-white col-span-2 sm:col-span-1">
-                                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
-                                  Budget Fit
-                                </div>
-                                <div className="mt-2">
-                                  <span
-                                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusTone.pill}`}
-                                  >
-                                    {statusTone.label}
-                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -593,14 +549,6 @@ export default function RecommendationsPage() {
                                   </div>
                                   <div className="mt-1 text-sm font-medium text-gray-900">
                                     {card.card_number}
-                                  </div>
-                                </div>
-                                <div className="rounded-2xl bg-white/80 px-4 py-3">
-                                  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                                    Price Status
-                                  </div>
-                                  <div className={`mt-1 text-sm font-semibold ${tone.text}`}>
-                                    {statusTone.label}
                                   </div>
                                 </div>
                               </div>
