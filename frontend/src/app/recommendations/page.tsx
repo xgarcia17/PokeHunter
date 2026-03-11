@@ -15,17 +15,13 @@ type SetAffinity = {
   count: number;
 };
 
-type RarityAffinity = {
-  rarity: string;
-  count: number;
-};
+type BudgetPolicy = "soft_cap" | "strict_cap" | "market_flex";
 
 type RecommendationProfile = {
   budget_usd: number;
   collection_size: number;
   top_pokemon: PokemonAffinity[];
   top_sets: SetAffinity[];
-  top_rarities: RarityAffinity[];
   finish_affinity_status: string;
 };
 
@@ -51,10 +47,18 @@ type RecommendationGroup = {
 type RecommendationPayload = {
   source: string;
   budget_usd: number;
+  budget_policy?: BudgetPolicy;
   profile: RecommendationProfile;
   profile_summary: string;
   recommendations: RecommendationCard[];
   recommendation_groups: RecommendationGroup[];
+};
+
+type RecommendationSettings = {
+  userId: string;
+  budgetPolicy: BudgetPolicy;
+  budgetUsd: number;
+  num: number;
 };
 
 type RecommendationResponse =
@@ -104,6 +108,18 @@ function affinityLabel(label: string, count: number) {
   return `${label} (${count})`;
 }
 
+function budgetPolicyLabel(policy: BudgetPolicy) {
+  if (policy === "strict_cap") return "Strict Cap";
+  if (policy === "market_flex") return "Market Flex";
+  return "Soft Cap";
+}
+
+function budgetPolicyDescription(policy: BudgetPolicy) {
+  if (policy === "strict_cap") return "Over-budget cards are excluded.";
+  if (policy === "market_flex") return "Over-budget cards may be included as stretch targets.";
+  return "Soft cap with unknown prices still allowed.";
+}
+
 const GROUP_FALLBACKS: RecommendationGroup[] = [
   {
     key: "pokemon_affinity",
@@ -117,19 +133,24 @@ const GROUP_FALLBACKS: RecommendationGroup[] = [
     focus: "Cards that deepen the sets you already favor.",
     recommendations: [],
   },
-  {
-    key: "rarity_affinity",
-    title: "Rarity Affinity",
-    focus: "Cards that match the rarities you tend to keep.",
-    recommendations: [],
-  },
 ];
 
 export default function RecommendationsPage() {
   const [loading, setLoading] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<RecommendationPayload | null>(null);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [userId, setUserId] = useState<string>("");
+  const [budgetUsd, setBudgetUsd] = useState(1000);
+  const [budgetPolicy, setBudgetPolicy] = useState<BudgetPolicy>("soft_cap");
+  const [num, setNum] = useState(10);
+  const [savedSettings, setSavedSettings] = useState<{
+    budgetUsd: number;
+    budgetPolicy: BudgetPolicy;
+    num: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading) {
@@ -146,30 +167,21 @@ export default function RecommendationsPage() {
     return () => window.clearInterval(intervalId);
   }, [loading]);
 
-  const loadRecommendations = useCallback(async (forceRefresh = false) => {
-    if (!supabase) {
-      setError(
-        "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.",
-      );
-      setLoading(false);
-      return;
-    }
-
-    const { data } = await supabase.auth.getSession();
-    const userId = data.session?.user.id;
-    if (!userId) {
-      setError("Please sign in on the Scan page first.");
-      setLoading(false);
-      return;
-    }
-
+  const loadRecommendations = useCallback(async (
+    forceRefresh = false,
+    settings?: Pick<RecommendationSettings, "userId" | "budgetUsd" | "budgetPolicy" | "num">,
+  ) => {
+    if (!settings?.userId) return;
     setLoading(true);
     setError(null);
     setLoadingMessageIndex(0);
 
     try {
       const params = new URLSearchParams({
-        userId,
+        userId: settings.userId,
+        budgetUsd: String(settings.budgetUsd),
+        budgetPolicy: settings.budgetPolicy,
+        num: String(settings.num),
       });
       if (forceRefresh) {
         params.set("forceRefresh", "1");
@@ -200,19 +212,149 @@ export default function RecommendationsPage() {
   }, []);
 
   useEffect(() => {
-    void loadRecommendations();
+    async function bootstrap() {
+      if (!supabase) {
+        setError(
+          "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+        );
+        setLoadingSettings(false);
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await supabase.auth.getSession();
+      const sessionUserId = data.session?.user.id;
+      if (!sessionUserId) {
+        setError("Please sign in on the Scan page first.");
+        setLoadingSettings(false);
+        setLoading(false);
+        return;
+      }
+      setUserId(sessionUserId);
+
+      try {
+        const settingsRes = await fetch(
+          `/api/recommendations/settings?userId=${encodeURIComponent(sessionUserId)}`,
+          { cache: "no-store" },
+        );
+        const settingsPayload = (await settingsRes.json()) as
+          | ({ ok: true; settings: RecommendationSettings })
+          | { error: string };
+        if (!settingsRes.ok || !("ok" in settingsPayload && settingsPayload.ok)) {
+          throw new Error(
+            "error" in settingsPayload
+              ? settingsPayload.error
+              : "Failed to load recommendation settings",
+          );
+        }
+
+        const nextBudget = Number(settingsPayload.settings.budgetUsd ?? 1000);
+        const nextPolicy = settingsPayload.settings.budgetPolicy ?? "soft_cap";
+        const nextNum = Number(settingsPayload.settings.num ?? 10);
+        setBudgetUsd(nextBudget);
+        setBudgetPolicy(nextPolicy);
+        setNum(nextNum);
+        setSavedSettings({
+          budgetUsd: nextBudget,
+          budgetPolicy: nextPolicy,
+          num: nextNum,
+        });
+        setLoadingSettings(false);
+        await loadRecommendations(false, {
+          userId: sessionUserId,
+          budgetUsd: nextBudget,
+          budgetPolicy: nextPolicy,
+          num: nextNum,
+        });
+      } catch (settingsError) {
+        setLoadingSettings(false);
+        setError(
+          settingsError instanceof Error
+            ? settingsError.message
+            : "Failed to load recommendation settings",
+        );
+        setLoading(false);
+      }
+    }
+
+    void bootstrap();
   }, [loadRecommendations]);
+
+  const saveSettings = useCallback(async () => {
+    if (!userId) return;
+    const normalizedNumInput = Number(num);
+    const normalizedNum = Number.isFinite(normalizedNumInput)
+      ? Math.max(1, Math.min(15, Math.trunc(normalizedNumInput)))
+      : 10;
+    const normalizedBudget = Number.isFinite(budgetUsd)
+      ? budgetUsd >= 0
+        ? Number(budgetUsd.toFixed(2))
+        : 0
+      : 0;
+    const hasChanged =
+      !savedSettings ||
+      savedSettings.num !== normalizedNum ||
+      savedSettings.budgetUsd !== normalizedBudget ||
+      savedSettings.budgetPolicy !== budgetPolicy;
+    if (!hasChanged) return;
+
+    setSavingSettings(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/recommendations/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          budgetPolicy,
+          budgetUsd: normalizedBudget,
+          num: normalizedNum,
+        }),
+      });
+      const payload = (await res.json()) as
+        | ({ ok: true; settings: RecommendationSettings })
+        | { error: string };
+      if (!res.ok || !("ok" in payload && payload.ok)) {
+        throw new Error(
+          "error" in payload ? payload.error : "Failed to save recommendation settings",
+        );
+      }
+
+      setNum(payload.settings.num);
+      setBudgetUsd(payload.settings.budgetUsd);
+      setBudgetPolicy(payload.settings.budgetPolicy);
+      setSavedSettings({
+        budgetUsd: payload.settings.budgetUsd,
+        budgetPolicy: payload.settings.budgetPolicy,
+        num: payload.settings.num,
+      });
+      await loadRecommendations(true, {
+        userId,
+        budgetUsd: payload.settings.budgetUsd,
+        budgetPolicy: payload.settings.budgetPolicy,
+        num: payload.settings.num,
+      });
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to save recommendation settings",
+      );
+    } finally {
+      setSavingSettings(false);
+    }
+  }, [budgetPolicy, budgetUsd, loadRecommendations, num, savedSettings, userId]);
 
   const summary = useMemo(() => {
     const profile = payload?.profile;
     return {
-      budget: payload?.budget_usd ?? 1000,
+      budget: payload?.budget_usd ?? budgetUsd,
       recommendationCount: payload?.recommendations.length ?? 0,
       favoritePokemon: profile?.top_pokemon[0]?.name ?? "N/A",
       favoriteSet: profile?.top_sets[0]?.set_name ?? "N/A",
-      favoriteRarity: profile?.top_rarities[0]?.rarity ?? "N/A",
     };
-  }, [payload]);
+  }, [budgetUsd, payload]);
 
   const profile = payload?.profile;
   const recommendationGroups = useMemo(() => {
@@ -252,7 +394,14 @@ export default function RecommendationsPage() {
           </div>
           <button
             type="button"
-            onClick={() => void loadRecommendations(true)}
+            onClick={() =>
+              void loadRecommendations(true, {
+                userId,
+                budgetUsd,
+                budgetPolicy,
+                num,
+              })
+            }
             disabled={loading}
             className="inline-flex h-11 items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-800 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
@@ -277,6 +426,48 @@ export default function RecommendationsPage() {
                   This can take a moment while we read your collection, compare
                   likely candidates, and prepare the final recommendation notes.
                 </p>
+              </div>
+            </div>
+          </div>
+        )}
+        {!loading && !error && !loadingSettings && (
+          <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+              Recommendation Settings
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              <label className="flex flex-col gap-1 text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Budget (USD)</span>
+                <input
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={budgetUsd}
+                  onChange={(event) => setBudgetUsd(Number(event.target.value))}
+                  className="h-10 rounded-lg border border-gray-300 px-3"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Budget Policy</span>
+                <select
+                  value={budgetPolicy}
+                  onChange={(event) => setBudgetPolicy(event.target.value as BudgetPolicy)}
+                  className="h-10 rounded-lg border border-gray-300 px-3"
+                >
+                  <option value="soft_cap">Soft Cap</option>
+                  <option value="strict_cap">Strict Cap</option>
+                  <option value="market_flex">Market Flex</option>
+                </select>
+              </label>
+              <div className="flex items-end">
+                <button
+                  type="button"
+                  onClick={() => void saveSettings()}
+                  disabled={savingSettings || loading}
+                  className="h-10 rounded-lg border border-gray-900 bg-gray-900 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {savingSettings ? "Saving..." : "Save Settings"}
+                </button>
               </div>
             </div>
           </div>
@@ -364,22 +555,6 @@ export default function RecommendationsPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">
-                      Rarity Affinity
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {(profile?.top_rarities ?? []).map((item) => (
-                        <span
-                          key={item.rarity}
-                          className="rounded-full bg-rose-50 px-3 py-1 text-sm font-medium text-rose-700"
-                        >
-                          {affinityLabel(item.rarity, item.count)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
                   <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                     Finish affinity is intentionally omitted in v1 because owned
                     finish and printing data are not stored in the collection
@@ -404,20 +579,13 @@ export default function RecommendationsPage() {
                       {profile?.collection_size ?? 0}
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-gray-50 px-4 py-3">
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">
-                      Top Rarity
-                    </div>
-                    <div className="mt-1 text-lg font-bold text-gray-900 break-words">
-                      {summary.favoriteRarity}
-                    </div>
-                  </div>
                   <div className="rounded-2xl bg-gray-900 px-4 py-3 text-white">
                     <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">
                       Budget Policy
                     </div>
                     <div className="mt-1 text-sm font-semibold">
-                      Soft cap with unknown prices still allowed
+                      {budgetPolicyLabel((payload?.budget_policy ?? budgetPolicy) as BudgetPolicy)}:{" "}
+                      {budgetPolicyDescription((payload?.budget_policy ?? budgetPolicy) as BudgetPolicy)}
                     </div>
                   </div>
                 </div>

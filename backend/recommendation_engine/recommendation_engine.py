@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import logging
 import os
@@ -8,6 +9,7 @@ import re
 import time
 from collections import Counter
 from copy import deepcopy
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -40,6 +42,7 @@ RAW_SET_FETCH_LIMIT = 3
 RAW_POKEMON_FETCH_LIMIT = 3
 RAW_NAME_SEARCH_LIMIT = 30
 RECOMMENDATION_CACHE_TTL_SECONDS = 10 * 60
+ALLOWED_BUDGET_POLICIES = {"soft_cap", "strict_cap", "market_flex"}
 _NAME_SUFFIX_RE = re.compile(
     r"\b(?:ex|gx|vmax|vstar|v union|v-union|v|lv\.?\s*x|break|prism star|star|radiant)\b",
     re.IGNORECASE,
@@ -48,6 +51,8 @@ _NAME_SUFFIX_RE = re.compile(
 _TCGDEX_CLIENT = TCGdex() if TCGdex else None
 _TCGDEX_CACHE: dict[str, dict[str, Any] | None] = {}
 _RECOMMENDATION_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
+_PRICING_INSIGHT_CACHE: dict[str, dict[str, Any]] = {}
+PRICING_INSIGHT_CACHE_MAX_ENTRIES = 256
 LOGGER = logging.getLogger(__name__)
 RECOMMENDATION_GROUP_SPECS = (
     {
@@ -63,13 +68,6 @@ RECOMMENDATION_GROUP_SPECS = (
         "focus": "Cards that deepen the sets you already favor.",
         "limit": 5,
         "candidate_pool_size": 10,
-    },
-    {
-        "key": "rarity_affinity",
-        "title": "Rarity Affinity",
-        "focus": "Cards that match the rarities you tend to keep.",
-        "limit": 5,
-        "candidate_pool_size": 20,
     },
 )
 
@@ -313,6 +311,7 @@ def _recommendation_cache_key(
     csv_path: str | os.PathLike[str] | None,
     budget_usd: float,
     limit: int,
+    budget_policy: str,
     collection_signature: str,
 ) -> str:
     return json.dumps(
@@ -322,6 +321,7 @@ def _recommendation_cache_key(
             "csv_path": str(csv_path or ""),
             "budget_usd": float(budget_usd),
             "limit": int(limit),
+            "budget_policy": budget_policy,
             "collection_signature": collection_signature,
         },
         sort_keys=True,
@@ -516,7 +516,10 @@ def enrich_cards_with_tcgdex(cards: list[dict[str, Any]], include_images: bool =
 
 
 def _pokemon_affinity(card: dict[str, Any]) -> dict[str, str] | None:
-    if _normalize_text(str(card.get("category") or "")) != "pokemon":
+    category = _normalize_text(str(card.get("category") or ""))
+    # If category metadata is missing, fall back to name-based affinity so
+    # profile counts still reflect owned duplicates.
+    if category and category != "pokemon":
         return None
     display_name = _clean_pokemon_name(str(card.get("name") or ""))
     key = _compact_text(display_name)
@@ -703,7 +706,19 @@ def _profile_weight_maps(profile: dict[str, Any]) -> dict[str, dict[str, float]]
     }
 
 
-def _budget_score_details(price_usd: float | None, budget_usd: float) -> dict[str, Any]:
+def _unknown_price_budget_reason(budget_policy: str) -> str:
+    if budget_policy == "strict_cap":
+        return "Price is missing, so it stays eligible unless it later exceeds your strict cap."
+    if budget_policy == "market_flex":
+        return "Price is missing, so it stays in the mix as a market-flex option."
+    return "Price is missing, so it stays in the mix as a soft-budget option."
+
+
+def _budget_score_details(
+    price_usd: float | None,
+    budget_usd: float,
+    budget_policy: str,
+) -> dict[str, Any]:
     status = price_status_for_budget(price_usd, budget_usd)
     if status == "under_budget":
         if budget_usd > 0 and price_usd is not None:
@@ -714,8 +729,23 @@ def _budget_score_details(price_usd: float | None, budget_usd: float) -> dict[st
             "price_status": status,
             "score": 3.0 + remaining_ratio,
             "reason": f"Currently fits inside your ${budget_usd:,.0f} budget.",
+            "eligible": True,
         }
     if status == "over_budget":
+        if budget_policy == "strict_cap":
+            return {
+                "price_status": status,
+                "score": -6.0,
+                "reason": "Above budget and excluded by strict cap policy.",
+                "eligible": False,
+            }
+        if budget_policy == "market_flex":
+            return {
+                "price_status": status,
+                "score": -0.4,
+                "reason": "Above budget, but allowed as a market-flex target.",
+                "eligible": True,
+            }
         if price_usd is not None and budget_usd > 0:
             penalty = min(4.0, ((price_usd - budget_usd) / budget_usd) * 4.0 + 0.5)
         else:
@@ -724,11 +754,13 @@ def _budget_score_details(price_usd: float | None, budget_usd: float) -> dict[st
             "price_status": status,
             "score": -penalty,
             "reason": "Sits above your current budget, so it is a stretch target.",
+            "eligible": True,
         }
     return {
         "price_status": status,
         "score": 0.75,
-        "reason": "Price is missing, so it stays in the mix as a soft-budget option.",
+        "reason": _unknown_price_budget_reason(budget_policy),
+        "eligible": True,
     }
 
 
@@ -796,10 +828,11 @@ def _score_bucket_candidate(
     card: dict[str, Any],
     weight_maps: dict[str, dict[str, float]],
     budget_usd: float,
+    budget_policy: str,
     driver_key: str,
 ) -> dict[str, Any]:
     affinity = _candidate_affinity_details(card, weight_maps)
-    budget_details = _budget_score_details(_as_float(card.get("price_usd")), budget_usd)
+    budget_details = _budget_score_details(_as_float(card.get("price_usd")), budget_usd, budget_policy)
     weights_by_driver = {
         "pokemon_affinity": (10.0, 4.0, 2.0, 0.5),
         "set_affinity": (4.0, 10.0, 2.0, 0.0),
@@ -821,12 +854,18 @@ def _score_bucket_candidate(
         score += pokemon_bonus
 
     reasons = _bucket_reason_text(driver_key, affinity, str(budget_details["reason"]))
+    is_eligible = primary_weight_lookup[driver_key] > 0
+    if driver_key == "rarity_affinity" and not weight_maps["rarity_weights"]:
+        # If owned-card rarity metadata is sparse, keep rarity cards eligible
+        # so this bucket can still surface useful options.
+        is_eligible = bool(affinity["rarity"])
+
     return {
         **card,
         "driver_key": driver_key,
         "price_status": budget_details["price_status"],
         "bucket_score": round(score, 4),
-        "is_eligible": primary_weight_lookup[driver_key] > 0,
+        "is_eligible": is_eligible and bool(budget_details.get("eligible", True)),
         "deterministic_reason": " ".join(reasons[:2]) if reasons else "Strong fit for your current collection patterns.",
     }
 
@@ -868,6 +907,7 @@ def build_recommendation_candidate_groups(
     profile: dict[str, Any],
     candidates: list[dict[str, Any]],
     budget_usd: float,
+    budget_policy: str,
     *,
     limit: int = DEFAULT_LIMIT,
 ) -> list[dict[str, Any]]:
@@ -882,7 +922,7 @@ def build_recommendation_candidate_groups(
         for candidate in candidates:
             if not str(candidate.get("card_id") or "").strip():
                 continue
-            scored = _score_bucket_candidate(candidate, weight_maps, budget_usd, driver_key)
+            scored = _score_bucket_candidate(candidate, weight_maps, budget_usd, budget_policy, driver_key)
             if not scored["is_eligible"]:
                 continue
             scored_candidates.append(scored)
@@ -935,19 +975,29 @@ def build_candidate_pool(
     }
 
 
-def _deterministic_profile_summary(profile: dict[str, Any], budget_usd: float) -> str:
+def _deterministic_profile_summary(
+    profile: dict[str, Any],
+    budget_usd: float,
+    budget_policy: str,
+) -> str:
     favorite_pokemon = profile.get("top_pokemon", [])
     favorite_sets = profile.get("top_sets", [])
-    favorite_rarities = profile.get("top_rarities", [])
 
     pokemon_text = favorite_pokemon[0]["name"] if favorite_pokemon else "Pokemon cards"
     set_text = favorite_sets[0]["set_name"] if favorite_sets else "your favorite sets"
-    rarity_text = favorite_rarities[0]["rarity"] if favorite_rarities else "higher-priority rarities"
     return (
         f"Your collection leans toward {pokemon_text}, especially in {set_text}. "
-        f"These recommendations stay close to that profile, emphasize {rarity_text}, "
-        f"and use your ${budget_usd:,.0f} budget as a soft cap."
+        f"These recommendations stay close to that profile, "
+        f"and use your ${budget_usd:,.0f} budget under the {_budget_policy_summary_text(budget_policy)} policy."
     )
+
+
+def _budget_policy_summary_text(budget_policy: str) -> str:
+    if budget_policy == "strict_cap":
+        return "strict cap"
+    if budget_policy == "market_flex":
+        return "market-flex"
+    return "soft cap"
 
 
 def _extract_json_object(text: str) -> dict[str, Any]:
@@ -988,6 +1038,7 @@ def _run_llm_recommender(
     profile: dict[str, Any],
     recommendation_candidate_groups: list[dict[str, Any]],
     budget_usd: float,
+    budget_policy: str,
     limit: int,
 ) -> dict[str, Any]:
     client, deployment = _azure_openai_client()
@@ -1036,6 +1087,7 @@ def _run_llm_recommender(
                 "content": json.dumps(
                     {
                         "budget_usd": budget_usd,
+                        "budget_policy": budget_policy,
                         "limit": limit,
                         "profile": profile,
                         "recommendation_groups": grouped_payload,
@@ -1048,11 +1100,252 @@ def _run_llm_recommender(
     return _extract_json_object(getattr(response, "output_text", ""))
 
 
+def _parse_datetime(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _pricing_collection_signature(cards: list[dict[str, Any]]) -> str:
+    normalized_cards = []
+    for card in cards:
+        normalized_cards.append(
+            {
+                "name": _normalize_text(str(card.get("name") or "")),
+                "set_name": _normalize_text(str(card.get("set_name") or card.get("setId") or "")),
+                "quantity": max(1, _as_int(card.get("quantity"), 1)),
+                "date_added": str(card.get("date_added") or card.get("dateAdded") or "").strip(),
+            }
+        )
+    normalized_cards.sort(
+        key=lambda item: (
+            str(item["name"]),
+            str(item["set_name"]),
+            int(item["quantity"]),
+            str(item["date_added"]),
+        )
+    )
+    payload = {"cards": normalized_cards}
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def _pricing_insight_cache_key(cards: list[dict[str, Any]], budget_usd: float) -> str:
+    encoded = json.dumps(
+        {
+            "budget_usd": round(float(budget_usd), 2),
+            "collection_signature": _pricing_collection_signature(cards),
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def _store_pricing_insight_cache(cache_key: str, payload: dict[str, Any]) -> None:
+    _PRICING_INSIGHT_CACHE[cache_key] = deepcopy(payload)
+    while len(_PRICING_INSIGHT_CACHE) > PRICING_INSIGHT_CACHE_MAX_ENTRIES:
+        oldest_key = next(iter(_PRICING_INSIGHT_CACHE))
+        _PRICING_INSIGHT_CACHE.pop(oldest_key, None)
+
+
+def _pricing_card_stats(cards: list[dict[str, Any]]) -> dict[str, Any]:
+    now = datetime.now(timezone.utc)
+    known_value_total = 0.0
+    priced_card_count = 0
+    unknown_price_count = 0
+    set_value_totals: dict[str, float] = {}
+    top_cards_by_value: list[dict[str, Any]] = []
+    added_last_30_days = 0
+    added_last_30_days_value = 0.0
+    card_count = 0
+
+    for card in cards:
+        quantity = max(1, _as_int(card.get("quantity"), 1))
+        card_count += quantity
+        price_usd = _as_float(card.get("price_usd"))
+        set_name = str(card.get("set_name") or card.get("setId") or "Unknown Set").strip() or "Unknown Set"
+        card_name = str(card.get("name") or "Unknown Card").strip() or "Unknown Card"
+        added_at = _parse_datetime(card.get("date_added") or card.get("dateAdded"))
+        if added_at and added_at.tzinfo is None:
+            added_at = added_at.replace(tzinfo=timezone.utc)
+
+        card_total_value = 0.0
+        if price_usd is None:
+            unknown_price_count += quantity
+        else:
+            priced_card_count += quantity
+            card_total_value = float(price_usd) * quantity
+            known_value_total += card_total_value
+            set_value_totals[set_name] = set_value_totals.get(set_name, 0.0) + card_total_value
+            top_cards_by_value.append(
+                {
+                    "name": card_name,
+                    "set_name": set_name,
+                    "quantity": quantity,
+                    "price_usd": float(price_usd),
+                    "total_value_usd": round(card_total_value, 2),
+                }
+            )
+
+        if added_at and (now - added_at).days <= 30:
+            added_last_30_days += quantity
+            added_last_30_days_value += card_total_value
+
+    top_set_name = ""
+    top_set_value = 0.0
+    if set_value_totals:
+        top_set_name, top_set_value = max(set_value_totals.items(), key=lambda entry: entry[1])
+
+    top_cards_by_value.sort(key=lambda card: float(card.get("total_value_usd") or 0), reverse=True)
+
+    return {
+        "card_count": card_count,
+        "priced_card_count": priced_card_count,
+        "unknown_price_count": unknown_price_count,
+        "known_value_total_usd": round(known_value_total, 2),
+        "top_set_name": top_set_name,
+        "top_set_value_usd": round(top_set_value, 2),
+        "top_cards_by_value": top_cards_by_value[:5],
+        "added_last_30_days": added_last_30_days,
+        "added_last_30_days_value_usd": round(added_last_30_days_value, 2),
+    }
+
+
+def _deterministic_pricing_insight(stats: dict[str, Any], budget_usd: float) -> dict[str, Any]:
+    card_count = int(stats.get("card_count") or 0)
+    if card_count <= 0:
+        return {
+            "source": "deterministic",
+            "insight": "No cards were found, so there is not enough pricing data to generate insights yet.",
+            "highlights": [
+                "Add cards to your collection to unlock set and value trend insights.",
+            ],
+        }
+
+    known_total = float(stats.get("known_value_total_usd") or 0.0)
+    priced_card_count = int(stats.get("priced_card_count") or 0)
+    top_set_name = str(stats.get("top_set_name") or "").strip()
+    top_set_value = float(stats.get("top_set_value_usd") or 0.0)
+    added_last_30 = int(stats.get("added_last_30_days") or 0)
+    added_last_30_value = float(stats.get("added_last_30_days_value_usd") or 0.0)
+    top_card = (stats.get("top_cards_by_value") or [{}])[0]
+    top_card_name = str(top_card.get("name") or "N/A")
+    top_card_value = float(top_card.get("total_value_usd") or 0.0)
+
+    set_sentence = (
+        f"The strongest set right now is {top_set_name} at about ${top_set_value:,.2f}."
+        if top_set_name
+        else "No single set has a clear lead yet."
+    )
+    growth_sentence = (
+        f"In the last 30 days you added {added_last_30} cards worth roughly ${added_last_30_value:,.2f}."
+        if added_last_30 > 0
+        else "No recent additions were detected in the last 30 days."
+    )
+    insight = (
+        f"Your tracked collection value is about ${known_total:,.2f} across {card_count} cards "
+        f"({priced_card_count} with prices). {set_sentence} {growth_sentence}"
+    )
+
+    highlights = [
+        f"Top value card right now: {top_card_name} (${top_card_value:,.2f}).",
+        f"Tracked value vs budget (${budget_usd:,.0f}): ${known_total:,.2f}.",
+        set_sentence,
+        (
+            "Forward view: if your 30-day add pace holds, collection value should keep trending up in the near term."
+            if added_last_30 > 0
+            else "Forward view: growth may stay flat unless you add new cards or prices re-rate higher."
+        ),
+    ]
+    return {"source": "deterministic", "insight": insight, "highlights": highlights[:4]}
+
+
+def _run_llm_pricing_analyst(stats: dict[str, Any], budget_usd: float) -> dict[str, Any]:
+    client, deployment = _azure_openai_client()
+    response = client.responses.create(
+        model=deployment,
+        input=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a Pokemon card market analyst. "
+                    "Given collection stats, return strict JSON only with keys "
+                    "'insight' and 'highlights'. 'insight' must be one concise paragraph. "
+                    "'highlights' must be an array of 2 to 4 concise bullets. "
+                    "Write in analyst tone and include a short forward-looking market view with confidence language "
+                    "(for example: low/moderate/high confidence). "
+                    "Do not promise outcomes, do not give financial advice, and do not include markdown."
+                ),
+            },
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "budget_usd": budget_usd,
+                        "stats": stats,
+                    },
+                    ensure_ascii=True,
+                ),
+            },
+        ],
+    )
+    return _extract_json_object(getattr(response, "output_text", ""))
+
+
+def generate_pricing_insight(
+    cards: list[dict[str, Any]],
+    *,
+    budget_usd: float = DEFAULT_BUDGET_USD,
+) -> dict[str, Any]:
+    cache_key = _pricing_insight_cache_key(cards, budget_usd)
+    cached = _PRICING_INSIGHT_CACHE.get(cache_key)
+    if cached is not None:
+        return deepcopy(cached)
+
+    stats = _pricing_card_stats(cards)
+    fallback = _deterministic_pricing_insight(stats, budget_usd)
+
+    try:
+        model_payload = _run_llm_pricing_analyst(stats, budget_usd)
+        insight = str(model_payload.get("insight") or "").strip()
+        raw_highlights = model_payload.get("highlights")
+        highlights = (
+            [str(item).strip() for item in raw_highlights if str(item).strip()]
+            if isinstance(raw_highlights, list)
+            else []
+        )
+        if not insight:
+            response = {**fallback, "stats": stats}
+            _store_pricing_insight_cache(cache_key, response)
+            return response
+        if not highlights:
+            highlights = fallback["highlights"]
+        response = {
+            "source": "llm",
+            "insight": insight,
+            "highlights": highlights[:4],
+            "stats": stats,
+        }
+        _store_pricing_insight_cache(cache_key, response)
+        return response
+    except Exception:
+        response = {**fallback, "stats": stats}
+        _store_pricing_insight_cache(cache_key, response)
+        return response
+
+
 def apply_model_recommendations(
     recommendation_candidate_groups: list[dict[str, Any]],
     model_payload: dict[str, Any] | None = None,
     profile: dict[str, Any] | None = None,
     budget_usd: float = DEFAULT_BUDGET_USD,
+    budget_policy: str = "soft_cap",
 ) -> dict[str, Any]:
     candidates_by_group: dict[str, dict[str, dict[str, Any]]] = {}
     for group in recommendation_candidate_groups:
@@ -1071,7 +1364,11 @@ def apply_model_recommendations(
 
     summary = str((model_payload or {}).get("profile_summary") or "").strip()
     if not summary:
-        summary = _deterministic_profile_summary(profile or {}, budget_usd)
+        summary = _deterministic_profile_summary(
+            profile or {},
+            budget_usd,
+            budget_policy,
+        )
 
     finalized_groups: list[dict[str, Any]] = []
     flattened_recommendations: list[dict[str, Any]] = []
@@ -1132,6 +1429,33 @@ def apply_model_recommendations(
             flattened_recommendations.append(finalized_card)
             used_card_ids.add(card_id)
 
+        # If this bucket remains empty because all viable cards were consumed by
+        # prior groups, allow overlap as a last resort to avoid blank sections.
+        if len(finalized_cards) == 0 and target_count > 0:
+            for card in group.get("candidates", []):
+                if len(finalized_cards) >= target_count:
+                    break
+                card_id = str(card.get("card_id") or "").strip()
+                if not card_id:
+                    continue
+                finalized_card = {
+                    "card_id": card.get("card_id"),
+                    "name": card.get("name"),
+                    "set_id": card.get("set_id"),
+                    "set_name": card.get("set_name") or card.get("set_id"),
+                    "card_number": card.get("card_number"),
+                    "rarity": card.get("rarity"),
+                    "price_usd": _as_float(card.get("price_usd")),
+                    "price_status": card.get("price_status")
+                    or price_status_for_budget(_as_float(card.get("price_usd")), budget_usd),
+                    "image_url": card.get("image_url"),
+                    "reason": str(card.get("deterministic_reason") or "Strong fit for your collection."),
+                    "driver_key": card.get("driver_key") or group_key,
+                }
+                finalized_cards.append(finalized_card)
+                flattened_recommendations.append(finalized_card)
+                used_card_ids.add(card_id)
+
         finalized_groups.append(
             {
                 "key": group_key,
@@ -1154,6 +1478,7 @@ def recommend_cards(
     user_id: str | None = None,
     csv_path: str | os.PathLike[str] | None = None,
     budget_usd: float = DEFAULT_BUDGET_USD,
+    budget_policy: str = "soft_cap",
     limit: int = DEFAULT_LIMIT,
     force_refresh: bool = False,
 ) -> dict[str, Any]:
@@ -1161,6 +1486,9 @@ def recommend_cards(
     normalized_source = (source or "supabase").strip().lower()
     if normalized_source not in {"supabase", "csv"}:
         raise ValueError("source must be 'supabase' or 'csv'")
+    normalized_budget_policy = (budget_policy or "soft_cap").strip().lower()
+    if normalized_budget_policy not in ALLOWED_BUDGET_POLICIES:
+        normalized_budget_policy = "soft_cap"
     limit = max(1, min(int(limit), DEFAULT_LIMIT))
 
     collection_start = time.perf_counter()
@@ -1177,6 +1505,7 @@ def recommend_cards(
         csv_path=csv_path,
         budget_usd=budget_usd,
         limit=limit,
+        budget_policy=normalized_budget_policy,
         collection_signature=collection_signature,
     )
     cached = None if force_refresh else _get_cached_recommendation(cache_key)
@@ -1199,6 +1528,7 @@ def recommend_cards(
         response = {
             "source": normalized_source,
             "budget_usd": float(budget_usd),
+            "budget_policy": normalized_budget_policy,
             "profile": profile,
             "profile_summary": "No cards found in the collection yet, so there is not enough signal to recommend next pickups.",
             "recommendations": [],
@@ -1226,6 +1556,7 @@ def recommend_cards(
         profile,
         candidate_pool,
         budget_usd,
+        normalized_budget_policy,
         limit=limit,
     )
     candidate_count = sum(
@@ -1236,8 +1567,12 @@ def recommend_cards(
         response = {
             "source": normalized_source,
             "budget_usd": float(budget_usd),
+            "budget_policy": normalized_budget_policy,
             "profile": profile,
-            "profile_summary": _deterministic_profile_summary(profile, budget_usd),
+            "profile_summary": (
+                f"{_deterministic_profile_summary(profile, budget_usd, normalized_budget_policy)} "
+                f"Current budget policy: {_budget_policy_summary_text(normalized_budget_policy)}."
+            ),
             "recommendations": [],
             "recommendation_groups": _empty_recommendation_groups(limit),
         }
@@ -1258,7 +1593,13 @@ def recommend_cards(
     model_payload: dict[str, Any] | None = None
     gpt_start = time.perf_counter()
     try:
-        model_payload = _run_llm_recommender(profile, recommendation_candidate_groups, budget_usd, limit)
+        model_payload = _run_llm_recommender(
+            profile,
+            recommendation_candidate_groups,
+            budget_usd,
+            normalized_budget_policy,
+            limit,
+        )
     except Exception:
         model_payload = None
     gpt_ms = round((time.perf_counter() - gpt_start) * 1000, 2)
@@ -1268,13 +1609,18 @@ def recommend_cards(
         model_payload=model_payload,
         profile=profile,
         budget_usd=budget_usd,
+        budget_policy=normalized_budget_policy,
     )
     if not finalized["recommendations"]:
         response = {
             "source": normalized_source,
             "budget_usd": float(budget_usd),
+            "budget_policy": normalized_budget_policy,
             "profile": profile,
-            "profile_summary": _deterministic_profile_summary(profile, budget_usd),
+            "profile_summary": (
+                f"{_deterministic_profile_summary(profile, budget_usd, normalized_budget_policy)} "
+                f"Current budget policy: {_budget_policy_summary_text(normalized_budget_policy)}."
+            ),
             "recommendations": [],
             "recommendation_groups": _empty_recommendation_groups(limit),
         }
@@ -1295,6 +1641,7 @@ def recommend_cards(
     response = {
         "source": normalized_source,
         "budget_usd": float(budget_usd),
+        "budget_policy": normalized_budget_policy,
         "profile": profile,
         "profile_summary": finalized["profile_summary"],
         "recommendations": finalized["recommendations"],

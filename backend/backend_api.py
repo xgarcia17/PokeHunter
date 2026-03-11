@@ -21,6 +21,7 @@ except ImportError:  # pragma: no cover - optional local dependency
 from recommendation_engine.recommendation_engine import (
     DEFAULT_BUDGET_USD,
     DEFAULT_LIMIT,
+    generate_pricing_insight,
     recommend_cards,
 )
 
@@ -75,8 +76,22 @@ class RecommendationRequest(BaseModel):
     user_id: str | None = None
     csv_path: str | None = None
     budget_usd: float = Field(default=DEFAULT_BUDGET_USD, ge=0)
+    budget_policy: str = "soft_cap"
     limit: int = Field(default=DEFAULT_LIMIT, ge=1, le=15)
     force_refresh: bool = False
+
+
+class PricingInsightCard(BaseModel):
+    name: str | None = None
+    set_name: str | None = None
+    price_usd: float | None = None
+    quantity: int = Field(default=1, ge=1)
+    date_added: str | None = None
+
+
+class PricingInsightRequest(BaseModel):
+    cards: list[PricingInsightCard] = Field(default_factory=list)
+    budget_usd: float = Field(default=DEFAULT_BUDGET_USD, ge=0)
 
 
 def ensure_identification_dependencies_available() -> None:
@@ -344,6 +359,7 @@ async def recommendations_route(body: RecommendationRequest) -> dict:
             user_id=body.user_id,
             csv_path=body.csv_path,
             budget_usd=body.budget_usd,
+            budget_policy=body.budget_policy,
             limit=body.limit,
             force_refresh=body.force_refresh,
         )
@@ -351,6 +367,19 @@ async def recommendations_route(body: RecommendationRequest) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except RequestException as exc:
         raise HTTPException(status_code=502, detail=f"Recommendation data request failed: {exc}") from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/pricing-insight")
+async def pricing_insight_route(body: PricingInsightRequest) -> dict:
+    try:
+        return generate_pricing_insight(
+            [card.model_dump() for card in body.cards],
+            budget_usd=body.budget_usd,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

@@ -5,4 +5,5 @@ python-multipart
 python-dotenv
 requests
 openai
-tcgdexsdk
+# Optional: tcgdex Python SDK is not available on PyPI in this environment.
+# Recommendation engine handles missing TCGdex dependency gracefully.

@@ -12,6 +12,8 @@ const TCGDEX_BASE_URL = "https://api.tcgdex.net/v2/en";
 const EUR_TO_USD_RATE = 1.08;
 const PRICE_REFRESH_WINDOW_MS = 4 * 24 * 60 * 60 * 1000;
 const STORAGE_BUCKET = process.env.STORAGE_BUCKET ?? "pokemon-images";
+const TCGDEX_FETCH_TIMEOUT_MS = 12_000;
+const TCGDEX_MAX_ATTEMPTS = 2;
 
 export type CardRecord = {
   id: string;
@@ -30,6 +32,7 @@ type SetRecord = {
 type CollectionRow = {
   card_id: string;
   quantity: number;
+  date_added: string | null;
   price_usd: number | null;
   price_last_updated: string | null;
 };
@@ -128,6 +131,7 @@ export type TopPricedCard = {
   setName: string;
   priceUsd: number;
   quantity: number;
+  dateAdded: string | null;
   totalValueUsd: number;
   priceLastUpdated: string | null;
   imageUrl: string | null;
@@ -276,7 +280,7 @@ async function fetchSupabaseSet(setId: string): Promise<SetRecord | null> {
 async function fetchCollectionRows(userId: string): Promise<CollectionRow[]> {
   const url = `${SUPABASE_URL}/rest/v1/collections?user_id=eq.${encodeURIComponent(
     userId,
-  )}&select=card_id,quantity,price_usd,price_last_updated`;
+  )}&select=card_id,quantity,date_added,price_usd,price_last_updated`;
   const res = await fetch(url, {
     headers: supabaseHeaders(),
     cache: "no-store",
@@ -373,20 +377,43 @@ async function fetchJustTcg<T>(
 
 async function fetchTcgdexPricing(cardId: string): Promise<TopPricedCard["tcgdexPricing"]> {
   const url = `${TCGDEX_BASE_URL}/cards/${encodeURIComponent(cardId)}`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) return null;
+  for (let attempt = 1; attempt <= TCGDEX_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const res = await fetch(url, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(TCGDEX_FETCH_TIMEOUT_MS),
+      });
+      if (!res.ok) return null;
 
-  const payload = (await res.json()) as TcgdexCardResponse;
-  const cardmarket = payload.pricing?.cardmarket;
-  if (!cardmarket) return null;
+      const payload = (await res.json()) as TcgdexCardResponse;
+      const cardmarket = payload.pricing?.cardmarket;
+      if (!cardmarket) return null;
 
-  return {
-    updated: cardmarket.updated ?? null,
-    eurToUsdRate: EUR_TO_USD_RATE,
-    avgUsd: convertEurToUsd(cardmarket.avg),
-    lowUsd: convertEurToUsd(cardmarket.low),
-    trendUsd: convertEurToUsd(cardmarket.trend),
-  };
+      return {
+        updated: cardmarket.updated ?? null,
+        eurToUsdRate: EUR_TO_USD_RATE,
+        avgUsd: convertEurToUsd(cardmarket.avg),
+        lowUsd: convertEurToUsd(cardmarket.low),
+        trendUsd: convertEurToUsd(cardmarket.trend),
+      };
+    } catch (error: unknown) {
+      const code =
+        (error as { code?: string } | null)?.code ??
+        ((error as { cause?: { code?: string } } | null)?.cause?.code ?? "");
+      const canRetry =
+        attempt < TCGDEX_MAX_ATTEMPTS &&
+        (code === "UND_ERR_CONNECT_TIMEOUT" ||
+          code === "UND_ERR_HEADERS_TIMEOUT" ||
+          code === "UND_ERR_BODY_TIMEOUT" ||
+          code === "ECONNRESET" ||
+          code === "ETIMEDOUT" ||
+          error instanceof TypeError);
+      if (canRetry) continue;
+      return null;
+    }
+  }
+
+  return null;
 }
 
 function pokemonTcgHeaders() {
@@ -966,6 +993,7 @@ export async function fetchTopValuableCardsWithHistory(
         setName: resolvedSet.name,
         priceUsd: Number(highestPricedVariant.price.toFixed(2)),
         quantity: 1,
+        dateAdded: null,
         totalValueUsd: Number(highestPricedVariant.price.toFixed(2)),
         priceLastUpdated: null,
         imageUrl: null,
@@ -1044,6 +1072,7 @@ export async function fetchCollectionTopValuableCardsWithHistory(
       return {
         card,
         quantity: row.quantity,
+        dateAdded: row.date_added ?? null,
         priceUsd: card.price_usd ?? row.price_usd ?? null,
         priceLastUpdated: card.price_last_updated ?? row.price_last_updated ?? null,
         setName: setsById.get(card.set_id)?.name ?? card.set_id,
@@ -1055,6 +1084,7 @@ export async function fetchCollectionTopValuableCardsWithHistory(
       ): entry is {
         card: CardRecord;
         quantity: number;
+        dateAdded: string | null;
         priceUsd: number | null;
         priceLastUpdated: string | null;
         setName: string;
@@ -1122,6 +1152,7 @@ export async function fetchCollectionTopValuableCardsWithHistory(
         setName: entry.setName,
         priceUsd: entry.priceUsd ?? 0,
         quantity: entry.quantity,
+        dateAdded: entry.dateAdded,
         totalValueUsd: Number(((entry.priceUsd ?? 0) * entry.quantity).toFixed(2)),
         priceLastUpdated: entry.priceLastUpdated,
         imageUrl: toPublicImageUrl(imageByCardId.get(entry.card.id) ?? null),
