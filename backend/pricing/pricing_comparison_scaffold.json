@@ -1,0 +1,1082 @@
+[
+  {
+    "name": "Squirtle - 007/165",
+    "number": "007",
+    "tcgplayer_market_price_usd": 0.18,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Gengar",
+    "number": "094",
+    "tcgplayer_market_price_usd": 2.01,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Blastoise ex - 009/165",
+    "number": "009",
+    "tcgplayer_market_price_usd": 1.44,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "151 Booster Pack",
+    "number": null,
+    "tcgplayer_market_price_usd": 24.64,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Mewtwo",
+    "number": "150",
+    "tcgplayer_market_price_usd": 1.23,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Ditto",
+    "number": "132",
+    "tcgplayer_market_price_usd": 0.4,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Venusaur ex - 003/165",
+    "number": "003",
+    "tcgplayer_market_price_usd": 1.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Dragonite",
+    "number": "149",
+    "tcgplayer_market_price_usd": 0.5,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Psyduck - 054/165",
+    "number": "054",
+    "tcgplayer_market_price_usd": 0.17,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Bulbasaur - 001/165",
+    "number": "001",
+    "tcgplayer_market_price_usd": 0.21,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Pikachu - 025/165",
+    "number": "025",
+    "tcgplayer_market_price_usd": 0.24,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Magnemite",
+    "number": "081",
+    "tcgplayer_market_price_usd": 0.11,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Slowpoke",
+    "number": "079",
+    "tcgplayer_market_price_usd": 0.12,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Charmander - 004/165",
+    "number": "004",
+    "tcgplayer_market_price_usd": 0.18,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Wartortle - 008/165",
+    "number": "008",
+    "tcgplayer_market_price_usd": 0.23,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Snorlax",
+    "number": "143",
+    "tcgplayer_market_price_usd": 0.2,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Code Card - 151 Booster Pack",
+    "number": null,
+    "tcgplayer_market_price_usd": 0.03,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Beedrill",
+    "number": "015",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Chansey",
+    "number": "113",
+    "tcgplayer_market_price_usd": 0.27,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Gastly",
+    "number": "092",
+    "tcgplayer_market_price_usd": 0.11,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Mew ex - 151/165",
+    "number": "151",
+    "tcgplayer_market_price_usd": 9.39,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Articuno",
+    "number": "144",
+    "tcgplayer_market_price_usd": 0.3,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Kabutops",
+    "number": "141",
+    "tcgplayer_market_price_usd": 0.25,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Gyarados",
+    "number": "130",
+    "tcgplayer_market_price_usd": 0.32,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Mr. Mime - 122/165",
+    "number": "122",
+    "tcgplayer_market_price_usd": 0.27,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Aerodactyl",
+    "number": "142",
+    "tcgplayer_market_price_usd": 0.28,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Ivysaur - 002/165",
+    "number": "002",
+    "tcgplayer_market_price_usd": 0.22,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Drowzee",
+    "number": "096",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Omastar",
+    "number": "139",
+    "tcgplayer_market_price_usd": 0.18,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Weezing",
+    "number": "110",
+    "tcgplayer_market_price_usd": 0.18,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Vaporeon",
+    "number": "134",
+    "tcgplayer_market_price_usd": 0.2984,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Machamp",
+    "number": "068",
+    "tcgplayer_market_price_usd": 0.23,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Electabuzz",
+    "number": "125",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Nidoking - 034/165",
+    "number": "034",
+    "tcgplayer_market_price_usd": 0.24,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Vulpix",
+    "number": "037",
+    "tcgplayer_market_price_usd": 0.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Jolteon",
+    "number": "135",
+    "tcgplayer_market_price_usd": 0.26,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Poliwag",
+    "number": "060",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Dragonair - 148/165",
+    "number": "148",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Jigglypuff",
+    "number": "039",
+    "tcgplayer_market_price_usd": 0.14,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Ninetales ex - 038/165",
+    "number": "038",
+    "tcgplayer_market_price_usd": 1.63,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Electrode",
+    "number": "101",
+    "tcgplayer_market_price_usd": 0.21,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Raichu",
+    "number": "026",
+    "tcgplayer_market_price_usd": 0.23,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Dodrio",
+    "number": "085",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Marowak",
+    "number": "105",
+    "tcgplayer_market_price_usd": 0.23,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Clefairy",
+    "number": "035",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Magikarp",
+    "number": "129",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Haunter",
+    "number": "093",
+    "tcgplayer_market_price_usd": 0.18,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Cubone",
+    "number": "104",
+    "tcgplayer_market_price_usd": 0.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Charizard ex - 006/165",
+    "number": "006",
+    "tcgplayer_market_price_usd": 8.37,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Shellder",
+    "number": "090",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Moltres",
+    "number": "146",
+    "tcgplayer_market_price_usd": 0.27,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Diglett",
+    "number": "050",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Magmar",
+    "number": "126",
+    "tcgplayer_market_price_usd": 0.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Voltorb",
+    "number": "100",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Weedle",
+    "number": "013",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Growlithe",
+    "number": "058",
+    "tcgplayer_market_price_usd": 0.13,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Eevee",
+    "number": "133",
+    "tcgplayer_market_price_usd": 0.22,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Caterpie - 010/165",
+    "number": "010",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Starmie",
+    "number": "121",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Staryu",
+    "number": "120",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Pidgey",
+    "number": "016",
+    "tcgplayer_market_price_usd": 0.17,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Tentacool",
+    "number": "072",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Lickitung",
+    "number": "108",
+    "tcgplayer_market_price_usd": 0.08,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Ekans",
+    "number": "023",
+    "tcgplayer_market_price_usd": 0.08,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Vileplume",
+    "number": "045",
+    "tcgplayer_market_price_usd": 0.27,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Horsea",
+    "number": "116",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Tangela - 114/165",
+    "number": "114",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Abra",
+    "number": "063",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Goldeen",
+    "number": "118",
+    "tcgplayer_market_price_usd": 0.04,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Erika's Invitation - 160/165",
+    "number": "160",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Bellsprout",
+    "number": "069",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Magneton",
+    "number": "082",
+    "tcgplayer_market_price_usd": 0.11,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Charmeleon - 005/165",
+    "number": "005",
+    "tcgplayer_market_price_usd": 0.2,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Geodude",
+    "number": "074",
+    "tcgplayer_market_price_usd": 0.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Paras",
+    "number": "046",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Scyther",
+    "number": "123",
+    "tcgplayer_market_price_usd": 0.19,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Hitmonchan",
+    "number": "107",
+    "tcgplayer_market_price_usd": 0.16,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Bill's Transfer - 156/165",
+    "number": "156",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Clefable",
+    "number": "036",
+    "tcgplayer_market_price_usd": 0.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Flareon",
+    "number": "136",
+    "tcgplayer_market_price_usd": 0.3,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Kangaskhan ex - 115/165",
+    "number": "115",
+    "tcgplayer_market_price_usd": 1.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Golem ex - 076/165",
+    "number": "076",
+    "tcgplayer_market_price_usd": 1.14,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Rattata",
+    "number": "019",
+    "tcgplayer_market_price_usd": 0.08,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Cloyster",
+    "number": "091",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Grimer",
+    "number": "088",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Seadra",
+    "number": "117",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Zubat",
+    "number": "041",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Alakazam ex - 065/165",
+    "number": "065",
+    "tcgplayer_market_price_usd": 1.37,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Machop",
+    "number": "066",
+    "tcgplayer_market_price_usd": 0.14,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Exeggcute",
+    "number": "102",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Rhyhorn",
+    "number": "111",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Krabby",
+    "number": "098",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Spearow",
+    "number": "021",
+    "tcgplayer_market_price_usd": 0.12,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Kabuto",
+    "number": "140",
+    "tcgplayer_market_price_usd": 0.14,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Arcanine",
+    "number": "059",
+    "tcgplayer_market_price_usd": 0.17,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Mankey",
+    "number": "056",
+    "tcgplayer_market_price_usd": 0.05,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Pidgeotto",
+    "number": "017",
+    "tcgplayer_market_price_usd": 0.21,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "151 Booster Bundle",
+    "number": null,
+    "tcgplayer_market_price_usd": 178.85,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Primeape",
+    "number": "057",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Meowth",
+    "number": "052",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Pinsir",
+    "number": "127",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Golbat",
+    "number": "042",
+    "tcgplayer_market_price_usd": 0.09,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Nidoran M",
+    "number": "032",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Jynx ex - 124/165",
+    "number": "124",
+    "tcgplayer_market_price_usd": 1.1,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Butterfree",
+    "number": "012",
+    "tcgplayer_market_price_usd": 0.12,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Arbok ex - 024/165",
+    "number": "024",
+    "tcgplayer_market_price_usd": 1.2,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Tentacruel",
+    "number": "073",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Persian",
+    "number": "053",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Hypno",
+    "number": "097",
+    "tcgplayer_market_price_usd": 0.12,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Wigglytuff ex - 040/165",
+    "number": "040",
+    "tcgplayer_market_price_usd": 1.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Metapod",
+    "number": "011",
+    "tcgplayer_market_price_usd": 0.16,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Zapdos ex - 145/165",
+    "number": "145",
+    "tcgplayer_market_price_usd": 1.34,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Ponyta",
+    "number": "077",
+    "tcgplayer_market_price_usd": 0.08,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Porygon",
+    "number": "137",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Leftovers",
+    "number": "163",
+    "tcgplayer_market_price_usd": 0.11,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Omanyte - 138/165",
+    "number": "138",
+    "tcgplayer_market_price_usd": 0.16,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Exeggutor",
+    "number": "103",
+    "tcgplayer_market_price_usd": 0.15,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Farfetch'd",
+    "number": "083",
+    "tcgplayer_market_price_usd": 0.06,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Kakuna",
+    "number": "014",
+    "tcgplayer_market_price_usd": 0.12,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  },
+  {
+    "name": "Sandshrew",
+    "number": "027",
+    "tcgplayer_market_price_usd": 0.07,
+    "api_price_usd": null,
+    "delta_usd": null,
+    "matched": false,
+    "notes": "API error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /pricing-insight (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8000): Failed to establish a new connection: [Errno 61] Connection refused\"))"
+  }
+]

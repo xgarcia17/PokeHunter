@@ -1,0 +1,962 @@
+[
+  {
+    "product_id": 502548,
+    "name": "Squirtle - 007/165",
+    "number": "007",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Squirtle 007 165"
+  },
+  {
+    "product_id": 516663,
+    "name": "Gengar",
+    "number": "094",
+    "market_price_usd": 2.01,
+    "raw_price_text": "2.01",
+    "product_url": "Gengar"
+  },
+  {
+    "product_id": 502551,
+    "name": "Blastoise ex - 009/165",
+    "number": "009",
+    "market_price_usd": 1.44,
+    "raw_price_text": "1.44",
+    "product_url": "Blastoise ex 009 165"
+  },
+  {
+    "product_id": 504467,
+    "name": "151 Booster Pack",
+    "number": null,
+    "market_price_usd": 24.64,
+    "raw_price_text": "24.64",
+    "product_url": "151 Booster Pack"
+  },
+  {
+    "product_id": 516713,
+    "name": "Mewtwo",
+    "number": "150",
+    "market_price_usd": 1.23,
+    "raw_price_text": "1.23",
+    "product_url": "Mewtwo"
+  },
+  {
+    "product_id": 516695,
+    "name": "Ditto",
+    "number": "132",
+    "market_price_usd": 0.4,
+    "raw_price_text": "0.4",
+    "product_url": "Ditto"
+  },
+  {
+    "product_id": 502554,
+    "name": "Venusaur ex - 003/165",
+    "number": "003",
+    "market_price_usd": 1.06,
+    "raw_price_text": "1.06",
+    "product_url": "Venusaur ex 003 165"
+  },
+  {
+    "product_id": 516712,
+    "name": "Dragonite",
+    "number": "149",
+    "market_price_usd": 0.5,
+    "raw_price_text": "0.5",
+    "product_url": "Dragonite"
+  },
+  {
+    "product_id": 516231,
+    "name": "Psyduck - 054/165",
+    "number": "054",
+    "market_price_usd": 0.17,
+    "raw_price_text": "0.17",
+    "product_url": "Psyduck 054 165"
+  },
+  {
+    "product_id": 502552,
+    "name": "Bulbasaur - 001/165",
+    "number": "001",
+    "market_price_usd": 0.21,
+    "raw_price_text": "0.21",
+    "product_url": "Bulbasaur 001 165"
+  },
+  {
+    "product_id": 517033,
+    "name": "Pikachu - 025/165",
+    "number": "025",
+    "market_price_usd": 0.24,
+    "raw_price_text": "0.24",
+    "product_url": "Pikachu 025 165"
+  },
+  {
+    "product_id": 516648,
+    "name": "Magnemite",
+    "number": "081",
+    "market_price_usd": 0.11,
+    "raw_price_text": "0.11",
+    "product_url": "Magnemite"
+  },
+  {
+    "product_id": 516650,
+    "name": "Slowpoke",
+    "number": "079",
+    "market_price_usd": 0.12,
+    "raw_price_text": "0.12",
+    "product_url": "Slowpoke"
+  },
+  {
+    "product_id": 502555,
+    "name": "Charmander - 004/165",
+    "number": "004",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Charmander 004 165"
+  },
+  {
+    "product_id": 502550,
+    "name": "Wartortle - 008/165",
+    "number": "008",
+    "market_price_usd": 0.23,
+    "raw_price_text": "0.23",
+    "product_url": "Wartortle 008 165"
+  },
+  {
+    "product_id": 516706,
+    "name": "Snorlax",
+    "number": "143",
+    "market_price_usd": 0.2,
+    "raw_price_text": "0.2",
+    "product_url": "Snorlax"
+  },
+  {
+    "product_id": 517267,
+    "name": "Code Card - 151 Booster Pack",
+    "number": null,
+    "market_price_usd": 0.03,
+    "raw_price_text": "0.03",
+    "product_url": "Code Card 151 Booster Pack"
+  },
+  {
+    "product_id": 502564,
+    "name": "Beedrill",
+    "number": "015",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Beedrill"
+  },
+  {
+    "product_id": 516575,
+    "name": "Chansey",
+    "number": "113",
+    "market_price_usd": 0.27,
+    "raw_price_text": "0.27",
+    "product_url": "Chansey"
+  },
+  {
+    "product_id": 516661,
+    "name": "Gastly",
+    "number": "092",
+    "market_price_usd": 0.11,
+    "raw_price_text": "0.11",
+    "product_url": "Gastly"
+  },
+  {
+    "product_id": 516566,
+    "name": "Mew ex - 151/165",
+    "number": "151",
+    "market_price_usd": 9.39,
+    "raw_price_text": "9.39",
+    "product_url": "Mew ex 151 165"
+  },
+  {
+    "product_id": 516707,
+    "name": "Articuno",
+    "number": "144",
+    "market_price_usd": 0.3,
+    "raw_price_text": "0.3",
+    "product_url": "Articuno"
+  },
+  {
+    "product_id": 516704,
+    "name": "Kabutops",
+    "number": "141",
+    "market_price_usd": 0.25,
+    "raw_price_text": "0.25",
+    "product_url": "Kabutops"
+  },
+  {
+    "product_id": 516693,
+    "name": "Gyarados",
+    "number": "130",
+    "market_price_usd": 0.32,
+    "raw_price_text": "0.32",
+    "product_url": "Gyarados"
+  },
+  {
+    "product_id": 516685,
+    "name": "Mr. Mime - 122/165",
+    "number": "122",
+    "market_price_usd": 0.27,
+    "raw_price_text": "0.27",
+    "product_url": "Mr Mime 122 165"
+  },
+  {
+    "product_id": 516705,
+    "name": "Aerodactyl",
+    "number": "142",
+    "market_price_usd": 0.28,
+    "raw_price_text": "0.28",
+    "product_url": "Aerodactyl"
+  },
+  {
+    "product_id": 502553,
+    "name": "Ivysaur - 002/165",
+    "number": "002",
+    "market_price_usd": 0.22,
+    "raw_price_text": "0.22",
+    "product_url": "Ivysaur 002 165"
+  },
+  {
+    "product_id": 516665,
+    "name": "Drowzee",
+    "number": "096",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Drowzee"
+  },
+  {
+    "product_id": 516702,
+    "name": "Omastar",
+    "number": "139",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Omastar"
+  },
+  {
+    "product_id": 516680,
+    "name": "Weezing",
+    "number": "110",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Weezing"
+  },
+  {
+    "product_id": 516697,
+    "name": "Vaporeon",
+    "number": "134",
+    "market_price_usd": 0.2984,
+    "raw_price_text": "0.2984",
+    "product_url": "Vaporeon"
+  },
+  {
+    "product_id": 516385,
+    "name": "Machamp",
+    "number": "068",
+    "market_price_usd": 0.23,
+    "raw_price_text": "0.23",
+    "product_url": "Machamp"
+  },
+  {
+    "product_id": 516688,
+    "name": "Electabuzz",
+    "number": "125",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Electabuzz"
+  },
+  {
+    "product_id": 516024,
+    "name": "Nidoking - 034/165",
+    "number": "034",
+    "market_price_usd": 0.24,
+    "raw_price_text": "0.24",
+    "product_url": "Nidoking 034 165"
+  },
+  {
+    "product_id": 516060,
+    "name": "Vulpix",
+    "number": "037",
+    "market_price_usd": 0.1,
+    "raw_price_text": "0.1",
+    "product_url": "Vulpix"
+  },
+  {
+    "product_id": 516698,
+    "name": "Jolteon",
+    "number": "135",
+    "market_price_usd": 0.26,
+    "raw_price_text": "0.26",
+    "product_url": "Jolteon"
+  },
+  {
+    "product_id": 516249,
+    "name": "Poliwag",
+    "number": "060",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Poliwag"
+  },
+  {
+    "product_id": 516711,
+    "name": "Dragonair - 148/165",
+    "number": "148",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Dragonair 148 165"
+  },
+  {
+    "product_id": 516108,
+    "name": "Jigglypuff",
+    "number": "039",
+    "market_price_usd": 0.14,
+    "raw_price_text": "0.14",
+    "product_url": "Jigglypuff"
+  },
+  {
+    "product_id": 516072,
+    "name": "Ninetales ex - 038/165",
+    "number": "038",
+    "market_price_usd": 1.63,
+    "raw_price_text": "1.63",
+    "product_url": "Ninetales ex 038 165"
+  },
+  {
+    "product_id": 516670,
+    "name": "Electrode",
+    "number": "101",
+    "market_price_usd": 0.21,
+    "raw_price_text": "0.21",
+    "product_url": "Electrode"
+  },
+  {
+    "product_id": 515957,
+    "name": "Raichu",
+    "number": "026",
+    "market_price_usd": 0.23,
+    "raw_price_text": "0.23",
+    "product_url": "Raichu"
+  },
+  {
+    "product_id": 516654,
+    "name": "Dodrio",
+    "number": "085",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Dodrio"
+  },
+  {
+    "product_id": 516674,
+    "name": "Marowak",
+    "number": "105",
+    "market_price_usd": 0.23,
+    "raw_price_text": "0.23",
+    "product_url": "Marowak"
+  },
+  {
+    "product_id": 516030,
+    "name": "Clefairy",
+    "number": "035",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Clefairy"
+  },
+  {
+    "product_id": 516692,
+    "name": "Magikarp",
+    "number": "129",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Magikarp"
+  },
+  {
+    "product_id": 516662,
+    "name": "Haunter",
+    "number": "093",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Haunter"
+  },
+  {
+    "product_id": 516673,
+    "name": "Cubone",
+    "number": "104",
+    "market_price_usd": 0.1,
+    "raw_price_text": "0.1",
+    "product_url": "Cubone"
+  },
+  {
+    "product_id": 502558,
+    "name": "Charizard ex - 006/165",
+    "number": "006",
+    "market_price_usd": 8.37,
+    "raw_price_text": "8.37",
+    "product_url": "Charizard ex 006 165"
+  },
+  {
+    "product_id": 516659,
+    "name": "Shellder",
+    "number": "090",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Shellder"
+  },
+  {
+    "product_id": 516709,
+    "name": "Moltres",
+    "number": "146",
+    "market_price_usd": 0.27,
+    "raw_price_text": "0.27",
+    "product_url": "Moltres"
+  },
+  {
+    "product_id": 516215,
+    "name": "Diglett",
+    "number": "050",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Diglett"
+  },
+  {
+    "product_id": 516689,
+    "name": "Magmar",
+    "number": "126",
+    "market_price_usd": 0.1,
+    "raw_price_text": "0.1",
+    "product_url": "Magmar"
+  },
+  {
+    "product_id": 516669,
+    "name": "Voltorb",
+    "number": "100",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Voltorb"
+  },
+  {
+    "product_id": 502562,
+    "name": "Weedle",
+    "number": "013",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Weedle"
+  },
+  {
+    "product_id": 516247,
+    "name": "Growlithe",
+    "number": "058",
+    "market_price_usd": 0.13,
+    "raw_price_text": "0.13",
+    "product_url": "Growlithe"
+  },
+  {
+    "product_id": 516696,
+    "name": "Eevee",
+    "number": "133",
+    "market_price_usd": 0.22,
+    "raw_price_text": "0.22",
+    "product_url": "Eevee"
+  },
+  {
+    "product_id": 502559,
+    "name": "Caterpie - 010/165",
+    "number": "010",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Caterpie 010 165"
+  },
+  {
+    "product_id": 516684,
+    "name": "Starmie",
+    "number": "121",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Starmie"
+  },
+  {
+    "product_id": 516683,
+    "name": "Staryu",
+    "number": "120",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Staryu"
+  },
+  {
+    "product_id": 502565,
+    "name": "Pidgey",
+    "number": "016",
+    "market_price_usd": 0.17,
+    "raw_price_text": "0.17",
+    "product_url": "Pidgey"
+  },
+  {
+    "product_id": 516565,
+    "name": "Tentacool",
+    "number": "072",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Tentacool"
+  },
+  {
+    "product_id": 516677,
+    "name": "Lickitung",
+    "number": "108",
+    "market_price_usd": 0.08,
+    "raw_price_text": "0.08",
+    "product_url": "Lickitung"
+  },
+  {
+    "product_id": 515955,
+    "name": "Ekans",
+    "number": "023",
+    "market_price_usd": 0.08,
+    "raw_price_text": "0.08",
+    "product_url": "Ekans"
+  },
+  {
+    "product_id": 516159,
+    "name": "Vileplume",
+    "number": "045",
+    "market_price_usd": 0.27,
+    "raw_price_text": "0.27",
+    "product_url": "Vileplume"
+  },
+  {
+    "product_id": 516583,
+    "name": "Horsea",
+    "number": "116",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Horsea"
+  },
+  {
+    "product_id": 516579,
+    "name": "Tangela - 114/165",
+    "number": "114",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Tangela 114 165"
+  },
+  {
+    "product_id": 516268,
+    "name": "Abra",
+    "number": "063",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Abra"
+  },
+  {
+    "product_id": 516681,
+    "name": "Goldeen",
+    "number": "118",
+    "market_price_usd": 0.04,
+    "raw_price_text": "0.04",
+    "product_url": "Goldeen"
+  },
+  {
+    "product_id": 516722,
+    "name": "Erika's Invitation - 160/165",
+    "number": "160",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Erikas Invitation 160 165"
+  },
+  {
+    "product_id": 516560,
+    "name": "Bellsprout",
+    "number": "069",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Bellsprout"
+  },
+  {
+    "product_id": 516649,
+    "name": "Magneton",
+    "number": "082",
+    "market_price_usd": 0.11,
+    "raw_price_text": "0.11",
+    "product_url": "Magneton"
+  },
+  {
+    "product_id": 502557,
+    "name": "Charmeleon - 005/165",
+    "number": "005",
+    "market_price_usd": 0.2,
+    "raw_price_text": "0.2",
+    "product_url": "Charmeleon 005 165"
+  },
+  {
+    "product_id": 516569,
+    "name": "Geodude",
+    "number": "074",
+    "market_price_usd": 0.1,
+    "raw_price_text": "0.1",
+    "product_url": "Geodude"
+  },
+  {
+    "product_id": 516163,
+    "name": "Paras",
+    "number": "046",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Paras"
+  },
+  {
+    "product_id": 516686,
+    "name": "Scyther",
+    "number": "123",
+    "market_price_usd": 0.19,
+    "raw_price_text": "0.19",
+    "product_url": "Scyther"
+  },
+  {
+    "product_id": 516676,
+    "name": "Hitmonchan",
+    "number": "107",
+    "market_price_usd": 0.16,
+    "raw_price_text": "0.16",
+    "product_url": "Hitmonchan"
+  },
+  {
+    "product_id": 516718,
+    "name": "Bill's Transfer - 156/165",
+    "number": "156",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Bills Transfer 156 165"
+  },
+  {
+    "product_id": 516036,
+    "name": "Clefable",
+    "number": "036",
+    "market_price_usd": 0.1,
+    "raw_price_text": "0.1",
+    "product_url": "Clefable"
+  },
+  {
+    "product_id": 516699,
+    "name": "Flareon",
+    "number": "136",
+    "market_price_usd": 0.3,
+    "raw_price_text": "0.3",
+    "product_url": "Flareon"
+  },
+  {
+    "product_id": 516581,
+    "name": "Kangaskhan ex - 115/165",
+    "number": "115",
+    "market_price_usd": 1.09,
+    "raw_price_text": "1.09",
+    "product_url": "Kangaskhan ex 115 165"
+  },
+  {
+    "product_id": 516574,
+    "name": "Golem ex - 076/165",
+    "number": "076",
+    "market_price_usd": 1.14,
+    "raw_price_text": "1.14",
+    "product_url": "Golem ex 076 165"
+  },
+  {
+    "product_id": 502568,
+    "name": "Rattata",
+    "number": "019",
+    "market_price_usd": 0.08,
+    "raw_price_text": "0.08",
+    "product_url": "Rattata"
+  },
+  {
+    "product_id": 516660,
+    "name": "Cloyster",
+    "number": "091",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Cloyster"
+  },
+  {
+    "product_id": 516657,
+    "name": "Grimer",
+    "number": "088",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Grimer"
+  },
+  {
+    "product_id": 516584,
+    "name": "Seadra",
+    "number": "117",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Seadra"
+  },
+  {
+    "product_id": 516150,
+    "name": "Zubat",
+    "number": "041",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Zubat"
+  },
+  {
+    "product_id": 516381,
+    "name": "Alakazam ex - 065/165",
+    "number": "065",
+    "market_price_usd": 1.37,
+    "raw_price_text": "1.37",
+    "product_url": "Alakazam ex 065 165"
+  },
+  {
+    "product_id": 516382,
+    "name": "Machop",
+    "number": "066",
+    "market_price_usd": 0.14,
+    "raw_price_text": "0.14",
+    "product_url": "Machop"
+  },
+  {
+    "product_id": 516671,
+    "name": "Exeggcute",
+    "number": "102",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Exeggcute"
+  },
+  {
+    "product_id": 516570,
+    "name": "Rhyhorn",
+    "number": "111",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Rhyhorn"
+  },
+  {
+    "product_id": 516667,
+    "name": "Krabby",
+    "number": "098",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Krabby"
+  },
+  {
+    "product_id": 502587,
+    "name": "Spearow",
+    "number": "021",
+    "market_price_usd": 0.12,
+    "raw_price_text": "0.12",
+    "product_url": "Spearow"
+  },
+  {
+    "product_id": 516703,
+    "name": "Kabuto",
+    "number": "140",
+    "market_price_usd": 0.14,
+    "raw_price_text": "0.14",
+    "product_url": "Kabuto"
+  },
+  {
+    "product_id": 516248,
+    "name": "Arcanine",
+    "number": "059",
+    "market_price_usd": 0.17,
+    "raw_price_text": "0.17",
+    "product_url": "Arcanine"
+  },
+  {
+    "product_id": 516242,
+    "name": "Mankey",
+    "number": "056",
+    "market_price_usd": 0.05,
+    "raw_price_text": "0.05",
+    "product_url": "Mankey"
+  },
+  {
+    "product_id": 502566,
+    "name": "Pidgeotto",
+    "number": "017",
+    "market_price_usd": 0.21,
+    "raw_price_text": "0.21",
+    "product_url": "Pidgeotto"
+  },
+  {
+    "product_id": 502000,
+    "name": "151 Booster Bundle",
+    "number": null,
+    "market_price_usd": 178.85,
+    "raw_price_text": "178.85",
+    "product_url": "151 Booster Bundle"
+  },
+  {
+    "product_id": 516246,
+    "name": "Primeape",
+    "number": "057",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Primeape"
+  },
+  {
+    "product_id": 516221,
+    "name": "Meowth",
+    "number": "052",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Meowth"
+  },
+  {
+    "product_id": 516690,
+    "name": "Pinsir",
+    "number": "127",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Pinsir"
+  },
+  {
+    "product_id": 516152,
+    "name": "Golbat",
+    "number": "042",
+    "market_price_usd": 0.09,
+    "raw_price_text": "0.09",
+    "product_url": "Golbat"
+  },
+  {
+    "product_id": 516006,
+    "name": "Nidoran M",
+    "number": "032",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Nidoran M"
+  },
+  {
+    "product_id": 516687,
+    "name": "Jynx ex - 124/165",
+    "number": "124",
+    "market_price_usd": 1.1,
+    "raw_price_text": "1.1",
+    "product_url": "Jynx ex 124 165"
+  },
+  {
+    "product_id": 502561,
+    "name": "Butterfree",
+    "number": "012",
+    "market_price_usd": 0.12,
+    "raw_price_text": "0.12",
+    "product_url": "Butterfree"
+  },
+  {
+    "product_id": 515956,
+    "name": "Arbok ex - 024/165",
+    "number": "024",
+    "market_price_usd": 1.2,
+    "raw_price_text": "1.2",
+    "product_url": "Arbok ex 024 165"
+  },
+  {
+    "product_id": 516567,
+    "name": "Tentacruel",
+    "number": "073",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Tentacruel"
+  },
+  {
+    "product_id": 516223,
+    "name": "Persian",
+    "number": "053",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Persian"
+  },
+  {
+    "product_id": 516666,
+    "name": "Hypno",
+    "number": "097",
+    "market_price_usd": 0.12,
+    "raw_price_text": "0.12",
+    "product_url": "Hypno"
+  },
+  {
+    "product_id": 516145,
+    "name": "Wigglytuff ex - 040/165",
+    "number": "040",
+    "market_price_usd": 1.07,
+    "raw_price_text": "1.07",
+    "product_url": "Wigglytuff ex 040 165"
+  },
+  {
+    "product_id": 502560,
+    "name": "Metapod",
+    "number": "011",
+    "market_price_usd": 0.16,
+    "raw_price_text": "0.16",
+    "product_url": "Metapod"
+  },
+  {
+    "product_id": 516708,
+    "name": "Zapdos ex - 145/165",
+    "number": "145",
+    "market_price_usd": 1.34,
+    "raw_price_text": "1.34",
+    "product_url": "Zapdos ex 145 165"
+  },
+  {
+    "product_id": 516601,
+    "name": "Ponyta",
+    "number": "077",
+    "market_price_usd": 0.08,
+    "raw_price_text": "0.08",
+    "product_url": "Ponyta"
+  },
+  {
+    "product_id": 516700,
+    "name": "Porygon",
+    "number": "137",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Porygon"
+  },
+  {
+    "product_id": 516725,
+    "name": "Leftovers",
+    "number": "163",
+    "market_price_usd": 0.11,
+    "raw_price_text": "0.11",
+    "product_url": "Leftovers"
+  },
+  {
+    "product_id": 516701,
+    "name": "Omanyte - 138/165",
+    "number": "138",
+    "market_price_usd": 0.16,
+    "raw_price_text": "0.16",
+    "product_url": "Omanyte 138 165"
+  },
+  {
+    "product_id": 516672,
+    "name": "Exeggutor",
+    "number": "103",
+    "market_price_usd": 0.15,
+    "raw_price_text": "0.15",
+    "product_url": "Exeggutor"
+  },
+  {
+    "product_id": 516652,
+    "name": "Farfetch'd",
+    "number": "083",
+    "market_price_usd": 0.06,
+    "raw_price_text": "0.06",
+    "product_url": "Farfetchd"
+  },
+  {
+    "product_id": 502563,
+    "name": "Kakuna",
+    "number": "014",
+    "market_price_usd": 0.12,
+    "raw_price_text": "0.12",
+    "product_url": "Kakuna"
+  },
+  {
+    "product_id": 515978,
+    "name": "Sandshrew",
+    "number": "027",
+    "market_price_usd": 0.07,
+    "raw_price_text": "0.07",
+    "product_url": "Sandshrew"
+  }
+]
