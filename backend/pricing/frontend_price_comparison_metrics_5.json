@@ -1,0 +1,137 @@
+{
+  "summary": {
+    "timestamp_utc": "2026-03-12T17:27:03.066185Z",
+    "tcgdex_base_url": "https://api.tcgdex.net/v2/en",
+    "tcgdex_set_prefix": "sv03.5",
+    "eur_to_usd_rate": 1.08,
+    "total_scraped_rows": 5,
+    "comparable_rows": 4,
+    "missing_frontend_price_rows": 1,
+    "missing_tcgplayer_price_rows": 0,
+    "average_signed_diff_usd": -0.2375,
+    "average_abs_diff_usd": 0.8925000000000001,
+    "median_abs_diff_usd": 0.98,
+    "rmse_usd": 1.0391222257270796,
+    "mape_percent": 73.68245,
+    "max_abs_diff_usd": 1.47,
+    "min_abs_diff_usd": 0.14,
+    "within_0_10_usd_count": 0,
+    "within_0_25_usd_count": 1,
+    "within_0_50_usd_count": 1,
+    "within_0_10_usd_rate": 0.0,
+    "within_0_25_usd_rate": 0.25,
+    "within_0_50_usd_rate": 0.25
+  },
+  "outliers_top_abs_diff": [
+    {
+      "product_id": 516663,
+      "card_name": "Gengar",
+      "card_number": "094",
+      "tcgplayer_market_price_usd": 2.01,
+      "frontend_price_usd": 0.54,
+      "frontend_tcgdex_card_id": "sv03.5-094",
+      "signed_diff_usd": -1.47,
+      "abs_diff_usd": 1.47,
+      "abs_diff_pct": 73.1343,
+      "tcgdex_card_name": "Gengar"
+    },
+    {
+      "product_id": 502551,
+      "card_name": "Blastoise ex - 009/165",
+      "card_number": "009",
+      "tcgplayer_market_price_usd": 1.44,
+      "frontend_price_usd": 2.75,
+      "frontend_tcgdex_card_id": "sv03.5-009",
+      "signed_diff_usd": 1.31,
+      "abs_diff_usd": 1.31,
+      "abs_diff_pct": 90.9722,
+      "tcgdex_card_name": "Blastoise ex"
+    },
+    {
+      "product_id": 516713,
+      "card_name": "Mewtwo",
+      "card_number": "150",
+      "tcgplayer_market_price_usd": 1.23,
+      "frontend_price_usd": 0.58,
+      "frontend_tcgdex_card_id": "sv03.5-150",
+      "signed_diff_usd": -0.65,
+      "abs_diff_usd": 0.65,
+      "abs_diff_pct": 52.8455,
+      "tcgdex_card_name": "Mewtwo"
+    },
+    {
+      "product_id": 502548,
+      "card_name": "Squirtle - 007/165",
+      "card_number": "007",
+      "tcgplayer_market_price_usd": 0.18,
+      "frontend_price_usd": 0.04,
+      "frontend_tcgdex_card_id": "sv03.5-007",
+      "signed_diff_usd": -0.14,
+      "abs_diff_usd": 0.14,
+      "abs_diff_pct": 77.7778,
+      "tcgdex_card_name": "Squirtle"
+    }
+  ],
+  "per_card": [
+    {
+      "product_id": 502548,
+      "card_name": "Squirtle - 007/165",
+      "card_number": "007",
+      "tcgplayer_market_price_usd": 0.18,
+      "frontend_price_usd": 0.04,
+      "frontend_tcgdex_card_id": "sv03.5-007",
+      "signed_diff_usd": -0.14,
+      "abs_diff_usd": 0.14,
+      "abs_diff_pct": 77.7778,
+      "tcgdex_card_name": "Squirtle"
+    },
+    {
+      "product_id": 516663,
+      "card_name": "Gengar",
+      "card_number": "094",
+      "tcgplayer_market_price_usd": 2.01,
+      "frontend_price_usd": 0.54,
+      "frontend_tcgdex_card_id": "sv03.5-094",
+      "signed_diff_usd": -1.47,
+      "abs_diff_usd": 1.47,
+      "abs_diff_pct": 73.1343,
+      "tcgdex_card_name": "Gengar"
+    },
+    {
+      "product_id": 502551,
+      "card_name": "Blastoise ex - 009/165",
+      "card_number": "009",
+      "tcgplayer_market_price_usd": 1.44,
+      "frontend_price_usd": 2.75,
+      "frontend_tcgdex_card_id": "sv03.5-009",
+      "signed_diff_usd": 1.31,
+      "abs_diff_usd": 1.31,
+      "abs_diff_pct": 90.9722,
+      "tcgdex_card_name": "Blastoise ex"
+    },
+    {
+      "product_id": 504467,
+      "card_name": "151 Booster Pack",
+      "card_number": null,
+      "tcgplayer_market_price_usd": 24.64,
+      "frontend_price_usd": null,
+      "frontend_tcgdex_card_id": null,
+      "signed_diff_usd": null,
+      "abs_diff_usd": null,
+      "abs_diff_pct": null,
+      "tcgdex_card_name": null
+    },
+    {
+      "product_id": 516713,
+      "card_name": "Mewtwo",
+      "card_number": "150",
+      "tcgplayer_market_price_usd": 1.23,
+      "frontend_price_usd": 0.58,
+      "frontend_tcgdex_card_id": "sv03.5-150",
+      "signed_diff_usd": -0.65,
+      "abs_diff_usd": 0.65,
+      "abs_diff_pct": 52.8455,
+      "tcgdex_card_name": "Mewtwo"
+    }
+  ]
+}

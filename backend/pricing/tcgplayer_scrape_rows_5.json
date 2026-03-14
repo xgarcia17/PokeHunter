@@ -1,0 +1,42 @@
+[
+  {
+    "product_id": 502548,
+    "name": "Squirtle - 007/165",
+    "number": "007",
+    "market_price_usd": 0.18,
+    "raw_price_text": "0.18",
+    "product_url": "Squirtle 007 165"
+  },
+  {
+    "product_id": 516663,
+    "name": "Gengar",
+    "number": "094",
+    "market_price_usd": 2.01,
+    "raw_price_text": "2.01",
+    "product_url": "Gengar"
+  },
+  {
+    "product_id": 502551,
+    "name": "Blastoise ex - 009/165",
+    "number": "009",
+    "market_price_usd": 1.44,
+    "raw_price_text": "1.44",
+    "product_url": "Blastoise ex 009 165"
+  },
+  {
+    "product_id": 504467,
+    "name": "151 Booster Pack",
+    "number": null,
+    "market_price_usd": 24.64,
+    "raw_price_text": "24.64",
+    "product_url": "151 Booster Pack"
+  },
+  {
+    "product_id": 516713,
+    "name": "Mewtwo",
+    "number": "150",
+    "market_price_usd": 1.23,
+    "raw_price_text": "1.23",
+    "product_url": "Mewtwo"
+  }
+]

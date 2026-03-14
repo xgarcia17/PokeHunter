@@ -333,7 +333,7 @@ export default function Scanner({ userId }: ScannerProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg w-full max-w-4xl mx-auto p-6 md:p-8 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg w-full max-w-5xl mx-auto p-6 md:p-8 overflow-hidden">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -417,8 +417,20 @@ export default function Scanner({ userId }: ScannerProps) {
             if (!displayCandidate) return null;
 
             return (
-              <div className="text-left text-xs md:text-sm bg-gray-50 border rounded-lg p-3 text-black space-y-4">
-              <div className="font-semibold">Card identification result</div>
+              <div className="text-left bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 text-slate-900 space-y-5">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <h3 className="text-base md:text-lg font-semibold">
+                    Card Identification Result
+                  </h3>
+                  <p className="text-xs md:text-sm text-slate-600">
+                    Review both images before adding the match to your collection.
+                  </p>
+                </div>
+                <div className="rounded-full bg-slate-900 text-white text-xs md:text-sm font-semibold px-3 py-1.5">
+                  Confidence: {(displayCandidate.score * 100).toFixed(2)}%
+                </div>
+              </div>
 
               {topTwoClose && candidates[1] && (
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 space-y-2">
@@ -454,48 +466,66 @@ export default function Scanner({ userId }: ScannerProps) {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <div className="font-medium mb-1">Uploaded</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="rounded-xl border border-slate-200 bg-white p-3 md:p-4">
+                  <div className="text-[11px] md:text-xs uppercase tracking-wide text-slate-500 font-semibold mb-2">
+                    Input Card
+                  </div>
                   {previewUrl && (
                     <img
                       src={previewUrl}
                       alt="Uploaded card"
-                      className="max-h-72 w-auto rounded-lg border bg-white"
+                      className="w-full aspect-[5/7] object-contain rounded-lg border border-slate-200 bg-slate-50"
                     />
                   )}
                 </div>
 
-                <div>
-                  <div className="font-medium mb-1">Detected from Supabase</div>
+                <div className="rounded-xl border border-slate-200 bg-white p-3 md:p-4">
+                  <div className="text-[11px] md:text-xs uppercase tracking-wide text-slate-500 font-semibold mb-2">
+                    Detected Card
+                  </div>
                   {displayCandidate.matched_image_url ? (
                     <img
                       src={displayCandidate.matched_image_url}
                       alt="Detected card from Supabase"
-                      className="max-h-72 w-auto rounded-lg border bg-white"
+                      className="w-full aspect-[5/7] object-contain rounded-lg border border-slate-200 bg-slate-50"
                     />
                   ) : (
-                    <div className="text-gray-500">No matched image found.</div>
+                    <div className="text-sm text-slate-500 border border-dashed border-slate-200 rounded-lg p-4 bg-slate-50">
+                      No matched image found.
+                    </div>
                   )}
                 </div>
               </div>
 
-              <div>
-                <span className="font-semibold">Detected card:</span>{" "}
-                {displayCandidate.card_name ?? "Unknown"}
-              </div>
-              <div>
-                <span className="font-semibold">Set / Number:</span>{" "}
-                {displayCandidate.set_id ?? "?"} /{" "}
-                {displayCandidate.card_number ?? "?"}
-              </div>
-              <div>
-                <span className="font-semibold">Confidence:</span>{" "}
-                {(displayCandidate.score * 100).toFixed(2)}%
+              <div className="rounded-xl border border-slate-200 bg-white p-4 md:p-5 space-y-3">
+                <div className="text-[11px] md:text-xs uppercase tracking-wide text-slate-500 font-semibold">
+                  Detected Details
+                </div>
+                <div>
+                  <div className="text-xs md:text-sm text-slate-500">Card Name</div>
+                  <div className="text-base md:text-lg font-semibold text-slate-900">
+                    {displayCandidate.card_name ?? "Unknown"}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <div className="text-xs md:text-sm text-slate-500">Set</div>
+                    <div className="text-sm md:text-base font-medium">
+                      {displayCandidate.set_id ?? "?"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs md:text-sm text-slate-500">Card Number</div>
+                    <div className="text-sm md:text-base font-medium">
+                      {displayCandidate.card_number ?? "?"}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {displayCandidate.score < MIN_CONFIDENCE_FOR_DIRECT_ADD && (
-                <div className="text-amber-700 text-sm">
+                <div className="text-amber-800 text-sm bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                   Confidence is below 90%. You will be asked to confirm before
                   adding.
                 </div>
@@ -511,7 +541,7 @@ export default function Scanner({ userId }: ScannerProps) {
                     }
                     className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    {addStatus === "adding" ? "ADDING..." : "ADD TO COLLECTION"}
+                    {addStatus === "adding" ? "Adding..." : "Add to Collection"}
                   </button>
                   <button
                     type="button"
@@ -519,7 +549,7 @@ export default function Scanner({ userId }: ScannerProps) {
                     disabled={addStatus === "adding"}
                     className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    DO NOT ADD
+                    Do Not Add
                   </button>
                   {shouldPromptRetake && (
                     <button
@@ -527,7 +557,7 @@ export default function Scanner({ userId }: ScannerProps) {
                       onClick={onTakeAnotherPhoto}
                       className="border border-amber-300 text-amber-800 bg-amber-50 px-4 py-2 rounded-lg text-sm font-medium"
                     >
-                      TAKE ANOTHER PHOTO
+                      Take Another Photo
                     </button>
                   )}
                 </div>
